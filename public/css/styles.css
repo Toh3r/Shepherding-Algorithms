@@ -1,0 +1,177 @@
+html, .container {
+	height:100%;
+	width: 100%;
+}
+
+body {
+	min-height: 100%;
+	font-family: 'Orbitron', sans-serif;
+  background-color: black;
+  border: 5px solid white;
+  color: rgb(36, 188, 25);
+}
+
+.navbar{
+	border-bottom: 2px solid white;
+  background-color: black;
+}
+
+a {
+  color: rgb(36, 188, 25);
+}
+
+a:hover {
+  color: white;
+}
+
+canvas {
+  margin-top: 20px;
+	margin-bottom: 20px;
+  border: 5px solid white;
+}
+
+#simRow {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('./images/herd.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+#controls {
+  background-color: black;
+  border-top: 5px solid white;
+  color: rgb(36, 188, 25);
+}
+
+#controlsMiddle {
+	border-left: 5px solid white;
+	border-right: 5px solid white;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+#controlsLeft {
+	padding-top: 20px;
+}
+
+#controlsRight {
+	padding-top: 20px;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 50%;
+  height: 5px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+input[type=range]:hover {
+  opacity: 1;
+	background: rgb(36, 188, 25);
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 24px;
+  border-radius: 25%;
+  background: white;
+  cursor: pointer;
+}
+
+input[type=range]::-moz-range-thumb {
+  width: 10px;
+  height: 24px;
+  border: 0;
+  background: white;
+  cursor: pointer;
+}
+
+input[type=text] {
+	width: 32px;
+  color: rgb(36, 188, 25);
+	margin-left: 10px;
+}
+
+label {
+min-width: 100px;
+}
+
+
+h5 {
+	padding-left: 10px;
+	display: inline;
+}
+
+button {
+	min-width: 180px;
+	border: 3px solid rgb(36, 188, 25);
+}
+
+button:hover {
+	color: white;
+	background: black;
+}
+
+button:active {
+	color: white;
+	background: rgb(36, 188, 25);
+}
+
+select {
+	min-width: 180px;
+	border: 3px solid rgb(36, 188, 25);
+}
+
+[type="checkbox"]:not(:checked),
+[type="checkbox"]:checked {
+  position: absolute;
+  left: -9999px;
+}
+[type="checkbox"]:not(:checked) + label,
+[type="checkbox"]:checked + label {
+  position: relative;
+  padding-left: 95px;
+  cursor: pointer;
+}
+[type="checkbox"]:not(:checked) + label:before,
+[type="checkbox"]:checked + label:before,
+[type="checkbox"]:not(:checked) + label:after,
+[type="checkbox"]:checked + label:after {
+  content: '';
+  position: absolute;
+}
+[type="checkbox"]:not(:checked) + label:before,
+[type="checkbox"]:checked + label:before {
+  left: 0; top: 0;
+  width: 80px; height: 30px;
+  background: rgb(36, 188, 25);
+  border-radius: 6px;
+  transition: background-color .2s;
+}
+[type="checkbox"]:not(:checked) + label:after,
+[type="checkbox"]:checked + label:after {
+  width: 30px; height: 30px;
+  transition: all .2s;
+  border-radius: 6px 0 0 6px;
+  background: white;
+  top: 0; left: 0;
+}
+
+/* on checked */
+[type="checkbox"]:checked + label:before {
+  background: rgb(36, 188, 25);
+}
+[type="checkbox"]:checked + label:after {
+  background: white;
+  top: 0; left: 51px;
+  border-radius: 0 6px 6px 0;
+}

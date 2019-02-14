@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
+    <title>Herding Simulation</title>
+
+    <!-- Add styles -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
+
+    <!-- Add library scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.dom.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.sound.min.js"></script> -->
+
+    <!-- Add my scripts -->
+    <script src="js/sketch.js"></script>
+    <script src="js/flock.js"></script>
+    <script src="js/boid.js"></script>
+    <script src="js/shepherd.js"></script>
+    <script src="js/novelty.js"></script>
+
+  </head>
+  <body>
+    <!-- Use header partial -->
+    {{> header}}
+
+    <!-- Canvas div -->
+    <div class="container-fluid" align:'center'>
+      <div class="row" id="simRow">
+        	<div id="myCanvas"></div>
+      </div>
+
+      <!-- Behaviour Sliders -->
+      <div class="row" id="controls">
+        <div class="col-lg-4" id='controlsLeft'>
+          <div id="speSli">
+            <label for="speedSlider">Speed: </label>
+          </div>
+          <div id="sepSli">
+            <label for="separationSlider">Seperation: </label>
+          </div>
+          <div id="aliSli">
+            <label for="aliSlider">Allignment: </label>
+          </div>
+          <div id="cohSli">
+            <label for="cohesionSlider">Cohesion: </label>
+          </div>
+        </div>
+
+        <!-- Add/Delete Buttons -->
+        <div class="col-lg-4" id="controlsMiddle" align="center">
+          <div id="addDrop">
+            <label for="sel" style="display:block">Click canvas to ...</label>
+          </div><br>
+          <div id="boidButtons">
+          </div>
+          <div id="shepButtons">
+          </div>
+          <div id="novButtons">
+          </div><br>
+          <div id="delAll">
+          </div>
+        </div>
+
+        <!-- CheckBox xontorls -->
+        <div class="col-lg-4" id="controlsRight" align='center'>
+          <div id="zoneDiv">
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- More scripts -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
