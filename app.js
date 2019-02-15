@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/about', (req, res) => {
-  res.send('WIP');
+  res.render('about.hbs');
 })
 
 // Listen on port 3000

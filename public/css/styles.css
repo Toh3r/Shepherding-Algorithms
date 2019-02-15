@@ -49,8 +49,8 @@ canvas {
 #controlsMiddle {
 	border-left: 5px solid white;
 	border-right: 5px solid white;
-	padding-top: 20px;
-	padding-bottom: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 #controlsLeft {
 	padding-top: 20px;
@@ -58,6 +58,8 @@ canvas {
 
 #controlsRight {
 	padding-top: 20px;
+	align: left;
+	padding-right: 10px;
 }
 
 input[type=range] {

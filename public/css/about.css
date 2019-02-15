@@ -1,0 +1,55 @@
+body {
+	background-image: url(http://i.imgur.com/JQMEb.jpg);
+	background-size: cover;
+	background-position: -70px 50px;
+	font-family: Barrio;
+	color: white;
+}
+
+html {
+	height: 100%;
+}
+
+#content {
+	text-align: center;
+	padding-top: 20%;
+	text-shadow: 0px 4px 3px black,
+	0px 8px 13px black,
+	0px 18px 23px black;
+}
+
+h1 {
+	font-weight: 700;
+	font-size: 5em;
+}
+
+hr {
+	width: 250px;
+	border-top: 2px groove #f8f8f8;
+	border-bottom: 2px ridge rgba(0,0,0,0.8);
+}
+
+.navbar-default {
+	border-top: 3px ridge black;
+	border-bottom: 3px ridge black;
+}
+
+.navbar-default .navbar-nav > li > a {
+	color: #0D160C;
+}
+
+.navbar-default .navbar-brand {
+	color: #0D160C;
+}
+
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+	color: #0D160C;
+}
+
+.btn-default {
+	border: 4px ridge rgba(0,0,0,0.8);
+	text-shadow: 0px 1px 2px #AFABAB,
+	0px 1px 3px #AFABAB,
+	0px 1px 3px #AFABAB;
+}
+

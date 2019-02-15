@@ -1,10 +1,10 @@
 // Create variables for index page
-var flock;
+var environment;
 let speedSlider, separationSlider, alignSlider, cohesionSlider;
 let speVal, sepVal, aliVal, cohVal;
 let speOut, sepOut, aliOut, cohOut;
 let novelObjects, sel, addText, zoneCheck;
-let addB, delB, addS, delS, addN, delN, delA;
+let delA, delS, delN, delAll;
 
 // Create page elements using p5.js
 function setup() {
@@ -14,9 +14,9 @@ function setup() {
   canvas.parent('myCanvas');
 
   // Create Sliders to change behavioural rules
-  speedSlider = createSlider(0, 5, 0.1, 0.1);
+  speedSlider = createSlider(0, 5, 1, 0.1);
   speedSlider.parent('speSli');
-  speOut = createElement("h5", "0.5");
+  speOut = createElement("h5", "1");
   speOut.parent('speSli');
   speedSlider.mouseReleased(updateValue);
 
@@ -41,15 +41,15 @@ function setup() {
   // Create Dropdown to add agents/objects
   sel = createSelect();
   sel.parent('addDrop');
-  sel.option('Add Boid');
+  sel.option('Add Animal');
   sel.option('Add Shepherd');
   sel.option('Add Novelty');
   canvas.mouseClicked(addStuff);
 
   // Create delete buttons to remove agents/objects
-  delB = createButton('Delete Boid');
-  delB.parent('boidButtons');
-  delB.mouseClicked(delBoid);
+  delA = createButton('Delete Animal');
+  delA.parent('animalButtons');
+  delA.mouseClicked(delAnimal);
 
   delS = createButton('Delete Shepherd');
   delS.parent('shepButtons');
@@ -59,33 +59,36 @@ function setup() {
   delN.parent('novButtons');
   delN.mouseClicked(delNovelty);
 
-  delA = createButton('Delete All');
-  delA.parent('delAll');
-  delA.mouseClicked(deleteAll);
+  delAll = createButton('Delete All');
+  delAll.parent('delAll');
+  delAll.mouseClicked(deleteAll);
 
   // Create checkbox to display flight/Pressure zones
   zoneCheck = createCheckbox("Display Each Zone");
   zoneCheck.parent("zoneDiv");
 
+  shepControl = createCheckbox("Control Shepherd");
+  shepControl.parent("zoneDiv");
+
   // Initialize starting flock
-  flock = new Flock();
+  environment = new Environment();
 
   //Create starting boids in random positions
-  for (var i = 0; i < 5; i++) {
-    var b = new Boid(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
-    flock.addBoid(b);
+  for (var i = 0; i < 1; i++) {
+    var b = new Animal(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
+    environment.addAnimal(b);
   }
 
   // Create starting shepherds in random positions
   for (var i = 0; i < 1; i++) {
     var s = new Shepherd(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
-    flock.addShepherd(s);
+    environment.addShepherd(s);
   }
 
   // Create novelty in random positions
   for (var i = 0; i < 0; i++) {
     var n = new NovelObject(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
-    flock.addNovelty(n);
+    environment.addNovelty(n);
   }
 
 }
@@ -93,7 +96,7 @@ function setup() {
 // Call run to begin simulation
 function draw() {
   background(36, 188, 25);
-  flock.run();
+  environment.run();
 }
 
 // Method to update the behavioral rules of each boid
@@ -114,27 +117,27 @@ function updateValue() {
 // Call flock functions to add objects
 function addStuff() {
   var dropSelect = sel.value();
-  if (dropSelect == "Add Boid") {
-    flock.addBoid(new Boid(mouseX, mouseY));
+  if (dropSelect == "Add Animal") {
+    environment.addAnimal(new Animal(mouseX, mouseY));
   }
   if (dropSelect == "Add Shepherd") {
-    flock.addShepherd(new Shepherd(mouseX, mouseY));
+    environment.addShepherd(new Shepherd(mouseX, mouseY));
   }
   if (dropSelect == "Add Novelty") {
-    flock.addNovelty(new NovelObject(mouseX, mouseY));
+    environment.addNovelty(new NovelObject(mouseX, mouseY));
   }
 }
 
 // Call flock functions to delete agents/objects
-function delBoid() {
-  flock.deleteBoid();
+function delAnimal() {
+  environment.deleteAnimal();
 }
 function delShepherd() {
-  flock.deleteShepherd();
+  environment.deleteShepherd();
 }
 function delNovelty() {
-  flock.deleteNovelty();
+  environment.deleteNovelty();
 }
 function deleteAll() {
-  flock.removeAll();
+  environment.removeAll();
 }

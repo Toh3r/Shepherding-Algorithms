@@ -1,18 +1,18 @@
-// Flock object
-function Flock() {
+// Environment object, holds all objects in the simulation
+function Environment() {
   // Initialize arrays to store agents/objects
-  this.boids = [];
+  this.herd = [];
   this.shepherds = [];
   this.novelObjects = [];
 }
 
-Flock.prototype.run = function() {
-  for (var i = 0; i < this.boids.length; i++) {
-    this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
+Environment.prototype.run = function() {
+  for (var i = 0; i < this.herd.length; i++) {
+    this.herd[i].run(this.herd, this.shepherds);  // Passing the entire list of boids to each boid individually
   }
 
   for (var i = 0; i < this.shepherds.length; i++) {
-    this.shepherds[i].run(this.boids);  // Passing the entire list of boids to each boid individually
+    this.shepherds[i].run();  // Passing the entire list of boids to each boid individually
   }
 
   for (var i = 0; i < this.novelObjects.length; i++) {
@@ -21,34 +21,34 @@ Flock.prototype.run = function() {
 }
 
 // Methods to add agents/Objects
-Flock.prototype.addBoid = function(b) {
-  this.boids.push(b);
+Environment.prototype.addAnimal = function(b) {
+  this.herd.push(b);
 }
 
-Flock.prototype.addShepherd = function(s) {
+Environment.prototype.addShepherd = function(s) {
   this.shepherds.push(s);
 }
 
-Flock.prototype.addNovelty = function(n) {
+Environment.prototype.addNovelty = function(n) {
   this.novelObjects.push(n);
 }
 
 // Methods to delete agents/Obstructions
-Flock.prototype.deleteBoid = function() {
-  this.boids.pop();
+Environment.prototype.deleteAnimal = function() {
+  this.herd.pop();
 }
 
-Flock.prototype.deleteShepherd = function() {
+Environment.prototype.deleteShepherd = function() {
   this.shepherds.pop();
 }
 
-Flock.prototype.deleteNovelty = function() {
+Environment.prototype.deleteNovelty = function() {
   this.novelObjects.pop();
 }
 
 // Method to clear the canvas
-Flock.prototype.removeAll = function() {
-  this.boids.length = 0;
+Environment.prototype.removeAll = function() {
+  this.herd.length = 0;
   this.shepherds.length = 0;
   this.novelObjects.length = 0;
 }

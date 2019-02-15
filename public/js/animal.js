@@ -1,17 +1,17 @@
 // Boid class
 // Set Boid attributes
-function Boid(x,y) {
+function Animal(x,y) {
   this.acceleration = createVector(0,0);
-  this.velocity = createVector(random(-1,1),random(-1,1));
+  this.velocity = createVector(random(-3,3),random(-3,3));
   this.position = createVector(x,y);
   this.r = 3.0;
-  this.maxspeed = 0.5;    // Maximum speed
+  this.maxspeed = 1;    // Maximum speed
   this.maxforce = 0.03; // Maximum steering force
 }
 
 // Call functions for each boid
-Boid.prototype.run = function(boids) {
-  this.flock(boids);
+Animal.prototype.run = function(herd, shepherds) {
+  this.flock(herd, shepherds);
   this.update();
   this.borders();
   this.render();
@@ -21,29 +21,47 @@ Boid.prototype.run = function(boids) {
 }
 
 // Apply each behavioural rule to each boid
-Boid.prototype.applyForce = function(force) {
+Animal.prototype.applyForce = function(force) {
   this.acceleration.add(force);
 }
 
 // Accumulate a new acceleration each time based on three rules
-Boid.prototype.flock = function(boids) {
-  var sep = this.separate(boids);   // Separation
-  var ali = this.align(boids);      // Alignment
-  var coh = this.cohesion(boids);   // Cohesion
+Animal.prototype.flock = function(herd, shepherds) {
+  var sep = this.separate(herd);   // Separation
+  var ali = this.align(herd);      // Alignment
+  var coh = this.cohesion(herd);   // Cohesion
+  var bun = this.bunch(shepherds); // Bunching
+  var mov = this.move(shepherds);  // Steer herd
+
 
   // Forces weighted using slider input
-  sep.mult(separationSlider.value());
-  ali.mult(alignSlider.value());
-  coh.mult(cohesionSlider.value());
+  sep.mult(2.8);
+  mov.mult(5);
+
+  if (bun > 0) {
+    ali.mult(3);
+  } else {
+    ali.mult(0);
+  }
+  // ali.mult(alignSlider.value());
+
+  if (bun > 0) {
+    coh.mult(3);
+  } else {
+    coh.mult(0);
+  }
+
 
   // Add the force vectors to acceleration
+  this.applyForce(mov);
   this.applyForce(sep);
   this.applyForce(ali);
   this.applyForce(coh);
 }
 
 // Method to update location
-Boid.prototype.update = function() {
+Animal.prototype.update = function() {
+  this.velocity.setMag(speedSlider.value());
   // Update velocity
   this.velocity.add(this.acceleration);
   // Limit speed
@@ -55,7 +73,7 @@ Boid.prototype.update = function() {
 
 // A method that calculates and applies a steering force towards a target
 // STEER = DESIRED MINUS VELOCITY
-Boid.prototype.seek = function(target) {
+Animal.prototype.seek = function(target) {
   var desired = p5.Vector.sub(target,this.position);  // A vector pointing from the location to the target
   // Normalize desired and scale to maximum speed
   desired.normalize();
@@ -67,7 +85,7 @@ Boid.prototype.seek = function(target) {
 }
 
 // Method to draw boid
-Boid.prototype.render = function() {
+Animal.prototype.render = function() {
   // Draw a triangle rotated in the direction of velocity
   var theta = this.velocity.heading() + radians(90);
   fill(0, 0, 0);
@@ -84,7 +102,7 @@ Boid.prototype.render = function() {
 }
 
 // Method to render a boids flight and pressure zone
-Boid.prototype.renderZones = function () {
+Animal.prototype.renderZones = function () {
   fill(0,0,0,0.0)
   stroke(255, 0, 0);
   ellipse(this.position.x,this.position.y, 50, 50);
@@ -95,7 +113,7 @@ Boid.prototype.renderZones = function () {
 };
 
 // Method for boid to turn when it encounters a wall
-Boid.prototype.borders = function () {
+Animal.prototype.borders = function () {
   if (this.position.x < 15) {
     this.velocity.x *= -1;
     this.position.x = 15;
@@ -113,17 +131,17 @@ Boid.prototype.borders = function () {
 
 // Separation
 // Method checks for nearby boids and steers away
-Boid.prototype.separate = function(boids) {
-  var desiredseparation = 25.0;
+Animal.prototype.separate = function(herd) {
+  var desiredseparation = 15.0;
   var steer = createVector(0,0);
   var count = 0;
   // For every boid in the system, check if it's too close
-  for (var i = 0; i < boids.length; i++) {
-    var d = p5.Vector.dist(this.position,boids[i].position);
+  for (var i = 0; i < herd.length; i++) {
+    var d = p5.Vector.dist(this.position,herd[i].position);
     // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
     if ((d > 0) && (d < desiredseparation)) {
       // Calculate vector pointing away from neighbor
-      var diff = p5.Vector.sub(this.position,boids[i].position);
+      var diff = p5.Vector.sub(this.position,herd[i].position);
       diff.normalize();
       diff.div(d);        // Weight by distance
       steer.add(diff);
@@ -148,14 +166,14 @@ Boid.prototype.separate = function(boids) {
 
 // Alignment
 // For every nearby boid in the system, calculate the average velocity
-Boid.prototype.align = function(boids) {
+Animal.prototype.align = function(herd) {
   var neighbordist = 50;
   var sum = createVector(0,0);
   var count = 0;
-  for (var i = 0; i < boids.length; i++) {
-    var d = p5.Vector.dist(this.position,boids[i].position);
+  for (var i = 0; i < herd.length; i++) {
+    var d = p5.Vector.dist(this.position,herd[i].position);
     if ((d > 0) && (d < neighbordist)) {
-      sum.add(boids[i].velocity);
+      sum.add(herd[i].velocity);
       count++;
     }
   }
@@ -173,14 +191,14 @@ Boid.prototype.align = function(boids) {
 
 // Cohesion
 // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
-Boid.prototype.cohesion = function(boids) {
-  var neighbordist = 50;
+Animal.prototype.cohesion = function(herd) {
+  var neighbordist = 200;
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
-  for (var i = 0; i < boids.length; i++) {
-    var d = p5.Vector.dist(this.position,boids[i].position);
+  for (var i = 0; i < herd.length; i++) {
+    var d = p5.Vector.dist(this.position,herd[i].position);
     if ((d > 0) && (d < neighbordist)) {
-      sum.add(boids[i].position); // Add location
+      sum.add(herd[i].position); // Add location
       count++;
     }
   }
@@ -192,4 +210,50 @@ Boid.prototype.cohesion = function(boids) {
   }
 }
 
-// Bunch behavioural
+// Bunching Behaviour
+Animal.prototype.bunch = function(shepherds) {
+  var neighbordist = 200;
+  var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
+  var count = 0;
+  for (var i = 0; i < shepherds.length; i++) {
+    var d = p5.Vector.dist(this.position,shepherds[i].position);
+    if ((d > 0) && (d < neighbordist)) {
+      sum.add(shepherds[i].position); // Add location
+      count++;
+    }
+    return count;
+  }
+}
+
+Animal.prototype.move = function(shepherds) {
+  var desiredseparation = 150.0;
+  var steer = createVector(0,0);
+  var count = 0;
+  // For every boid in the system, check if it's too close
+  for (var i = 0; i < shepherds.length; i++) {
+    var d = p5.Vector.dist(this.position,shepherds[i].position);
+    // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
+    if ((d > 0) && (d < desiredseparation)) {
+      // Calculate vector pointing away from neighbor
+      var diff = p5.Vector.sub(this.position,shepherds[i].position);
+      diff.normalize();
+      diff.div(d);        // Weight by distance
+      steer.add(diff);
+      count++;            // Keep track of how many
+    }
+  }
+  // Average -- divide by how many
+  if (count > 0) {
+    steer.div(count);
+  }
+
+  // As long as the vector is greater than 0
+  if (steer.mag() > 0) {
+    // Implement Reynolds: Steering = Desired - Velocity
+    steer.normalize();
+    steer.mult(this.maxspeed);
+    steer.sub(this.velocity);
+    steer.limit(this.maxforce);
+  }
+  return steer;
+}
