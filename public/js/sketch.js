@@ -1,22 +1,23 @@
-// Create variables for index page
+// Create a million variables for index page
 var environment;
 let speedSlider, separationSlider, alignSlider, cohesionSlider;
 let speVal, sepVal, aliVal, cohVal;
 let speOut, sepOut, aliOut, cohOut;
 let novelObjects, sel, addText, zoneCheck;
 let delA, delS, delN, delAll;
+let numAnimals, stressLevelOut;
 
 // Create page elements using p5.js
 function setup() {
 
   // Create Canvas
   var canvas = createCanvas(1000,500);
-  canvas.parent('myCanvas');
+  canvas.parent('myCanvas'); // .parent allows item to manipulated on html page
 
   // Create Sliders to change behavioural rules
-  speedSlider = createSlider(0, 5, 1, 0.1);
+  speedSlider = createSlider(0, 5, 0.3, 0.1);
   speedSlider.parent('speSli');
-  speOut = createElement("h5", "1");
+  speOut = createElement("h5", "0.3");
   speOut.parent('speSli');
   speedSlider.mouseReleased(updateValue);
 
@@ -70,13 +71,13 @@ function setup() {
   shepControl = createCheckbox("Control Shepherd");
   shepControl.parent("zoneDiv");
 
-  // Initialize starting flock
+  // Initialize starting environment (with agents/objects)
   environment = new Environment();
 
-  //Create starting boids in random positions
+  //Create starting animals in random positions
   for (var i = 0; i < 10; i++) {
-    var b = new Animal(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
-    environment.addAnimal(b);
+    var a = new Animal(Math.floor(Math.random() * 500) + 1,Math.floor(Math.random() * 500) + 1);
+    environment.addAnimal(a);
   }
 
   // Create starting shepherds in random positions
@@ -85,13 +86,17 @@ function setup() {
     environment.addShepherd(s);
   }
 
-  // Create novelty in random positions
+  // Create starting novelties in random positions
   for (var i = 0; i < 1; i++) {
-    // var n = new NovelObject(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
-    var n = new NovelObject(950, 250);
+    var n = new NovelObject(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
     environment.addNovelty(n);
   }
 
+  // Create gate ('exit') at end of field
+  for (var i = 0; i < 1; i++) {
+    var g = new Gate(990, 230);
+    environment.addGate(g);
+  }
 }
 
 // Call run to begin simulation
@@ -115,7 +120,7 @@ function updateValue() {
   cohOut.html(cohVal);
 }
 
-// Call flock functions to add objects
+// Call add functions to add agents/objects on mouse co-ords
 function addStuff() {
   var dropSelect = sel.value();
   if (dropSelect == "Add Animal") {
@@ -129,7 +134,7 @@ function addStuff() {
   }
 }
 
-// Call flock functions to delete agents/objects
+// Call delete functions to delete agents/objects
 function delAnimal() {
   environment.deleteAnimal();
 }
