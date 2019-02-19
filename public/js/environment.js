@@ -46,6 +46,15 @@ Environment.prototype.deleteNovelty = function() {
   this.novelObjects.pop();
 }
 
+Environment.prototype.hitTheGap = function(animal) {
+  console.log(animal.name);
+  var index = this.herd.map(function (item) {
+    return item.name;
+  }).indexOf(animal.name);
+
+  this.herd.splice(index, 1);
+}
+
 // Method to clear the canvas
 Environment.prototype.removeAll = function() {
   this.herd.length = 0;

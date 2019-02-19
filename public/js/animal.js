@@ -7,6 +7,8 @@ function Animal(x,y) {
   this.r = 3.0;
   this.maxspeed = 1;    // Maximum speed
   this.maxforce = 0.03; // Maximum steering force
+  this.name = Math.random();
+  console.log(this.name);
 }
 
 // Call functions for each boid
@@ -32,11 +34,12 @@ Animal.prototype.flock = function(herd, shepherds) {
   var coh = this.cohesion(herd);   // Cohesion
   var bun = this.bunch(shepherds); // Bunching
   var mov = this.move(shepherds);  // Steer herd
+  var goa = this.goal();           // Move to goal
 
 
   // Forces weighted using slider input
-  sep.mult(2.8);
-  mov.mult(5);
+  sep.mult(2.5);
+  mov.mult(3);
 
   if (bun > 0) {
     ali.mult(3);
@@ -57,6 +60,8 @@ Animal.prototype.flock = function(herd, shepherds) {
   this.applyForce(sep);
   this.applyForce(ali);
   this.applyForce(coh);
+  this.applyForce(goa);
+
 }
 
 // Method to update location
@@ -103,10 +108,12 @@ Animal.prototype.render = function() {
 
 // Method to render a boids flight and pressure zone
 Animal.prototype.renderZones = function () {
+  // Draw flight zone
   fill(0,0,0,0.0)
   stroke(255, 0, 0);
-  ellipse(this.position.x,this.position.y, 50, 50);
+  ellipse(this.position.x,this.position.y, 100, 100);
 
+  // Draw pressure zone
   fill(0,0,0,0.0)
   stroke(0, 0, 0);
   ellipse(this.position.x,this.position.y, 200, 200);
@@ -212,7 +219,7 @@ Animal.prototype.cohesion = function(herd) {
 
 // Bunching Behaviour
 Animal.prototype.bunch = function(shepherds) {
-  var neighbordist = 200;
+  var neighbordist = 100;
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   for (var i = 0; i < shepherds.length; i++) {
@@ -226,7 +233,7 @@ Animal.prototype.bunch = function(shepherds) {
 }
 
 Animal.prototype.move = function(shepherds) {
-  var desiredseparation = 150.0;
+  var desiredseparation = 50.0;
   var steer = createVector(0,0);
   var count = 0;
   // For every boid in the system, check if it's too close
@@ -256,4 +263,19 @@ Animal.prototype.move = function(shepherds) {
     steer.limit(this.maxforce);
   }
   return steer;
+}
+
+// Goal setting brhaviour when animal comes within certain area of a gate
+Animal.prototype.goal = function () {
+    var gate = createVector(950, 250);
+    //console.log(this.animal);
+    if (this.position.x > 950 && this.position.x < 1000) {
+      environment.hitTheGap(this);
+    }
+    var desired = p5.Vector.sub(gate, this.position);
+    desired.normalize();
+    desired.mult(this.maxspeed);
+    var steer = p5.Vector.sub(desired, this.velocity);
+    steer.limit(this.maxforce);
+    return steer;
 }

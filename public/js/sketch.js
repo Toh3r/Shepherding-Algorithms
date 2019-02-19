@@ -74,7 +74,7 @@ function setup() {
   environment = new Environment();
 
   //Create starting boids in random positions
-  for (var i = 0; i < 1; i++) {
+  for (var i = 0; i < 10; i++) {
     var b = new Animal(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
     environment.addAnimal(b);
   }
@@ -86,8 +86,9 @@ function setup() {
   }
 
   // Create novelty in random positions
-  for (var i = 0; i < 0; i++) {
-    var n = new NovelObject(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
+  for (var i = 0; i < 1; i++) {
+    // var n = new NovelObject(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
+    var n = new NovelObject(950, 250);
     environment.addNovelty(n);
   }
 
