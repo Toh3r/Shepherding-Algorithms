@@ -1,4 +1,4 @@
-// Environment object, holds all objects in the simulation
+// Environment object, holds/manages all objects in the simulation
 function Environment() {
   // Initialize arrays to store agents/objects
   this.herd = [];

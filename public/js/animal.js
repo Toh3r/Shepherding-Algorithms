@@ -5,7 +5,7 @@ function Animal(x,y) {
   this.velocity = createVector(random(-3,3),random(-3,3)); // Starting velocity
   this.position = createVector(x,y); // Starting position
   this.r = 3.0; // Animal size
-  this.maxspeed = 1;    // Maximum speed
+  this.maxspeed = 0.3;    // Maximum speed
   this.maxforce = 0.03; // Maximum steering force
   this.name = Math.random(); // Give every animal a random id
   this.stressLevel = 0; // Starting stress level
@@ -43,6 +43,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   mov.mult(3);
 
   if (bun > 0) {
+    // this.velocity.setMag(2);
     ali.mult(3);
   } else {
     ali.mult(0);
@@ -69,7 +70,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
 // Method to update location
 Animal.prototype.update = function() {
   // Change speed using speed slider
-  this.velocity.setMag(speedSlider.value());
+  // this.velocity.setMag(0.1);
   // Update velocity
   this.velocity.add(this.acceleration);
   // Limit speed
