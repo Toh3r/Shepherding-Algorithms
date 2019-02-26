@@ -10,3 +10,5 @@ A flocking simulation that implements Reynolds flocking algorithm and will event
 
 * npm start
 * Go to localhost:3000
+
+* Or click -> https://shepherdingalgorithms.herokuapp.com/ <- to open hosted version
