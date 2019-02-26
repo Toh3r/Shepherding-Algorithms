@@ -1,17 +1,21 @@
+let oldBun;
 // Animal class
 // Set Animal attributes
 function Animal(x,y) {
   this.acceleration = createVector(0,0); // Starting accelertion
-  this.velocity = createVector(random(-3,3),random(-3,3)); // Starting velocity
+  this.velocity = createVector(random(-3,3),random(-3,3)); // Create starting velocity direction
   this.position = createVector(x,y); // Starting position
-  this.r = 3.0; // Animal size
-  this.maxspeed = 0.3;    // Maximum speed
+  this.r = 3.0;         // Animal size
+  this.maxspeed = 1;    // Maximum speed
   this.maxforce = 0.03; // Maximum steering force
+  this.velocity.setMag(0.1); // Create starting velocity speed
   this.name = Math.random(); // Give every animal a random id
-  this.stressLevel = 0; // Starting stress level
+  this.stressLevel = 0;      // Starting stress level
 }
 
-// Call functions for each animal
+// ----- ANIMAL UPDATE FUNCTIONS
+
+// Call functions for each animal each frame
 Animal.prototype.run = function(herd, shepherds, novelObjects) {
   this.herd(herd, shepherds, novelObjects);
   this.update();
@@ -29,6 +33,9 @@ Animal.prototype.applyForce = function(force) {
 
 // Accumulate a new acceleration each time based on all rules
 Animal.prototype.herd = function(herd, shepherds, novelObjects) {
+  // // Change speed using speed slider
+  // this.velocity.setMag(speedSlider.value());
+
   var sep = this.separate(herd);      // Separation
   var ali = this.align(herd);         // Alignment
   var coh = this.cohesion(herd);      // Cohesion
@@ -42,17 +49,25 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   sep.mult(4.5);
   mov.mult(3);
 
+  console.log('New Bunch: ' + bun);
+  console.log('Old Bunch: ' + oldBun);
+
   if (bun > 0) {
-    // this.velocity.setMag(2);
     ali.mult(3);
   } else {
     ali.mult(0);
   }
   // ali.mult(alignSlider.value());
 
+  // if shepherd is in pressure zone
   if (bun > 0) {
+    this.velocity.setMag(0.5);
     coh.mult(2);
-  } else {
+  } else { // if shepherd is not in pressure zone
+    if (bun < oldBun) {
+      speedDec(this);
+    }
+    // this.velocity.setMag(0.1);
     coh.mult(0);
   }
 
@@ -65,12 +80,13 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   this.applyForce(goa);
   this.applyForce(avo);
 
+  // Store old bun array value (Used for comparison in following frame)
+  oldBun = bun;
+
 }
 
 // Method to update location
 Animal.prototype.update = function() {
-  // Change speed using speed slider
-  // this.velocity.setMag(0.1);
   // Update velocity
   this.velocity.add(this.acceleration);
   // Limit speed
@@ -92,6 +108,8 @@ Animal.prototype.seek = function(target) {
   steer.limit(this.maxforce);  // Limit to maximum steering force
   return steer;
 }
+
+// ----- ANIMAL DRAWING FUNCTIONS
 
 // Method to draw animal
 Animal.prototype.render = function() {
@@ -123,7 +141,7 @@ Animal.prototype.renderZones = function () {
   ellipse(this.position.x,this.position.y, 200, 200);
 };
 
-// Method for animal to turn when it encounters a wall
+// Method to keep animal in enclosure
 Animal.prototype.borders = function () {
   if (this.position.x < 15) {
     this.velocity.x *= -1;
@@ -139,6 +157,8 @@ Animal.prototype.borders = function () {
     this.position.y = height - 15;
   }
 }
+
+// ----- ANIMAL BEHAVIOURAL RULES WITH OTHER ANIMALS
 
 // Separation
 // Method checks for nearby animals and steers away
@@ -221,6 +241,8 @@ Animal.prototype.cohesion = function(herd) {
   }
 }
 
+// ----- ANIMAL BEHAVIOURAL RULES WITH DRONE
+
 // When shepherd enters pressure zone, initiate bunching with neighbours
 Animal.prototype.bunch = function(shepherds) {
   var neighbordist = 100;
@@ -271,7 +293,9 @@ Animal.prototype.move = function(shepherds) {
   return steer;
 }
 
-// Goal setting brhaviour when animal comes within certain area of a gate
+// ----- ANIMAL BEHAVIOURAL RULES WITH ENVIRONMENT
+
+// Goal setting behaviour when animal comes within certain area of a gate
 Animal.prototype.goal = function () {
   if (this.position.x > 850 && this.position.y > 180 && this.position.y < 320) {
     var gate = createVector(980, 250);
@@ -288,7 +312,7 @@ Animal.prototype.goal = function () {
   }
 }
 
-// Try to avoid novel objects
+// Try to avoid novel objects -- ** Code needs to be put out on the line **
 Animal.prototype.avoid = function (novelObjects) {
   var desiredseparation = 50.0;
   var steer = createVector(0,0);
@@ -321,4 +345,23 @@ Animal.prototype.avoid = function (novelObjects) {
     steer.limit(this.maxforce);
   }
   return steer;
+}
+
+// ----- ANIMAL SPEED FUNCTIONS
+
+// ---- Funtion to reduce speed ----
+let count = 5;
+
+function speedDec(animal) {
+  var timer = setInterval(function () {
+    if (count == 0) {
+      clearInterval(timer);
+      count = 5;
+    } else {
+      animal.velocity.setMag(count * .1);
+      console.log("Animal Velocity: " + animal.velocity.mag())
+      count--;
+      console.log("I'M THE COUNTER: " + count);
+    }
+  }, 1000)
 }

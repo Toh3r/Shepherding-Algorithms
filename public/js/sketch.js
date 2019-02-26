@@ -75,7 +75,7 @@ function setup() {
   environment = new Environment();
 
   //Create starting animals in random positions
-  for (var i = 0; i < 10; i++) {
+  for (var i = 0; i < 1; i++) {
     var a = new Animal(Math.floor(Math.random() * 500) + 1,Math.floor(Math.random() * 500) + 1);
     environment.addAnimal(a);
   }
