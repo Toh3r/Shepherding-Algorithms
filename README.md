@@ -5,4 +5,8 @@ A flocking simulation that implements Reynolds flocking algorithm and will event
 #### Installation
 
 * npm install
-* npm start 
+
+#### To run
+
+* npm start
+* Go to localhost:3000
