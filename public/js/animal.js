@@ -1,4 +1,4 @@
-let oldBun;
+// let oldBun;
 let r, g, b;
 // Animal class
 // Set Animal attributes
@@ -12,18 +12,20 @@ function Animal(x,y) {
   this.velocity.setMag(0.2);   // Create starting velocity speed
   this.name = chance.first();  // Give every animal a random id
   this.stressLevel = 0;        // Starting stress level
+  this.timeCount = 5;         // Set starting timer
+  this.oldBun = 0;             // Starting num of shepherds in zones
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS
 
 // Call functions for each animal each frame
 Animal.prototype.run = function(herd, shepherds, novelObjects) {
-  this.herd(herd, shepherds, novelObjects);
-  this.update();
-  this.borders();
-  this.render();
+  this.herd(herd, shepherds, novelObjects); // Apply forces
+  this.update();    // Update position based on forces
+  this.borders();   // Keep animal in enclosure
+  this.render();    // Render animal
   if (zoneCheck.checked() == true) {
-    this.renderZones();
+    this.renderZones(); // Render animal zones
   }
 }
 
@@ -45,11 +47,9 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   var goa = this.goal();              // Move to goal
   var avo = this.avoid(novelObjects); // Avoid Novelty
 
-
   // Forces weighted depending on its conditions
   sep.mult(4.5);
   mov.mult(3);
-
 
   if (bun > 0) {
     ali.mult(3);
@@ -58,20 +58,18 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   }
   // ali.mult(alignSlider.value());
 
-  // if shepherd is in pressure zone
-  if (bun > 0) {
+
+  if (bun > 0) {   // if shepherd is in pressure zone
     this.velocity.setMag(0.5);
     coh.mult(2);
   } else { // if shepherd is not in pressure zone
-    this.velocity.setMag(0.2);
+    // this.velocity.setMag(0.2);
     coh.mult(0);
-    // if (bun < oldBun) {
-    //   console.log("Old Bunch: " + oldBun + " ,New Bunch: " + bun);
-    //   console.log("Name in update: " + this.name);
-    //   this.speedRed();
-    // }
+    if (this.oldBun > bun) {
+      this.timeCount = 5;
+      this.speedRed();
+    }
   }
-
 
   // Add the force vectors to acceleration
   this.applyForce(mov);
@@ -81,8 +79,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   this.applyForce(avo);
   this.applyForce(coh);
 
-  // Store old bun array value (Used for comparison in following frame)
-  oldBun = bun;
+  this.oldBun = bun; // Store old bun array value (Used for comparison in following frame)
 
 }
 
@@ -268,9 +265,10 @@ Animal.prototype.bunch = function(shepherds) {
       count++;
     }
     if (count < oldCount) {
-      this.timeCount = 5;
-      console.log("Mom I made it");
-      this.speedRed();
+      // console.log(this.name);
+      // this.timeCount = 5;
+      // console.log("Name in if statemant: " + this.name);
+      // this.speedRed();
     }
     oldCount = count; // for comparison of arrays
     return count; // Return number of shepherds in pressure zone
@@ -371,23 +369,19 @@ Animal.prototype.avoid = function (novelObjects) {
 // ----- ANIMAL SPEED FUNCTIONS
 
 // ---- Funtion to reduce speed ----
-
-
 Animal.prototype.speedRed = function() {
-  console.log("Name in speed : " + this.name);
-  console.log("Hello");
   var self = this;
   var timer = setInterval(function () {
     if (self.timeCount == 0) {
       console.log("Self Counter: " + self.timeCount);
       clearInterval(timer);
-      self.timeCount = 5;
+      // self.timeCount = 5;
     } else {
       console.log("Name: " + self.name);
       console.log("Self Counter: " + self.timeCount);
       self.velocity.setMag(self.timeCount * .1);
       console.log("Animal Velocity: " + self.velocity.mag())
-      self.count--;
+      self.timeCount--;
     }
   }, 1000);
 }
