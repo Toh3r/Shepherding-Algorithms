@@ -1,4 +1,5 @@
 let oldBun;
+let r, g, b;
 // Animal class
 // Set Animal attributes
 function Animal(x,y) {
@@ -8,9 +9,9 @@ function Animal(x,y) {
   this.r = 3.0;         // Animal size
   this.maxspeed = 1;    // Maximum speed
   this.maxforce = 0.03; // Maximum steering force
-  this.velocity.setMag(0.1); // Create starting velocity speed
-  this.name = Math.random(); // Give every animal a random id
-  this.stressLevel = 0;      // Starting stress level
+  this.velocity.setMag(0.2);   // Create starting velocity speed
+  this.name = chance.first();  // Give every animal a random id
+  this.stressLevel = 0;        // Starting stress level
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS
@@ -49,8 +50,6 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   sep.mult(4.5);
   mov.mult(3);
 
-  console.log('New Bunch: ' + bun);
-  console.log('Old Bunch: ' + oldBun);
 
   if (bun > 0) {
     ali.mult(3);
@@ -64,11 +63,13 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
     this.velocity.setMag(0.5);
     coh.mult(2);
   } else { // if shepherd is not in pressure zone
-    if (bun < oldBun) {
-      speedDec(this);
-    }
-    // this.velocity.setMag(0.1);
+    this.velocity.setMag(0.2);
     coh.mult(0);
+    // if (bun < oldBun) {
+    //   console.log("Old Bunch: " + oldBun + " ,New Bunch: " + bun);
+    //   console.log("Name in update: " + this.name);
+    //   this.speedRed();
+    // }
   }
 
 
@@ -76,9 +77,9 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   this.applyForce(mov);
   this.applyForce(sep);
   this.applyForce(ali);
-  this.applyForce(coh);
   this.applyForce(goa);
   this.applyForce(avo);
+  this.applyForce(coh);
 
   // Store old bun array value (Used for comparison in following frame)
   oldBun = bun;
@@ -126,6 +127,16 @@ Animal.prototype.render = function() {
   vertex(this.r, this.r*1.5);
   endShape(CLOSE);
   pop();
+
+  // r = random(255);
+  // g = random(255);
+  // b = random(255);
+  // fill(r, g, b);
+
+  fill(255);
+  stroke(0);
+  textSize(12);
+  text(this.name, this.position.x, this.position.y);
 }
 
 // Method to render animals flight and pressure zone
@@ -243,6 +254,8 @@ Animal.prototype.cohesion = function(herd) {
 
 // ----- ANIMAL BEHAVIOURAL RULES WITH DRONE
 
+let oldCount;
+
 // When shepherd enters pressure zone, initiate bunching with neighbours
 Animal.prototype.bunch = function(shepherds) {
   var neighbordist = 100;
@@ -254,7 +267,13 @@ Animal.prototype.bunch = function(shepherds) {
       sum.add(shepherds[i].position); // Add location
       count++;
     }
-    return count;
+    if (count < oldCount) {
+      this.timeCount = 5;
+      console.log("Mom I made it");
+      this.speedRed();
+    }
+    oldCount = count; // for comparison of arrays
+    return count; // Return number of shepherds in pressure zone
   }
 }
 
@@ -297,10 +316,11 @@ Animal.prototype.move = function(shepherds) {
 
 // Goal setting behaviour when animal comes within certain area of a gate
 Animal.prototype.goal = function () {
-  if (this.position.x > 850 && this.position.y > 180 && this.position.y < 320) {
+  if (this.position.x > 850 && this.position.y > 180 && this.position.y < 330) {
     var gate = createVector(980, 250);
     //console.log(this.animal);
     if (this.position.x > 980 && this.position.y > 230 && this.position.y < 270) {
+      console.log("Name of animal leaving: " + this.name);
       environment.hitTheGap(this);
     }
     var desired = p5.Vector.sub(gate, this.position);
@@ -332,6 +352,7 @@ Animal.prototype.avoid = function (novelObjects) {
   }
   // Average -- divide by how many
   if (count > 0) {
+    console.log("Name in avoid: " + this.name);
     steer.div(count);
     this.stressLevel = (this.stressLevel + 0.1);
   }
@@ -350,18 +371,23 @@ Animal.prototype.avoid = function (novelObjects) {
 // ----- ANIMAL SPEED FUNCTIONS
 
 // ---- Funtion to reduce speed ----
-let count = 5;
 
-function speedDec(animal) {
+
+Animal.prototype.speedRed = function() {
+  console.log("Name in speed : " + this.name);
+  console.log("Hello");
+  var self = this;
   var timer = setInterval(function () {
-    if (count == 0) {
+    if (self.timeCount == 0) {
+      console.log("Self Counter: " + self.timeCount);
       clearInterval(timer);
-      count = 5;
+      self.timeCount = 5;
     } else {
-      animal.velocity.setMag(count * .1);
-      console.log("Animal Velocity: " + animal.velocity.mag())
-      count--;
-      console.log("I'M THE COUNTER: " + count);
+      console.log("Name: " + self.name);
+      console.log("Self Counter: " + self.timeCount);
+      self.velocity.setMag(self.timeCount * .1);
+      console.log("Animal Velocity: " + self.velocity.mag())
+      self.count--;
     }
-  }, 1000)
+  }, 1000);
 }

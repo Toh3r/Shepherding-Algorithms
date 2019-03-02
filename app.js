@@ -1,6 +1,6 @@
-// Import dependencies
+// Import frameworks/libraries
 const express = require('express');
-const hbs = require('hbs');
+const hbs     = require('hbs');
 
 // Configure app
 var app = express();
@@ -19,5 +19,5 @@ app.get('/about', (req, res) => {
 
 // Listen on port 3000
 app.listen(process.env.PORT || 3000, () => {
-  console.log('Server is up on port 3000...')
+  console.log('Server is up on port 3000...');
 });

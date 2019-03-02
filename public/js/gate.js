@@ -16,10 +16,14 @@ Gate.prototype.render = function () {
 
 Gate.prototype.goalZone = function () {
   fill(0,0,0,0);
-  stroke(0);
+  stroke(255);
   push()
   rect(850, 180, 150, 150);
   pop();
+
+  textSize(20);
+  fill(255);
+  text('GoalZone', 890, 180);
 }
 
 // Render Gate on canvas
