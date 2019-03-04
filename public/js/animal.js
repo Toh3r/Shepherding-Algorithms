@@ -12,8 +12,11 @@ function Animal(x,y) {
   this.velocity.setMag(0.2);   // Create starting velocity speed
   this.name = chance.first();  // Give every animal a random id
   this.stressLevel = 0;        // Starting stress level
-  this.timeCount = 5;         // Set starting timer
+  this.timeCount = 5;          // Set starting timer
   this.oldBun = 0;             // Starting num of shepherds in zones
+  this.red = random(255);      // Colours for name
+  this.green = random(255);    // Colours for name
+  this.blue = random(255);     // Colours for name
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS
@@ -125,12 +128,9 @@ Animal.prototype.render = function() {
   endShape(CLOSE);
   pop();
 
-  // r = random(255);
-  // g = random(255);
-  // b = random(255);
-  // fill(r, g, b);
-
-  fill(255);
+  // Render Animal Name
+  fill(this.red, this.green, this.blue);
+  // fill(0);
   stroke(0);
   textSize(12);
   text(this.name, this.position.x, this.position.y);
@@ -373,14 +373,14 @@ Animal.prototype.speedRed = function() {
   var self = this;
   var timer = setInterval(function () {
     if (self.timeCount == 0) {
-      console.log("Self Counter: " + self.timeCount);
+      // console.log("Self Counter: " + self.timeCount);
       clearInterval(timer);
       // self.timeCount = 5;
     } else {
-      console.log("Name: " + self.name);
-      console.log("Self Counter: " + self.timeCount);
+      // console.log("Name: " + self.name);
+      // console.log("Self Counter: " + self.timeCount);
       self.velocity.setMag(self.timeCount * .1);
-      console.log("Animal Velocity: " + self.velocity.mag())
+      // console.log("Animal Velocity: " + self.velocity.mag())
       self.timeCount--;
     }
   }, 1000);

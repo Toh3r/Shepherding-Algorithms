@@ -49,7 +49,7 @@ canvas {
 #controlsMiddle {
 	border-left: 5px solid white;
 	border-right: 5px solid white;
-	padding-top: 10px;
+	padding-top: 20px;
 	padding-bottom: 10px;
 }
 #controlsLeft {
@@ -60,6 +60,15 @@ canvas {
 	padding-top: 20px;
 	align: left;
 	padding-right: 10px;
+	border-right: 5px solid white;
+}
+
+#controlsInfo {
+	padding-top: 20px;
+}
+
+#midName {
+	text-align: left;
 }
 
 input[type=range] {

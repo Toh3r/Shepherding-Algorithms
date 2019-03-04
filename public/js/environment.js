@@ -24,6 +24,7 @@ Environment.prototype.run = function() {
   for (var i = 0; i < this.gates.length; i++) {
     this.gates[i].run();
   }
+
 }
 
 // Methods to add agents/Objects to arrays
@@ -73,6 +74,11 @@ Environment.prototype.removeAll = function() {
   this.shepherds.length = 0;
   this.novelObjects.length = 0;
   this.accumulatedStress = 0;
+}
+
+Environment.prototype.displayInfo = function () {
+  // Create sim info output
+  numAnimals = this.herd.length;
 }
 
 // // Method to allow for class extensions
