@@ -7,6 +7,7 @@ function Gate (x, y) {
 
 // Draw Gate
 Gate.prototype.render = function () {
+  rectMode(CORNER);
   fill(150, 150, 150);
   stroke(0);
   push();
@@ -15,6 +16,7 @@ Gate.prototype.render = function () {
 }
 
 Gate.prototype.goalZone = function () {
+  rectMode(CORNER);
   fill(0,0,0,0);
   stroke(255);
   push()

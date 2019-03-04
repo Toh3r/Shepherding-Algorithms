@@ -25,6 +25,10 @@ Environment.prototype.run = function() {
     this.gates[i].run();
   }
 
+  if (herdZoneCheck.checked() == true) {
+    this.displayHerd(); // Render herd zone
+  }
+
 }
 
 // Methods to add agents/Objects to arrays
@@ -76,9 +80,51 @@ Environment.prototype.removeAll = function() {
   this.accumulatedStress = 0;
 }
 
-Environment.prototype.displayInfo = function () {
-  // Create sim info output
-  numAnimals = this.herd.length;
+Environment.prototype.displayHerd = function() {
+  var bottom = Math.max.apply(Math, this.herd.map(function(o) { return o.position.y; }));
+  var top = Math.min.apply(Math, this.herd.map(function(o) { return o.position.y; }));
+  var left = Math.min.apply(Math, this.herd.map(function(o) { return o.position.x; }));
+  var right = Math.max.apply(Math, this.herd.map(function(o) { return o.position.x; }));
+
+  var yPos = (bottom + top) / 2;
+  var xPos = (left + right) / 2;
+
+  // console.log("/Top/XPOS: " + bottom +"/"+ top + "/"+ xPos);
+
+  var topDist, botDist, leftDist, rightDist, ylen, xlen;
+
+  topDist = yPos - top;
+  botDist = bottom - yPos;
+
+  // console.log("Top/Bottom/YPOS: " + top + "/" + bottom + "/" + ysPos);
+  // console.log("Top Dist/Bottom Dist: " + topDist + "/" + botDist);
+  leftDist = xPos - left;
+  rightDist = right - xPos;
+
+
+  if (topDist > botDist) {
+    ylen = topDist;
+  } else {
+    ylen = botDist;
+  }
+
+  if (leftDist > rightDist) {
+    xlen = leftDist;
+  } else {
+    xlen = rightDist;
+  }
+
+  // Display Herd Flight Zone
+  rectMode(CENTER);
+  fill(0,0,0,0.0);
+  stroke(0, 0, 255);
+  rect(xPos, yPos, xlen*2 + 100, ylen*2 + 100, 55);
+
+  // Display Herd Pressure Zone
+  rectMode(CENTER);
+  fill(0,0,0,0.0);
+  stroke(238, 248, 52);
+  rect(xPos, yPos, xlen*2 + 200, ylen*2 + 200, 55);
 }
 
 // // Method to allow for class extensions

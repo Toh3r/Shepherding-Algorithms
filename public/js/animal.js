@@ -264,13 +264,6 @@ Animal.prototype.bunch = function(shepherds) {
       sum.add(shepherds[i].position); // Add location
       count++;
     }
-    if (count < oldCount) {
-      // console.log(this.name);
-      // this.timeCount = 5;
-      // console.log("Name in if statemant: " + this.name);
-      // this.speedRed();
-    }
-    oldCount = count; // for comparison of arrays
     return count; // Return number of shepherds in pressure zone
   }
 }
@@ -350,7 +343,6 @@ Animal.prototype.avoid = function (novelObjects) {
   }
   // Average -- divide by how many
   if (count > 0) {
-    console.log("Name in avoid: " + this.name);
     steer.div(count);
     this.stressLevel = (this.stressLevel + 0.1);
   }
@@ -374,6 +366,7 @@ Animal.prototype.speedRed = function() {
   var timer = setInterval(function () {
     if (self.timeCount == 0) {
       // console.log("Self Counter: " + self.timeCount);
+      // self.velocity.setMag(0);
       clearInterval(timer);
       // self.timeCount = 5;
     } else {
@@ -383,5 +376,5 @@ Animal.prototype.speedRed = function() {
       // console.log("Animal Velocity: " + self.velocity.mag())
       self.timeCount--;
     }
-  }, 1000);
+  }, 500);
 }

@@ -3,7 +3,7 @@ var environment;
 let speedSlider, separationSlider, alignSlider, cohesionSlider;
 let speVal, sepVal, aliVal, cohVal;
 let speOut, sepOut, aliOut, cohOut;
-let novelObjects, sel, addText, zoneCheck;
+let novelObjects, sel, addText, zoneCheck, herdZoneCheck;
 let delA, delS, delN, delAll;
 let numAnimals, stressLevelOut;
 
@@ -67,6 +67,10 @@ function setup() {
   // Create checkbox to display flight/Pressure zones
   zoneCheck = createCheckbox("Display Each Zone");
   zoneCheck.parent("zoneDiv");
+
+  // Create checkbox to display flight/Pressure zones
+  herdZoneCheck = createCheckbox("Display Herd Zone");
+  herdZoneCheck.parent("zoneDiv");
 
   shepControl = createCheckbox("Control Shepherd");
   shepControl.parent("zoneDiv");
