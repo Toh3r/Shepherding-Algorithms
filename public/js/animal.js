@@ -366,7 +366,7 @@ Animal.prototype.speedRed = function() {
   var timer = setInterval(function () {
     if (self.timeCount == 0) {
       // console.log("Self Counter: " + self.timeCount);
-      // self.velocity.setMag(0);
+      self.velocity.setMag(0);
       clearInterval(timer);
       // self.timeCount = 5;
     } else {
