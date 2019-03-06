@@ -7,14 +7,15 @@ function Animal(x,y) {
   this.velocity = createVector(random(-3,3),random(-3,3)); // Create starting velocity direction
   this.position = createVector(x,y); // Starting position
   this.r = 3.0;         // Animal size
-  this.maxspeed = 1;    // Maximum speed
+  this.maxspeed = .1;    // Maximum speed
   this.maxforce = 0.03; // Maximum steering force
-  this.velocity.setMag(0.2);   // Create starting velocity speed
+  this.velocity.setMag(0.1);   // Create starting velocity speed
   this.name = chance.first();  // Give every animal a random id
   this.stressLevel = 0;
   this.stressLevel.toFixed(2); // Starting stress level
   this.timeCount = 5;          // Set starting timer
-  this.oldBun = 0;             // Starting num of shepherds in zones
+  this.oldPre = 0;
+  this.oldFli = 0;            // Starting num of shepherds in zones
   this.red = random(255);      // Colours for name
   this.green = random(255);    // Colours for name
   this.blue = random(255);     // Colours for name
@@ -49,16 +50,28 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   var sep = this.separate(herd);      // Separation
   var ali = this.align(herd);         // Alignment
   var coh = this.cohesion(herd);      // Cohesion
-  var bun = this.bunch(shepherds);    // Bunching
+  var pre = this.pressure(shepherds);    // Bunching
+  var fli = this.flight(shepherds);
   var mov = this.move(shepherds);     // Steer herd
   var goa = this.goal();              // Move to goal
   var avo = this.avoid(novelObjects); // Avoid Novelty
 
   // Forces weighted depending on its conditions
-  sep.mult(4.5);
-  mov.mult(3);
+  sep.mult(4);
 
-  if (bun > 0) {
+  if (fli > 0) {   // if shepherd is in pressure zone
+    this.maxspeed = .5;
+    this.velocity.setMag(0.5);
+    coh.mult(2);
+  } else { // if shepherd is not in pressure zone
+    // this.velocity.setMag(0.2);
+    if (this.oldFli > fli) {
+      this.timeCount = 5;
+      this.speedRed();
+    }
+  }
+
+  if (pre > 0) {
     ali.mult(3);
   } else {
     ali.mult(0);
@@ -66,14 +79,15 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   // ali.mult(alignSlider.value());
 
 
-  if (bun > 0) {   // if shepherd is in pressure zone
-    this.velocity.setMag(0.5);
+  if (pre > 0) {   // if shepherd is in pressure zone
+    this.maxspeed = .2;
+    this.velocity.setMag(0.2);
     coh.mult(2);
   } else { // if shepherd is not in pressure zone
     // this.velocity.setMag(0.2);
     coh.mult(0);
-    if (this.oldBun > bun) {
-      this.timeCount = 5;
+    if (this.oldPre > pre) {
+      this.timeCount = 2;
       this.speedRed();
     }
   }
@@ -86,8 +100,8 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   this.applyForce(avo);
   this.applyForce(coh);
 
-  this.oldBun = bun; // Store old bun array value (Used for comparison in following frame)
-
+  this.oldFli = fli;
+  this.oldPre = pre; // Store old bun array value (Used for comparison in following frame)
 }
 
 // Method to update location
@@ -267,8 +281,23 @@ Animal.prototype.cohesion = function(herd) {
 let oldCount;
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
-Animal.prototype.bunch = function(shepherds) {
-  var neighbordist = 100;
+Animal.prototype.pressure = function(shepherds) {
+  var neighbordistMax = 100;
+  var neighbordistMin = 51;
+  var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
+  var count = 0;
+  for (var i = 0; i < shepherds.length; i++) {
+    var d = p5.Vector.dist(this.position,shepherds[i].position);
+    if ((d > 0) && (d < neighbordistMax) && (d > neighbordistMin)) {
+      sum.add(shepherds[i].position); // Add location
+      count++;
+    }
+    return count; // Return number of shepherds in pressure zone
+  }
+}
+
+Animal.prototype.flight = function(shepherds) {
+  var neighbordist = 50;
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   for (var i = 0; i < shepherds.length; i++) {
@@ -280,6 +309,8 @@ Animal.prototype.bunch = function(shepherds) {
     return count; // Return number of shepherds in pressure zone
   }
 }
+
+
 
 // When shepherd enters flight zone, move in opposite direction
 Animal.prototype.move = function(shepherds) {
@@ -378,15 +409,11 @@ Animal.prototype.speedRed = function() {
   var self = this;
   var timer = setInterval(function () {
     if (self.timeCount == 0) {
-      // console.log("Self Counter: " + self.timeCount);
-      // self.velocity.setMag(0);
+      self.velocity.setMag(0);
       clearInterval(timer);
       // self.timeCount = 5;
     } else {
-      // console.log("Name: " + self.name);
-      // console.log("Self Counter: " + self.timeCount);
       self.velocity.setMag(self.timeCount * .1);
-      // console.log("Animal Velocity: " + self.velocity.mag())
       self.timeCount--;
     }
   }, 500);

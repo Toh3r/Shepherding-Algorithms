@@ -74,7 +74,7 @@ function setup() {
   herdZoneCheck.parent("zoneDiv");
 
   // Create checkbox to display flight/Pressure zones
-  nameCheck = createCheckbox("Display Names");
+  nameCheck = createCheckbox("Display Animal Info");
   nameCheck.parent("zoneDiv");
 
   shepControl = createCheckbox("Control Shepherd");
@@ -85,18 +85,18 @@ function setup() {
 
   //Create starting animals in random positions
   for (var i = 0; i < 15; i++) {
-    var a = new Animal(Math.floor(Math.random() * 500) + 1,Math.floor(Math.random() * 500) + 1);
+    var a = new Animal(Math.floor(Math.random() * 200) + 1,Math.floor(Math.random() * 500) + 1);
     environment.addAnimal(a);
   }
 
   // Create starting shepherds in random positions
-  for (var i = 0; i < 1; i++) {
+  for (var i = 0; i < 0; i++) {
     var s = new Shepherd(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
     environment.addShepherd(s);
   }
 
   // Create starting novelties in random positions
-  for (var i = 0; i < 1; i++) {
+  for (var i = 0; i < 0; i++) {
     var n = new NovelObject(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
     environment.addNovelty(n);
   }
