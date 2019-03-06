@@ -6,6 +6,7 @@ function Environment() {
   this.novelObjects = [];
   this.gates = [];
   this.accumulatedStress = 0;
+  this.accumulatedStress.toFixed(2);
 }
 
 Environment.prototype.run = function() {
@@ -59,6 +60,10 @@ Environment.prototype.deleteShepherd = function() {
 
 Environment.prototype.deleteNovelty = function() {
   this.novelObjects.pop();
+}
+
+Environment.prototype.displayNums = function () {
+  return this.herd.length;
 }
 
 // Remove selected animal once they enter gate

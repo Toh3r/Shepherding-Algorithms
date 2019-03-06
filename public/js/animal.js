@@ -11,7 +11,8 @@ function Animal(x,y) {
   this.maxforce = 0.03; // Maximum steering force
   this.velocity.setMag(0.2);   // Create starting velocity speed
   this.name = chance.first();  // Give every animal a random id
-  this.stressLevel = 0;        // Starting stress level
+  this.stressLevel = 0;
+  this.stressLevel.toFixed(2); // Starting stress level
   this.timeCount = 5;          // Set starting timer
   this.oldBun = 0;             // Starting num of shepherds in zones
   this.red = random(255);      // Colours for name
@@ -29,6 +30,9 @@ Animal.prototype.run = function(herd, shepherds, novelObjects) {
   this.render();    // Render animal
   if (zoneCheck.checked() == true) {
     this.renderZones(); // Render animal zones
+  }
+  if(nameCheck.checked() == true) {
+    this.showName();
   }
 }
 
@@ -113,7 +117,7 @@ Animal.prototype.seek = function(target) {
 // ----- ANIMAL DRAWING FUNCTIONS
 
 // Method to draw animal
-Animal.prototype.render = function() {
+Animal.prototype.render = function () {
   // Draw a triangle rotated in the direction of velocity
   var theta = this.velocity.heading() + radians(90);
   fill(0, 0, 0);
@@ -127,13 +131,22 @@ Animal.prototype.render = function() {
   vertex(this.r, this.r*1.5);
   endShape(CLOSE);
   pop();
+}
 
+Animal.prototype.showName = function () {
+  var stressFixed = this.stressLevel.toFixed(2);
   // Render Animal Name
   fill(this.red, this.green, this.blue);
   // fill(0);
   stroke(0);
   textSize(12);
   text(this.name, this.position.x, this.position.y);
+
+  // Render Animal Name
+  fill(this.red, this.green, this.blue);
+  stroke(0);
+  textSize(12);
+  text(stressFixed, this.position.x, this.position.y + 10);
 }
 
 // Method to render animals flight and pressure zone

@@ -3,9 +3,10 @@ var environment;
 let speedSlider, separationSlider, alignSlider, cohesionSlider;
 let speVal, sepVal, aliVal, cohVal;
 let speOut, sepOut, aliOut, cohOut;
-let novelObjects, sel, addText, zoneCheck, herdZoneCheck;
+let novelObjects, sel, addText, zoneCheck, herdZoneCheck, nameCheck;
 let delA, delS, delN, delAll;
 let numAnimals, stressLevelOut;
+let animalDisplay, shepherdDisplay, stressDisplay;
 
 // Create page elements using p5.js
 function setup() {
@@ -72,6 +73,10 @@ function setup() {
   herdZoneCheck = createCheckbox("Display Herd Zone");
   herdZoneCheck.parent("zoneDiv");
 
+  // Create checkbox to display flight/Pressure zones
+  nameCheck = createCheckbox("Display Names");
+  nameCheck.parent("zoneDiv");
+
   shepControl = createCheckbox("Control Shepherd");
   shepControl.parent("zoneDiv");
 
@@ -101,12 +106,41 @@ function setup() {
     var g = new Gate(990, 230);
     environment.addGate(g);
   }
+
+  animalDisplay = createElement("h6", "Number of Animals: " + environment.herd.length);
+  animalDisplay.parent("numAnimalsDiv");
+
+  shepherdDisplay = createElement("h6", "Number of Shepherds: " + environment.shepherds.length);
+  shepherdDisplay.parent("numAnimalsDiv");
+
+  var fixedStress = environment.accumulatedStress.toFixed(2);
+  stressDisplay = createElement("h6", "Accumulated Stress: " + fixedStress);
+  stressDisplay.parent("numAnimalsDiv");
+
 }
 
 // Call run to begin simulation
 function draw() {
   background(36, 188, 25);
   environment.run();
+
+  display();
+}
+
+function display() {
+  animalDisplay.remove();
+  shepherdDisplay.remove();
+  stressDisplay.remove();
+
+  animalDisplay = createElement("h6", "Number of Animals: " + environment.herd.length);
+  animalDisplay.parent("numAnimalsDiv");
+
+  shepherdDisplay = createElement("h6", "Number of Shepherds: " + environment.shepherds.length);
+  shepherdDisplay.parent("numAnimalsDiv");
+
+  var fixedStress = environment.accumulatedStress.toFixed(2);
+  stressDisplay = createElement("h6", "Accumulated Stress: " + fixedStress);
+  stressDisplay.parent("numAnimalsDiv");
 }
 
 // Method to update the behavioral rules of each boid
@@ -150,4 +184,7 @@ function delNovelty() {
 }
 function deleteAll() {
   environment.removeAll();
+}
+function displayInfo() {
+
 }
