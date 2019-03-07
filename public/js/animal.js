@@ -101,8 +101,8 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   this.applyForce(avo);
   this.applyForce(coh);
 
-  this.oldFli = fli;
-  // this.oldPre = pre; // Store old bun array value (Used for comparison in following frame)
+  // this.oldFli = fli;
+  this.oldPre = pre; // Store old bun array value (Used for comparison in following frame)
 }
 
 // Method to update location
