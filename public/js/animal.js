@@ -15,7 +15,7 @@ function Animal(x,y) {
   this.stressLevel.toFixed(2); // Starting stress level
   this.timeCount = 5;          // Set starting timer
   this.oldPre = 0;
-  this.oldFli = 0;            // Starting num of shepherds in zones
+  // this.oldFli = 0;            // Starting num of shepherds in zones
   this.red = random(255);      // Colours for name
   this.green = random(255);    // Colours for name
   this.blue = random(255);     // Colours for name
@@ -58,18 +58,19 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
 
   // Forces weighted depending on its conditions
   sep.mult(4);
+  mov.mult(3);
 
-  if (fli > 0) {   // if shepherd is in pressure zone
-    this.maxspeed = .5;
-    this.velocity.setMag(0.5);
-    coh.mult(2);
-  } else { // if shepherd is not in pressure zone
-    // this.velocity.setMag(0.2);
-    if (this.oldFli > fli) {
-      this.timeCount = 5;
-      this.speedRed();
-    }
-  }
+  // if (fli > 0) {   // if shepherd is in pressure zone
+  //   this.maxspeed = .5;
+  //   this.velocity.setMag(0.5);
+  //   coh.mult(2);
+  // } else { // if shepherd is not in pressure zone
+  //   // this.velocity.setMag(0.2);
+  //   if (this.oldFli > fli) {
+  //     this.timeCount = 5;
+  //     this.speedRed();
+  //   }
+  // }
 
   if (pre > 0) {
     ali.mult(3);
@@ -80,14 +81,14 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
 
 
   if (pre > 0) {   // if shepherd is in pressure zone
-    this.maxspeed = .2;
-    this.velocity.setMag(0.2);
+    this.maxspeed = .5;
+    this.velocity.setMag(0.5);
     coh.mult(2);
   } else { // if shepherd is not in pressure zone
     // this.velocity.setMag(0.2);
     coh.mult(0);
     if (this.oldPre > pre) {
-      this.timeCount = 2;
+      this.timeCount = 5;
       this.speedRed();
     }
   }
@@ -101,7 +102,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   this.applyForce(coh);
 
   this.oldFli = fli;
-  this.oldPre = pre; // Store old bun array value (Used for comparison in following frame)
+  // this.oldPre = pre; // Store old bun array value (Used for comparison in following frame)
 }
 
 // Method to update location
