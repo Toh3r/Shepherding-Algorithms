@@ -76,7 +76,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
     mov.mult(3);
     sep.mult(2);
     ali.mult(3);
-    sep.mult(1);
+    // sep.mult(1);
     coh.mult(2);
     this.maxspeed = 1;
     this.velocity.setMag(0.5);
@@ -172,7 +172,7 @@ Animal.prototype.renderZones = function () {
   // Draw pressure zone
   fill(0,0,0,0.0)
   stroke(0, 0, 0);
-  ellipse(this.position.x,this.position.y, 200, 200);
+  ellipse(this.position.x,this.position.y, 250, 250);
 };
 
 // Method to keep animal in enclosure
@@ -279,10 +279,11 @@ Animal.prototype.cohesion = function(herd) {
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
 Animal.prototype.pressure = function(herd, shepherds) {
-  var neighbordistMax = 100;
+  var neighbordistMax = 125;
   // var neighbordistMin = 51;
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
+  var neighCount = 0;
 
   for (var i = 0; i < shepherds.length; i++) {
     var d = p5.Vector.dist(this.position,shepherds[i].position);
@@ -291,13 +292,15 @@ Animal.prototype.pressure = function(herd, shepherds) {
       count++;
     }
   }
+
   // for (var i = 0; i < herd.length; i++) {
   //   var di = p5.Vector.dist(this.position,herd[i].position);
   //   if ((di > 0) && (di < neighbordistMax) && (herd[i].oldPre > 0)) {
   //     sum.add(herd[i].position); // Add location
-  //     count++;
+  //     neighCount++;
   //   }
   // }
+  // count = count + neighCount;
   return count; // Return number of shepherds in pressure zone
 }
 
