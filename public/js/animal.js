@@ -7,18 +7,23 @@ function Animal(x,y) {
   this.velocity = createVector(random(-3,3),random(-3,3)); // Create starting velocity direction
   this.position = createVector(x,y); // Starting position
   this.r = 3.0;         // Animal size
-  this.maxspeed = .1;    // Maximum speed
+  this.maxspeed = .1;   // Maximum speed
   this.maxforce = 0.03; // Maximum steering force
   this.velocity.setMag(0.1);   // Create starting velocity speed
-  this.name = chance.first();  // Give every animal a random id
-  this.stressLevel = 0;
+  this.name = chance.first();  // Give every animal a random name
+  this.stressLevel = 0;        // Starting stress level of animal
   this.stressLevel.toFixed(2); // Starting stress level
   this.timeCount = 5;          // Set starting timer
-  this.oldPre = 0;
-  // this.oldFli = 0;            // Starting num of shepherds in zones
-  this.red = random(255);      // Colours for name
-  this.green = random(255);    // Colours for name
-  this.blue = random(255);     // Colours for name
+  this.oldPre = 0;             // Starting num of shepherds in pressure zone
+  // this.oldFli = 0;          // Starting num of shepherds in flight zone
+  this.red = random(255);      // Set colours for name
+  this.green = random(255);
+  this.blue = random(255);
+  this.wanderRadius = 10;      // Set wander characteristics
+  this.wanderDistance = 2.5;
+  this.wanderCenter = 0;
+  this.wanderAngle = random(50);
+  this.wanderForce = createVector(0,0);
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS
@@ -33,7 +38,7 @@ Animal.prototype.run = function(herd, shepherds, novelObjects) {
     this.renderZones(); // Render animal zones
   }
   if(nameCheck.checked() == true) {
-    this.showName();
+    this.showName();    // Render Animal info
   }
 }
 
@@ -44,47 +49,29 @@ Animal.prototype.applyForce = function(force) {
 
 // Accumulate a new acceleration each time based on all rules
 Animal.prototype.herd = function(herd, shepherds, novelObjects) {
-  // // Change speed using speed slider
-  // this.velocity.setMag(speedSlider.value());
-
   var sep = this.separate(herd);      // Separation
   var ali = this.align(herd);         // Alignment
   var coh = this.cohesion(herd);      // Cohesion
   var pre = this.pressure(herd, shepherds); // shepherds in pressure zone
-  // var fli = this.flight(shepherds);   // shepherds in flight zone
   var mov = this.move(shepherds);     // Steer herd
   var goa = this.goal();              // Move to goal
   var avo = this.avoid(novelObjects); // Avoid Novelty
-
-  // Forces weighted depending on its conditions
-
-  // if (fli > 0) {   // if shepherd is in pressure zone
-  //   this.maxspeed = .5;
-  //   this.velocity.setMag(0.5);
-  //   coh.mult(2);
-  // } else { // if shepherd is not in pressure zone
-  //   // this.velocity.setMag(0.2);
-  //   if (this.oldFli > fli) {
-  //     this.timeCount = 5;
-  //     this.speedRed();
-  //   }
-  // }
-
-  // ali.mult(alignSlider.value());
+  var wan = this.wander();
 
   if (pre > 0) {   // if shepherd is in pressure zone
     mov.mult(3);
-    sep.mult(2);
+    sep.mult(3);
     ali.mult(3);
-    // sep.mult(1);
     coh.mult(2);
+    wan.mult(0);
     this.maxspeed = 1;
     this.velocity.setMag(0.5);
-  } else {        // if shepherd is not in pressure zone
+  } else  {        // if shepherd is not in pressure zone
+    wan.mult(.5);
     sep.mult(4);
     ali.mult(0);
     coh.mult(0);
-    this.maxspeed = .5;
+    this.maxspeed = .1;
     if (this.oldPre > pre) {
       this.timeCount = 5;
       this.speedRed();
@@ -95,11 +82,11 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   this.applyForce(mov);
   this.applyForce(sep);
   this.applyForce(ali);
+  this.applyForce(wan);
   this.applyForce(goa);
   this.applyForce(avo);
   this.applyForce(coh);
 
-  // this.oldFli = fli;
   this.oldPre = pre; // Store old bun array value (Used for comparison in following frame)
 }
 
@@ -148,6 +135,7 @@ Animal.prototype.render = function () {
 
 Animal.prototype.showName = function () {
   var stressFixed = this.stressLevel.toFixed(2);
+
   // Render Animal Name
   fill(this.red, this.green, this.blue);
   // fill(0);
@@ -292,35 +280,34 @@ Animal.prototype.pressure = function(herd, shepherds) {
       count++;
     }
   }
-
-  // for (var i = 0; i < herd.length; i++) {
-  //   var di = p5.Vector.dist(this.position,herd[i].position);
-  //   if ((di > 0) && (di < neighbordistMax) && (herd[i].oldPre > 0)) {
-  //     sum.add(herd[i].position); // Add location
-  //     neighCount++;
-  //   }
-  // }
-  // count = count + neighCount;
   return count; // Return number of shepherds in pressure zone
 }
 
-// && (d > neighbordistMin)
-//
-// Animal.prototype.flight = function(shepherds) {
-//   var neighbordist = 50;
-//   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
-//   var count = 0;
-//   for (var i = 0; i < shepherds.length; i++) {
-//     var d = p5.Vector.dist(this.position,shepherds[i].position);
-//     if ((d > 0) && (d < neighbordist)) {
-//       sum.add(shepherds[i].position); // Add location
-//       count++;
-//     }
-//     return count; // Return number of shepherds in pressure zone
-//   }
-// }
+Animal.prototype.setAngle = function(vec, value) {
+    vec.x = cos(value) * vec.mag();
+    vec.y = sin(value) * vec.mag();
+}
 
+Animal.prototype.wander = function() {
 
+    //create future position to base wander displacement off of
+    this.wanderCenter = this.velocity.copy();
+    this.wanderCenter.normalize();
+    this.wanderCenter.mult(this.wanderDistance);
+
+    //calculate displacement force
+    var displacement = createVector(0, -0.1);
+    displacement.mult(this.wanderRadius);
+
+    this.setAngle(displacement, this.wanderAngle);
+    this.wanderAngle += random(-0.1, 0.1);
+
+    this.wanderForce = this.wanderCenter.add(displacement);
+    this.wanderForce.limit(this.maxForce);
+
+    //returns steering force that pushed the agent toward target
+    return this.wanderForce;
+}
 
 // When shepherd enters flight zone, move in opposite direction
 Animal.prototype.move = function(shepherds) {

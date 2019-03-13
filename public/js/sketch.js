@@ -15,6 +15,8 @@ function setup() {
   var canvas = createCanvas(1000,500);
   canvas.parent('myCanvas'); // .parent allows item to manipulated on html page
 
+  // setFrameRate(30);
+
   // Create Sliders to change behavioural rules
   speedSlider = createSlider(0, 5, 0.3, 0.1);
   speedSlider.parent('speSli');
@@ -84,7 +86,7 @@ function setup() {
   environment = new Environment();
 
   //Create starting animals in random positions
-  for (var i = 0; i < 1; i++) {
+  for (var i = 0; i < 15; i++) {
     var a = new Animal(Math.floor(Math.random() * 200) + 1,Math.floor(Math.random() * 500) + 1);
     environment.addAnimal(a);
   }

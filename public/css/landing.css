@@ -1,0 +1,121 @@
+body {
+	background-color: black;
+}
+
+#landing-header {
+	font-family: 'Audiowide', cursive;
+	z-index: 1;
+	position: relative;
+	text-align: center;
+	padding-top: 40vh;
+}
+
+#landing-header h1 {
+	padding-top: 20px;
+	padding-bottom: 20px;
+	background-color: black;
+	font-size: 50px;
+  border-top: 5px groove rgb(36, 188, 25);
+	border-bottom: 5px groove rgb(36, 188, 25);
+  color: rgb(36, 188, 25);
+}
+
+.btn-black {
+	color: rgb(36, 188, 25);
+	background-color: black;
+	border: 5px groove rgb(36, 188, 25);
+}
+
+.btn-black:hover {
+	color: white;
+	background-color: rgb(24, 171, 16);
+	border: 5px groove white;
+}
+
+.btn-black:active, .open>.dropdown-toggle.btn-success {
+	background-color: black;
+	border: 5px groove rgb(36, 188, 25);
+}
+
+.btn-black:active:focus {
+	background-color: black;
+	border: 5px groove rgb(36, 188, 25);
+}
+
+.slideshow {
+  position: fixed;
+  /*Take up 100% of the page*/
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  /*Places images behind other content*/
+  z-index: 0;
+  /*Remove bullet points*/
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*Style list items (pictures)*/
+.slideshow li {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  /*allow images to take up entire page*/
+  background-size: cover;
+  /*Centre images on the page*/
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  /*Images start faded out*/
+  opacity: 0;
+  z-index: 0;
+  /*Allow images to fade in and out, loops infinatley*/
+  animation: imageAnimation 50s linear infinite;
+}
+
+/*Background images*/
+.slideshow li:nth-child(1) {
+  background-image: url('./images/herd.jpg');
+}
+.slideshow li:nth-child(2) {
+  background-image: url('./images/drone.jpg'); /* Image by LoggaWiggler from Pixabay  */
+  animation-delay: 10s;
+}
+.slideshow li:nth-child(3) {
+  background-image: url('./images/code.jpg'); /* Photo by Fabian Grohs on Unsplash  */
+  animation-delay: 20s;
+}
+.slideshow li:nth-child(4) {
+  background-image: url('./images/dog.jpg');  /* Photo by Aitor Romero on Unsplash  */
+  animation-delay: 30s;
+}
+.slideshow li:nth-child(5) {
+  background-image: url('./images/sheep.jpg'); /* Photo by George Hiles on Unsplash  */
+  animation-delay: 40s;
+}
+
+/*Fades images in and out*/
+@keyframes imageAnimation {
+  0% {
+    opacity: 0;
+    animation-timing-function: ease-in;
+  }
+
+/* Older browser support - .no-cssanimations class added by modernizr */
+.no-cssanimations .slideshow li {
+	opacity: 1;
+}
+  10% {
+    opacity: 1;
+    animation-timing-function: ease-out;
+  }
+  20% {
+    opacity: 1
+  }
+  30% {
+    opacity: 0
+  }
+}

@@ -71,6 +71,16 @@ canvas {
 	text-align: left;
 }
 
+.navbar-toggler {
+	background-color: rgb(36, 188, 25);
+}
+
+.navbar-toggler-icon {
+	color: white;
+}
+
+
+
 input[type=range] {
   -webkit-appearance: none;
   width: 50%;
