@@ -7,10 +7,11 @@ function Shepherd(x,y) {
 }
 
 // Call methods for each shepherd
-Shepherd.prototype.run = function() {
+Shepherd.prototype.run = function(herd) {
   this.update();
   this.borders();
   this.render();
+  this.recHerd(herd);
 }
 
 // Method to prevent shepherd from leaving enclosure
@@ -50,4 +51,13 @@ Shepherd.prototype.render = function() {
   vertex(this.r, this.r*1.5);
   endShape(CLOSE);
   pop();
+}
+
+Shepherd.prototype.recHerd = function (herd) {
+  var bottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
+  var top = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
+  var left = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
+  var right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
+
+  // console.log("Dist: " + dist(left, top, right, bottom));
 }

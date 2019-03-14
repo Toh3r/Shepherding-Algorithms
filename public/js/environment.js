@@ -15,7 +15,7 @@ Environment.prototype.run = function() {
   }
 
   for (var i = 0; i < this.shepherds.length; i++) {
-    this.shepherds[i].run();
+    this.shepherds[i].run(this.herd);
   }
 
   for (var i = 0; i < this.novelObjects.length; i++) {
@@ -130,6 +130,26 @@ Environment.prototype.displayHerd = function() {
   fill(0,0,0,0.0);
   stroke(238, 248, 52);
   rect(xPos, yPos, xlen*2 + 200, ylen*2 + 200, 90);
+
+  // Draw pressure zone
+  fill(0);
+  stroke(0);
+  ellipse(left,top, 10, 10);
+
+  // // Draw pressure zone
+  // fill(0);
+  // stroke(0);
+  // ellipse(left,bottom, 10, 10);
+  //
+  // // Draw pressure zone
+  // fill(0);
+  // stroke(0);
+  // ellipse(right,top, 10, 10);
+
+  // Draw pressure zone
+  fill(0);
+  stroke(0);
+  ellipse(right, bottom, 10, 10);
 }
 
 // // Method to allow for class extensions

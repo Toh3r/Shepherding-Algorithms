@@ -1,5 +1,3 @@
-// let oldBun;
-let r, g, b;
 // Animal class
 // Set Animal attributes
 function Animal(x,y) {
@@ -13,13 +11,13 @@ function Animal(x,y) {
   this.name = chance.first();  // Give every animal a random name
   this.stressLevel = 0;        // Starting stress level of animal
   this.stressLevel.toFixed(2); // Starting stress level
-  this.timeCount = 5;          // Set starting timer
   this.oldPre = 0;             // Starting num of shepherds in pressure zone
-  // this.oldFli = 0;          // Starting num of shepherds in flight zone
+  this.oldFli = 0;             // Starting num of shepherds in flight zone
   this.red = random(255);      // Set colours for name
   this.green = random(255);
   this.blue = random(255);
-  this.wanderRadius = 10;      // Set wander characteristics
+  this.timeCount = 5;          // Set starting timecount
+  this.wanderRadius = 10;      // Set wander rule variables
   this.wanderDistance = 2.5;
   this.wanderCenter = 0;
   this.wanderAngle = random(50);
@@ -52,41 +50,76 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   var sep = this.separate(herd);      // Separation
   var ali = this.align(herd);         // Alignment
   var coh = this.cohesion(herd);      // Cohesion
-  var pre = this.pressure(herd, shepherds); // shepherds in pressure zone
+  var pre = this.pressure(herd, shepherds);   // shepherds in pressure zone
+  var fli = this.flightZone(herd, shepherds); // shepherds in pressure zone
   var mov = this.move(shepherds);     // Steer herd
-  var goa = this.goal();              // Move to goal
+  var goa = this.goal();              // Seek (Goal area)
   var avo = this.avoid(novelObjects); // Avoid Novelty
-  var wan = this.wander();
+  // var wan = this.wander();            // Wander beahviour
+  var bun = this.bunched(herd);       // Bunched
 
-  if (pre > 0) {   // if shepherd is in pressure zone
+  if (fli) { // If shepherd is in flight zone
     mov.mult(3);
     sep.mult(3);
     ali.mult(3);
     coh.mult(2);
-    wan.mult(0);
-    this.maxspeed = 1;
+    // wan.mult(0);
+    this.maxspeed = 0.5;
     this.velocity.setMag(0.5);
-  } else  {        // if shepherd is not in pressure zone
-    wan.mult(.5);
-    sep.mult(4);
+  } else if (pre) { // If shepherd is in pressure zone
+    mov.mult(0);
+    sep.mult(3);
+    ali.mult(3);
+    coh.mult(2);
+    this.timeCount = Math.round(this.velocity.mag() * 10);
+    if (bun == true && (fli < this.oldFli)) {
+      this.speedRed();
+    } else {
+
+    }
+  } else { // If shepherd is not in either zone
+    mov.mult(0);
+    sep.mult(3);
     ali.mult(0);
     coh.mult(0);
-    this.maxspeed = .1;
-    if (this.oldPre > pre) {
-      this.timeCount = 5;
-      this.speedRed();
-    }
   }
+
+
+  // if (pre > 0) {   // if shepherd is in pressure zone
+  //   mov.mult(3);
+  //   sep.mult(3);
+  //   ali.mult(3);
+  //   coh.mult(2);
+  //   wan.mult(0);
+  //   this.maxspeed = 1;
+  //   this.velocity.setMag(0.5);
+  //   console.log("Shep in pre");
+  // } else {       // if shepherd is not in pressure zone
+  //   sep.mult(4);
+  //   ali.mult(0);
+  //   coh.mult(0);
+  //   this.maxspeed = .5;
+  //   if (this.oldPre > pre && this.timeCount > 1) {
+  //     this.timeCount = 5;
+  //     this.speedRed();
+  //   }
+  //   if (this.timeCount = 1) {
+  //     this.maxspeed = .1;
+  //     wan.mult(.1);
+  //     // console.log("Wandering");
+  //   }
+  // }
 
   // Add the force vectors to acceleration
   this.applyForce(mov);
   this.applyForce(sep);
   this.applyForce(ali);
-  this.applyForce(wan);
+  // this.applyForce(wan);
   this.applyForce(goa);
   this.applyForce(avo);
   this.applyForce(coh);
 
+  this.oldFli = fli;
   this.oldPre = pre; // Store old bun array value (Used for comparison in following frame)
 }
 
@@ -148,6 +181,12 @@ Animal.prototype.showName = function () {
   stroke(0);
   textSize(12);
   text(stressFixed, this.position.x, this.position.y + 10);
+
+  // Render Animal Name
+  fill(this.red, this.green, this.blue);
+  stroke(0);
+  textSize(12);
+  text(this.velocity.mag().toFixed(2), this.position.x, this.position.y + 20);
 }
 
 // Method to render animals flight and pressure zone
@@ -268,7 +307,24 @@ Animal.prototype.cohesion = function(herd) {
 // When shepherd enters pressure zone, initiate bunching with neighbours
 Animal.prototype.pressure = function(herd, shepherds) {
   var neighbordistMax = 125;
-  // var neighbordistMin = 51;
+  var neighbordistMin = 51;
+  var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
+  var count = 0;
+  var neighCount = 0;
+
+  for (var i = 0; i < shepherds.length; i++) {
+    var d = p5.Vector.dist(this.position,shepherds[i].position);
+    if ((d > 0) && (d < neighbordistMax) && (d > neighbordistMin)) {
+      sum.add(shepherds[i].position); // Add location
+      count++;
+    }
+  }
+  return count; // Return number of shepherds in pressure zone
+}
+
+// When shepherd enters pressure zone, initiate bunching with neighbours
+Animal.prototype.flightZone = function(herd, shepherds) {
+  var neighbordistMax = 50;
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   var neighCount = 0;
@@ -281,6 +337,20 @@ Animal.prototype.pressure = function(herd, shepherds) {
     }
   }
   return count; // Return number of shepherds in pressure zone
+}
+
+Animal.prototype.bunched = function (herd) {
+  var bottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
+  var top = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
+  var left = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
+  var right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
+
+  herDist = dist(left, top, right, bottom);
+  if (herDist < 200) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 Animal.prototype.setAngle = function(vec, value) {
@@ -303,7 +373,11 @@ Animal.prototype.wander = function() {
     this.wanderAngle += random(-0.1, 0.1);
 
     this.wanderForce = this.wanderCenter.add(displacement);
-    this.wanderForce.limit(this.maxForce);
+    // this.wanderForce.limit(this.maxForce);
+
+    this.wanderForce.mult(this.maxspeed);
+    this.wanderForce.sub(this.velocity);
+    this.wanderForce.limit(this.maxforce);
 
     //returns steering force that pushed the agent toward target
     return this.wanderForce;
@@ -407,11 +481,12 @@ Animal.prototype.speedRed = function() {
   var timer = setInterval(function () {
     if (self.timeCount == 0) {
       self.velocity.setMag(0);
+      console.log(self.timeCount);
       clearInterval(timer);
-      // self.timeCount = 5;
     } else {
       self.velocity.setMag(self.timeCount * .1);
+      console.log(self.timeCount);
       self.timeCount--;
     }
-  }, 750);
+  }, 1000);
 }
