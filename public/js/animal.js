@@ -16,7 +16,7 @@ function Animal(x,y) {
   this.red = random(255);      // Set colours for name
   this.green = random(255);
   this.blue = random(255);
-  this.timeCount = 5;          // Set starting timecount
+  this.timeCount = 1;          // Set starting timecount
   this.wanderRadius = 10;      // Set wander rule variables
   this.wanderDistance = 2.5;
   this.wanderCenter = 0;
@@ -55,80 +55,44 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   var mov = this.move(shepherds);     // Steer herd
   var goa = this.goal();              // Seek (Goal area)
   var avo = this.avoid(novelObjects); // Avoid Novelty
-  var wan = this.wander();            // Wander beahviour
   var bun = this.bunched(herd);       // Bunched
 
-  if (fli) { // If shepherd is in flight zone
-    mov.mult(3);
-    sep.mult(3);
+  sep.mult(4); // Seperation between animals remains constant
+
+  if (fli > 0) {
+    mov.mult(5);
     ali.mult(3);
     coh.mult(2);
-    wan.mult(0);
     this.maxspeed = 0.5;
     this.velocity.setMag(0.5);
-  } else if (pre) { // If shepherd is in pressure zone
-    mov.mult(0);
-    sep.mult(3);
-    wan.mult(0);
+  }
+
+  if (pre > 0) {
+    mov.mult(5);
     ali.mult(3);
     coh.mult(2);
-    this.maxspeed = 0.3;
-    this.velocity.setMag(0.3);
-    this.timeCount = Math.round(this.velocity.mag() * 10);
-    if (bun == true) {
+    this.maxspeed = .5;
+    if(this.oldFli < fli && bun == true) {
       this.speedRed();
-    } else {
-      this.maxspeed = 0.3;
-      this.velocity.setMag(0.3);
-    }
-  } else { // If shepherd is not in either zone
-    this.timeCount = Math.round(this.velocity.mag() * 10);
-    if (pre < this.oldPre) {
-      this.speedRed();
-    }
-    if (this.timeCount = 0) {
-      mov.mult(0);
-      sep.mult(3);
-      ali.mult(0);
-      coh.mult(0);
-      wan.mult(1);
-      this.maxspeed = 0.05;
-      this.velocity.setMag(0.05);
+    } else if (bun == false) {
+      this.velocity.setMag(0.5);
     }
   }
 
-
-
-  // if (pre > 0) {   // if shepherd is in pressure zone
-  //   mov.mult(3);
-  //   sep.mult(3);
-  //   ali.mult(3);
-  //   coh.mult(2);
-  //   wan.mult(0);
-  //   this.maxspeed = 1;
-  //   this.velocity.setMag(0.5);
-  //   console.log("Shep in pre");
-  // } else {       // if shepherd is not in pressure zone
-  //   sep.mult(4);
-  //   ali.mult(0);
-  //   coh.mult(0);
-  //   this.maxspeed = .5;
-  //   if (this.oldPre > pre && this.timeCount > 1) {
-  //     this.timeCount = 5;
-  //     this.speedRed();
-  //   }
-  //   if (this.timeCount = 1) {
-  //     this.maxspeed = .1;
-  //     wan.mult(.1);
-  //     // console.log("Wandering");
-  //   }
-  // }
+  if (!pre && !fli) {
+    ali.mult(0);
+    coh.mult(0);
+    this.maxspeed = .5;
+    if (this.oldPre > pre) {
+      this.timeCount = 5;
+      this.speedRed();
+    }
+  }
 
   // Add the force vectors to acceleration
   this.applyForce(mov);
   this.applyForce(sep);
   this.applyForce(ali);
-  this.applyForce(wan);
   this.applyForce(goa);
   this.applyForce(avo);
   this.applyForce(coh);
@@ -495,11 +459,9 @@ Animal.prototype.speedRed = function() {
   var timer = setInterval(function () {
     if (self.timeCount == 0) {
       self.velocity.setMag(0);
-      console.log(self.timeCount);
       clearInterval(timer);
     } else {
       self.velocity.setMag(self.timeCount * .1);
-      console.log(self.timeCount);
       self.timeCount--;
     }
   }, 1000);
