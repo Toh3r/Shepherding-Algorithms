@@ -129,7 +129,7 @@ Environment.prototype.displayHerd = function() {
   rectMode(CENTER);
   fill(0,0,0,0.0);
   stroke(238, 248, 52);
-  rect(xPos, yPos, xlen*2 + 200, ylen*2 + 200, 90);
+  rect(xPos, yPos, xlen*2 + 225, ylen*2 + 225, 90);
 
   // Draw pressure zone
   fill(0);

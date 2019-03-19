@@ -16,7 +16,8 @@ function Animal(x,y) {
   this.red = random(255);      // Set colours for name
   this.green = random(255);
   this.blue = random(255);
-  this.timeCount = 1;          // Set starting timecount
+  this.timeCount = 5;          // Set starting timecount
+  this.reducingSpeed = false;  // Set boolean for setInterval
   this.wanderRadius = 10;      // Set wander rule variables
   this.wanderDistance = 2.5;
   this.wanderCenter = 0;
@@ -57,35 +58,53 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   var avo = this.avoid(novelObjects); // Avoid Novelty
   var bun = this.bunched(herd);       // Bunched
 
-  sep.mult(4); // Seperation between animals remains constant
+  sep.mult(4); // Seperation between animals remains constant, need to be apart at all times
 
+  // WHEN SHEPHERD IN FLIGHT ZONE
   if (fli > 0) {
-    mov.mult(5);
+    mov.mult(3);
     ali.mult(3);
     coh.mult(2);
     this.maxspeed = 0.5;
     this.velocity.setMag(0.5);
   }
 
+  // WHEN SHEPHERD IN PRESSURE ZONE
   if (pre > 0) {
-    mov.mult(5);
+    mov.mult(3);
     ali.mult(3);
     coh.mult(2);
-    this.maxspeed = .5;
-    if(this.oldFli < fli && bun == true) {
-      this.speedRed();
+    if (bun == true) {
+      this.maxspeed = this.timeCount / 10;
+      // console.log(this.name + "'s SPEED: " + this.velocity.mag());
     } else if (bun == false) {
+      this.maxspeed = 0.5;
       this.velocity.setMag(0.5);
+    }
+    if(this.oldFli > fli) {
+      this.timeCount = (Math.round(this.velocity.mag()*10));
+      this.speedRed();
     }
   }
 
+  // WHEN SHEPHERDS ARE NOT IN EITHER ZONE
   if (!pre && !fli) {
     ali.mult(0);
     coh.mult(0);
-    this.maxspeed = .5;
+    this.maxspeed = 0.5;
     if (this.oldPre > pre) {
-      this.timeCount = 5;
+      this.timeCount = Math.round(this.velocity.mag()*10);
       this.speedRed();
+    }
+    if (this.velocity.mag() < 0.15) {
+      this.maxspeed = .1;
+      this.velocity.setMag(.1);
+      var wan = this.wander();
+      wan.mult(.1);
+      this.applyForce(wan);
+    } else if (this.velocity.mag() > 0.15) {
+      ali.mult(3);
+      coh.mult(2);
     }
   }
 
@@ -302,7 +321,7 @@ Animal.prototype.pressure = function(herd, shepherds) {
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
 Animal.prototype.flightZone = function(herd, shepherds) {
-  var neighbordistMax = 50;
+  var neighbordistMax = 50.99;
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   var neighCount = 0;
@@ -324,7 +343,7 @@ Animal.prototype.bunched = function (herd) {
   var right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
 
   herDist = dist(left, top, right, bottom);
-  if (herDist < 200) {
+  if (herDist < 250) {
     return true;
   } else {
     return false;
@@ -455,14 +474,23 @@ Animal.prototype.avoid = function (novelObjects) {
 
 // ---- Funtion to reduce speed ----
 Animal.prototype.speedRed = function() {
-  var self = this;
-  var timer = setInterval(function () {
-    if (self.timeCount == 0) {
-      self.velocity.setMag(0);
-      clearInterval(timer);
-    } else {
-      self.velocity.setMag(self.timeCount * .1);
-      self.timeCount--;
-    }
-  }, 1000);
+  if (this.reducingSpeed == false) {
+    this.reducingSpeed = true;
+    var self = this;
+    var timer = setInterval(function () {
+      if (self.timeCount == 0) {
+        self.velocity.setMag(0);
+        self.reducingSpeed = false;
+        console.log(self.name + "'s SPEED: " + self.velocity.mag());
+        clearInterval(timer);
+      } else {
+        self.velocity.setMag(self.timeCount * .1);
+        console.log(self.name + "'s SPEED: " + self.velocity.mag());
+        self.timeCount--;
+      }
+    }, 2000);
+  } else {
+    // console.log("ALREADY DECREASING SPEED");
+  }
+
 }
