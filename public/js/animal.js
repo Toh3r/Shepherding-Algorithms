@@ -71,7 +71,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
 
   // WHEN SHEPHERD IN PRESSURE ZONE
   if (pre > 0) {
-    mov.mult(3);
+    mov.mult(1);
     ali.mult(3);
     coh.mult(2);
     if (bun == true) {
@@ -166,18 +166,18 @@ Animal.prototype.render = function () {
 Animal.prototype.showName = function () {
   var stressFixed = this.stressLevel.toFixed(2);
 
-  // Render Animal Name
-  fill(this.red, this.green, this.blue);
-  // fill(0);
-  stroke(0);
-  textSize(12);
-  text(this.name, this.position.x, this.position.y);
-
-  // Render Animal Name
-  fill(this.red, this.green, this.blue);
-  stroke(0);
-  textSize(12);
-  text(stressFixed, this.position.x, this.position.y + 10);
+  // // Render Animal Name
+  // fill(this.red, this.green, this.blue);
+  // // fill(0);
+  // stroke(0);
+  // textSize(12);
+  // text(this.name, this.position.x, this.position.y);
+  //
+  // // Render Animal Name
+  // fill(this.red, this.green, this.blue);
+  // stroke(0);
+  // textSize(12);
+  // text(stressFixed, this.position.x, this.position.y + 10);
 
   // Render Animal Name
   fill(this.red, this.green, this.blue);
@@ -343,7 +343,7 @@ Animal.prototype.bunched = function (herd) {
   var right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
 
   herDist = dist(left, top, right, bottom);
-  if (herDist < 250) {
+  if (herDist < 200) {
     return true;
   } else {
     return false;
@@ -382,7 +382,7 @@ Animal.prototype.wander = function() {
 
 // When shepherd enters flight zone, move in opposite direction
 Animal.prototype.move = function(shepherds) {
-  var desiredseparation = 50.0;
+  var desiredseparation = 125.0;
   var steer = createVector(0,0);
   var count = 0;
   // For every animal in the system, check if it's too close
