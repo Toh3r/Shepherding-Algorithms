@@ -58,37 +58,46 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   var avo = this.avoid(novelObjects); // Avoid Novelty
   var bun = this.bunched(herd);       // Bunched
 
-  sep.mult(4); // Seperation between animals remains constant, need to be apart at all times
 
   // WHEN SHEPHERD IN FLIGHT ZONE
   if (fli > 0) {
-    mov.mult(3);
-    ali.mult(3);
-    coh.mult(2);
+    mov.mult(2);
+    sep.mult(.8);
+    ali.mult(.5);
+    coh.mult(.8);
     this.maxspeed = 0.5;
     this.velocity.setMag(0.5);
   }
 
   // WHEN SHEPHERD IN PRESSURE ZONE
   if (pre > 0) {
-    mov.mult(1);
-    ali.mult(3);
-    coh.mult(2);
-    if (bun == true) {
-      this.maxspeed = this.timeCount / 10;
-      // console.log(this.name + "'s SPEED: " + this.velocity.mag());
-    } else if (bun == false) {
+    if (bun == false) {
       this.maxspeed = 0.5;
       this.velocity.setMag(0.5);
+      mov.mult(0);
+      sep.mult(.8);
+      ali.mult(.5);
+      coh.mult(1);
+    } else if (bun == true) {
+      this.maxspeed = this.timeCount / 10 + .1;
+      mov.mult(0);
+      sep.mult(.8);
+      ali.mult(.5);
+      coh.mult(.5);
     }
-    if(this.oldFli > fli) {
+    if (this.oldFli > fli && bun == true) {
       this.timeCount = (Math.round(this.velocity.mag()*10));
       this.speedRed();
+      mov.mult(0);
+      sep.mult(.8);
+      ali.mult(.5);
+      coh.mult(.5);
     }
   }
 
   // WHEN SHEPHERDS ARE NOT IN EITHER ZONE
   if (!pre && !fli) {
+    sep.mult(4);
     ali.mult(0);
     coh.mult(0);
     this.maxspeed = 0.5;
@@ -103,8 +112,9 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
       wan.mult(.1);
       this.applyForce(wan);
     } else if (this.velocity.mag() > 0.15) {
-      ali.mult(3);
-      coh.mult(2);
+      sep.mult(.8);
+      ali.mult(.5);
+      coh.mult(.5);
     }
   }
 
@@ -304,7 +314,7 @@ Animal.prototype.cohesion = function(herd) {
 // When shepherd enters pressure zone, initiate bunching with neighbours
 Animal.prototype.pressure = function(herd, shepherds) {
   var neighbordistMax = 125;
-  var neighbordistMin = 51;
+  var neighbordistMin = 50;
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   var neighCount = 0;
@@ -321,7 +331,7 @@ Animal.prototype.pressure = function(herd, shepherds) {
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
 Animal.prototype.flightZone = function(herd, shepherds) {
-  var neighbordistMax = 50.99;
+  var neighbordistMax = 50;
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   var neighCount = 0;
@@ -401,7 +411,7 @@ Animal.prototype.move = function(shepherds) {
   // Average -- divide by how many
   if (count > 0) {
     steer.div(count);
-    this.stressLevel = (this.stressLevel + 0.1);
+    this.stressLevel = (this.stressLevel + 0.01);
   }
 
   // As long as the vector is greater than 0

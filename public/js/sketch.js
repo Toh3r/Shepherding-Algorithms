@@ -15,7 +15,7 @@ function setup() {
   var canvas = createCanvas(1000,500);
   canvas.parent('myCanvas'); // .parent allows item to manipulated on html page
 
-  // setFrameRate(30);
+  // setFrameRate(60);
 
   // Create Sliders to change behavioural rules
   speedSlider = createSlider(0, 5, 0.3, 0.1);
