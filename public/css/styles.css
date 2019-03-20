@@ -38,12 +38,24 @@ canvas {
   background-image: url('./images/herd.jpg');
   background-size: cover;
   background-position: center;
+	overflow: hidden;
 }
 
 #controls {
   background-color: black;
   border-top: 5px solid white;
   color: rgb(36, 188, 25);
+}
+
+#moreControls {
+	background:black;
+	border-right: 5px solid white;
+	padding: 2px;
+	text-align: left;
+	margin-bottom: -99999px;
+  padding-bottom: 99999px;
+	margin-top: -99999px;
+  padding-top: 99999px;
 }
 
 #controlsMiddle {
@@ -123,12 +135,17 @@ input[type=text] {
 }
 
 label {
-min-width: 100px;
+min-width: 50px;
 }
 
 
 h5 {
 	padding-left: 10px;
+	display: inline;
+}
+
+h7 {
+	padding-left: 5px;
 	display: inline;
 }
 

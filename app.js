@@ -18,10 +18,10 @@ app.get('/index', (req, res) => {
   res.render('index.hbs');
 });
 
-// // Render test page
-// app.get('/test', (req, res) => {
-//   res.render('test.hbs');
-// });
+// Render test page
+app.get('/test', (req, res) => {
+  res.render('test.hbs');
+});
 
 // // Render TODO page
 // app.get('/todo', (req, res) => {

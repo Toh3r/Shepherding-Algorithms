@@ -1,65 +1,136 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<title>The Avengers</title>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<title>About Page</title>
 
-	<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="css/about.css">
-	<link href="https://fonts.googleapis.com/css?family=Barrio" rel="stylesheet">
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+		<!-- Add styles -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		<link rel="stylesheet" href="css/styles.css">
+		<link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
 
-	<script src="js/about.js">
+		<style media="screen">
+			body {
+				background: black;
+			}
 
-	</script>
+			.white {
+				background: gray;
+				margin-top: 3px;
+			}
+		</style>
 
-</head>
-<body>
+	</head>
+	<body>
 
-	<nav class="navbar navbar-default">
-  <div class="container">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">Avengers</a>
-    </div>
+	<!-- Use header partial -->
+	{{> header}}
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="/index">Home</a></li>
-        <li><a onclick="notWork()">About</a></li>
-        <li><a onclick="notWork()">Contact</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li onclick="notWork()"><a href="#"><i class="fas fa-user-plus"></i></i> Sign Up</a></li>
-        <li onclick="notWork()"><a href="#"><i class="fas fa-fighter-jet"></i> Login</a></li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid <i class="fas fa-user-plus"></i>-->
-</nav>
-
-	<div class="container">
+	<div class="container" style="padding-top: 50px">
 		<div class="row">
-			<div class="col-lg-12">
-				<div id="content">
-					<h1>The Avengers</h1>
-					<h3>Avengers Assemble</h3>
-					<hr>
-					<button class="btn btn-default btn-lg" onclick="signUp()"><i class="fas fa-bolt"></i> Sign Up!!</button>
-				</div>
+			<div class="col-lg-6 white" style="text-align:right">
+				<h1>If animal is here...</h1>
+			</div>
+			<div class="col-lg-6">
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-6">
+
+			</div>
+			<div class="col-lg-6 white">
+				<h1>...Then drone goes there</h1>
+			</div>
+		</div>
+		<div class="row" style="text-align:right">
+			<div class="col-lg-6 white">
+				<h1>Then animal goes there...</h1>
+			</div>
+			<div class="col-lg-6">
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-6">
+
+			</div>
+			<div class="col-lg-6 white">
+				<h1>...Then drone goes there</h1>
+			</div>
+		</div>
+		<div class="row" style="text-align:right">
+			<div class="col-lg-6 white">
+				<h1>Then animal goes there...</h1>
+			</div>
+			<div class="col-lg-6">
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-6">
+
+			</div>
+			<div class="col-lg-6 white">
+				<h1>...Then drone goes there</h1>
+			</div>
+		</div>
+		<div class="row" style="text-align:right">
+			<div class="col-lg-6 white">
+				<h1>Then animal goes there...</h1>
+			</div>
+			<div class="col-lg-6">
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-6">
+
+			</div>
+			<div class="col-lg-6 white">
+				<h1>...Then drone goes there</h1>
+			</div>
+		</div>
+		<div class="row" style="text-align:right">
+			<div class="col-lg-6 white">
+				<h1>Then animal goes there...</h1>
+			</div>
+			<div class="col-lg-6">
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-6">
+
+			</div>
+			<div class="col-lg-6 white">
+				<h1>...Then drone goes there</h1>
+			</div>
+		</div>
+		<div class="row" style="text-align:right">
+			<div class="col-lg-6 white">
+				<h1>Then animal goes there...</h1>
+			</div>
+			<div class="col-lg-6">
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-6">
+
+			</div>
+			<div class="col-lg-6 white">
+					<h1>Then animal leaves...</h1>
 			</div>
 		</div>
 	</div>
 
-<script
-  src="https://code.jquery.com/jquery-3.3.1.js"
-  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-  crossorigin="anonymous"></script>
-</body>
-</html>
+
+
+
+
+
+
+
+<!-- Use header partial -->
+{{> footer}}

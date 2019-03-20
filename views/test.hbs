@@ -8,6 +8,7 @@
     <!-- Add styles -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/testStyles.css">
     <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
 
     <!-- Add p5.js scripts -->
@@ -17,9 +18,9 @@
     <script	src="https://cdnjs.cloudflare.com/ajax/libs/chance/1.0.18/chance.min.js"></script>
 
     <!-- Add my .js scripts -->
-    <script src="js/sketch.js"></script>
+    <script src="js/test/sketchTest.js"></script>
     <script src="js/environment.js"></script>
-    <script src="js/animal.js"></script>
+    <script src="js/test/animalTest.js"></script>
     <script src="js/shepherd.js"></script>
     <script src="js/novelty.js"></script>
     <script src="js/gate.js"></script>
@@ -32,34 +33,68 @@
     <!-- Canvas div -->
     <div class="container-fluid" align:'center'>
       <div class="row" id="simRow">
-        	<div id="myCanvas"></div>
+        <div class="col-lg-2" id="moreControls">
+          <div>
+            <h7><strong><u>Speeds</u></strong></h7>
+          </div>
+          <div id="wSpeSli">
+            <label for="wSpeedSlider">Wan: </label>
+          </div>
+          <div id="pSpeSli">
+            <label for="pSpeedSlider">Pre: </label>
+          </div>
+          <div id="fSpeSli">
+            <label for="fSpeedSlider">Fli: </label>
+          </div>
+          <br>
+          <div>
+            <h7><strong><u>Force Strength</u></strong></h7>
+          </div>
+          <div id="sepSli">
+            <label for="separationSlider">Sep: </label>
+          </div>
+          <div id="aliSli">
+            <label for="aliSlider">Ali: </label>
+          </div>
+          <div id="cohSli">
+            <label for="cohesionSlider">Coh: </label>
+          </div>
+          <div id="dSepSli">
+            <label for="droneSepSlider">dSep: </label>
+          </div>
+          <br>
+          <div>
+            <h7><strong><u>Force Radius</u></strong></h7>
+          </div>
+          <div id="sepSizeSli">
+            <label for="sepSizeSlider">Sep: </label>
+          </div>
+          <div id="aliSizeSli">
+            <label for="aliSizeSlider">Ali: </label>
+          </div>
+          <div id="cohSizeSli">
+            <label for="cohSizeSlider">Coh: </label>
+          </div>
+          <div id="dSepSizeSli">
+            <label for="dSepSizeSlider">dSep: </label>
+          </div>
+        </div>
+
+        <div class="col-lg-10">
+          <div id="myCanvas"></div>
+        </div>
       </div>
 
       <!-- Behaviour Sliders -->
       <div class="row" id="controls">
-        <div class="col-lg-3" id='controlsLeft'>
-          <div>
-            <h5><strong><u>Force Sliders</u></strong></h5>
-          </div>
-          <br>
-          <div id="speSli">
-            <label for="speedSlider">Speed: </label>
-          </div>
-          <div id="sepSli">
-            <label for="separationSlider">Seperation: </label>
-          </div>
-          <div id="aliSli">
-            <label for="aliSlider">Allignment: </label>
-          </div>
-          <div id="cohSli">
-            <label for="cohesionSlider">Cohesion: </label>
-          </div>
+        <div class="col-lg-2" id='controlsLeft'>
+
         </div>
 
         <!-- Add/Delete Buttons -->
-        <div class="col-lg-3" id="controlsMiddle" align="center">
+        <div class="col-lg-2" id="controlsMiddle" align="center">
           <div id="midName">
-            <h5><strong><u>Edit Canvas</u></strong></h5>
+            <h7><strong><u>Zone Sizes</u></strong></h7>
           </div>
           <br>
           <div id="addDrop">
@@ -76,9 +111,9 @@
         </div>
 
         <!-- CheckBox xontorls -->
-        <div class="col-lg-3" id="controlsRight">
+        <div class="col-lg-2" id="controlsRight">
           <div>
-            <h5><strong><u>Display Info</u></strong></h5>
+            <h7><strong><u>Edit Zones</u></strong></h7>
           </div>
           <br>
           <div id="zoneDiv">
@@ -86,15 +121,17 @@
         </div>
 
         <!-- CheckBox xontorls -->
-        <div class="col-lg-3" id="controlsInfo">
+        <div class="col-lg-2" id="controlsInfo">
           <div>
-            <h5><strong><u>Sim Info</u></strong></h5>
+            <h7><strong><u>Sim Info</u></strong></h7>
           </div>
           <br>
           <div id="numAnimalsDiv">
 
           </div>
         </div>
+
+
 
       </div>
     </div>
