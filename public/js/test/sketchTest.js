@@ -1,12 +1,5 @@
-// Create a million variables for index page
+// Create enviroment variable
 var environment;
-// let speedSlider, separationSlider, alignSlider, cohesionSlider;
-// let speVal, sepVal, aliVal, cohVal;
-// let speOut, sepOut, aliOut, cohOut;
-// let novelObjects, sel, addText, zoneCheck, herdZoneCheck, nameCheck;
-// let delA, delS, delN, delAll;
-// let numAnimals, stressLevelOut;
-// let animalDisplay, shepherdDisplay, stressDisplay;
 
 // Create page elements using p5.js
 function setup() {
@@ -15,78 +8,132 @@ function setup() {
   var canvas = createCanvas(1000,500);
   canvas.parent('myCanvas'); // .parent allows item to manipulated on html page
 
+  // Set framerate of canvas
   // setFrameRate(60);
 
-  // Create Sliders to change behavioural rules
-  wSpeedSlider = createSlider(0, 5, 0.3, 0.1);
+  // Max Speed Sliders
+  wSpeedSlider = createSlider(0, 2, 0.5, 0.1);
   wSpeedSlider.parent('wSpeSli');
-  wSpeOut = createElement("h7", wSpeedSlider.value());
+  wSpeOut = createElement("h6", wSpeedSlider.value());
   wSpeOut.parent('wSpeSli');
-  wSpeedSlider.mouseReleased(updateValue);
 
-  pSpeedSlider = createSlider(0, 5, 0.3, 0.1);
+  pSpeedSlider = createSlider(0, 2, 0.5, 0.1);
   pSpeedSlider.parent('pSpeSli');
-  pSpeOut = createElement("h7", pSpeedSlider.value());
+  pSpeOut = createElement("h6", pSpeedSlider.value());
   pSpeOut.parent('pSpeSli');
-  pSpeedSlider.mouseReleased(updateValue);
 
-  fSpeedSlider = createSlider(0, 5, 0.3, 0.1);
+  fSpeedSlider = createSlider(0, 2, 0.5, 0.1);
   fSpeedSlider.parent('fSpeSli');
-  fSpeOut = createElement("h7", fSpeedSlider.value());
+  fSpeOut = createElement("h6", fSpeedSlider.value());
   fSpeOut.parent('fSpeSli');
-  fSpeedSlider.mouseReleased(updateValue);
 
-  separationSlider = createSlider(0, 5, 1.5, 0.1);
-  separationSlider.parent('sepSli');
-  sepOut = createElement("h7", "1.5");
-  sepOut.parent('sepSli');
-  separationSlider.mouseReleased(updateValue);
+  // Set Velocity Sliders
+  wVelSlider = createSlider(0, 2, 0.1, 0.1);
+  wVelSlider.parent('wVelSli');
+  wVelOut = createElement("h6", wVelSlider.value());
+  wVelOut.parent('wVelSli');
 
-  alignSlider = createSlider(0, 5, 1, 0.1);
-  alignSlider.parent('aliSli');
-  aliOut = createElement("h7", "1");
-  aliOut.parent('aliSli');
-  alignSlider.mouseReleased(updateValue);
+  pVelSlider = createSlider(0, 2, 0.5, 0.1);
+  pVelSlider.parent('pVelSli');
+  pVelOut = createElement("h6", pVelSlider.value());
+  pVelOut.parent('pVelSli');
 
-  cohesionSlider = createSlider(0, 5, 1, 0.1);
-  cohesionSlider.parent('cohSli');
-  cohOut = createElement("h7", "1");
-  cohOut.parent('cohSli');
-  cohesionSlider.mouseReleased(updateValue);
+  fVelSlider = createSlider(0, 2, 0.5, 0.1);
+  fVelSlider.parent('fVelSli');
+  fVelOut = createElement("h6", fVelSlider.value());
+  fVelOut.parent('fVelSli');
 
-  droneSepSlider = createSlider(0, 5, 1, 0.1);
-  droneSepSlider.parent('dSepSli');
-  dSepOut = createElement("h7", "1");
-  dSepOut.parent('dSepSli');
-  droneSepSlider.mouseReleased(updateValue);
+  // Seperation Sliders
+  sepWanSlider = createSlider(0, 5, 4, 0.1);
+  sepWanSlider.parent('sepWan');
+  sepWanOut = createElement("h6", sepWanSlider.value());
+  sepWanOut.parent('sepWan');
 
-  // Create Sliders to change behavioural rules
-  sepSizeSlider = createSlider(0, 5, 0.3, 0.1);
+  sepPreSlider = createSlider(0, 5, 0.8, 0.1);
+  sepPreSlider.parent('sepPre');
+  sepPreOut = createElement("h6", sepPreSlider.value());
+  sepPreOut.parent('sepPre');
+
+  sepFliSlider = createSlider(0, 5, 0.8, 0.1);
+  sepFliSlider.parent('sepFli');
+  sepFliOut = createElement("h6", sepFliSlider.value());
+  sepFliOut.parent('sepFli');
+
+  // Alignment Sliders
+  aliWanSlider = createSlider(0, 5, 0, 0.1);
+  aliWanSlider.parent('aliWan');
+  aliWanOut = createElement("h6", aliWanSlider.value());
+  aliWanOut.parent('aliWan');
+
+  aliPreSlider = createSlider(0, 5, 0.5, 0.1);
+  aliPreSlider.parent('aliPre');
+  aliPreOut = createElement("h6", aliPreSlider.value());
+  aliPreOut.parent('aliPre');
+
+  aliFliSlider = createSlider(0, 5, 0.5, 0.1);
+  aliFliSlider.parent('aliFli');
+  aliFliOut = createElement("h6", aliFliSlider.value());
+  aliFliOut.parent('aliFli');
+
+  // Cohsion Sliders
+  cohWanSlider = createSlider(0, 5, 0, 0.1);
+  cohWanSlider.parent('cohWan');
+  cohWanOut = createElement("h6", cohWanSlider.value());
+  cohWanOut.parent('cohWan');
+
+  cohPreSlider = createSlider(0, 5, 1.5, 0.1);
+  cohPreSlider.parent('cohPre');
+  cohPreOut = createElement("h6", cohPreSlider.value());
+  cohPreOut.parent('cohPre');
+
+  cohFliSlider = createSlider(0, 5, 0.8, 0.1);
+  cohFliSlider.parent('cohFli');
+  cohFliOut = createElement("h6", cohFliSlider.value());
+  cohFliOut.parent('cohFli');
+
+  // Drone Seperation Sliders
+  dSepPreSlider = createSlider(0, 5, 0, 0.1);
+  dSepPreSlider.parent('dSepPre');
+  dSepPreOut = createElement("h6", dSepPreSlider.value());
+  dSepPreOut.parent('dSepPre');
+
+  dSepFliSlider = createSlider(0, 5, 2, 0.1);
+  dSepFliSlider.parent('dSepFli');
+  dSepFliOut = createElement("h6", dSepFliSlider.value());
+  dSepFliOut.parent('dSepFli');
+
+  // Force Size Sliders
+  sepSizeSlider = createSlider(0, 200, 15, 5);
   sepSizeSlider.parent('sepSizeSli');
-  sepSizeOut = createElement("h7", sepSizeSlider.value());
+  sepSizeOut = createElement("h6", sepSizeSlider.value());
   sepSizeOut.parent('sepSizeSli');
-  sepSizeSlider.mouseReleased(updateValue);
 
-  // Create Sliders to change behavioural rules
-  aliSizeSlider = createSlider(0, 5, 0.3, 0.1);
+  aliSizeSlider = createSlider(0, 200, 50, 5);
   aliSizeSlider.parent('aliSizeSli');
-  aliSizeOut = createElement("h7", aliSizeSlider.value());
+  aliSizeOut = createElement("h6", aliSizeSlider.value());
   aliSizeOut.parent('aliSizeSli');
-  aliSizeSlider.mouseReleased(updateValue);
 
-  // Create Sliders to change behavioural rules
-  cohSizeSlider = createSlider(0, 5, 0.3, 0.1);
+  cohSizeSlider = createSlider(0, 200, 200, 5);
   cohSizeSlider.parent('cohSizeSli');
-  cohSizeOut = createElement("h7", cohSizeSlider.value());
+  cohSizeOut = createElement("h6", cohSizeSlider.value());
   cohSizeOut.parent('cohSizeSli');
-  cohSizeSlider.mouseReleased(updateValue);
 
-  // Create Sliders to change behavioural rules
-  dSepSizeSlider = createSlider(0, 5, 0.3, 0.1);
+  dSepSizeSlider = createSlider(0, 200, 125, 5);
   dSepSizeSlider.parent('dSepSizeSli');
-  dSepSizeOut = createElement("h7", dSepSizeSlider.value());
+  dSepSizeOut = createElement("h6", dSepSizeSlider.value());
   dSepSizeOut.parent('dSepSizeSli');
-  dSepSizeSlider.mouseReleased(updateValue);
+
+  // Zone Size Sliders
+  preSizeSlider = createSlider(0, 200, 130, 10);
+  preSizeSlider.parent('preSizeSli');
+  preSizeOut = createElement("h6", preSizeSlider.value());
+  preSizeOut.parent('preSizeSli');
+
+  fliSizeSlider = createSlider(0, 200, 50, 10);
+  fliSizeSlider.parent('fliSizeSli');
+  fliSizeOut = createElement("h6", fliSizeSlider.value());
+  fliSizeOut.parent('fliSizeSli');
+
 
   // Create Dropdown to add agents/objects
   sel = createSelect();
@@ -122,11 +169,17 @@ function setup() {
   herdZoneCheck.parent("zoneDiv");
 
   // Create checkbox to display flight/Pressure zones
+  forceCheck = createCheckbox("Display Force Zone");
+  forceCheck.parent("zoneDiv");
+
+  // Create checkbox to display flight/Pressure zones
   nameCheck = createCheckbox("Display Animal Info");
   nameCheck.parent("zoneDiv");
 
-  shepControl = createCheckbox("Control Shepherd");
-  shepControl.parent("zoneDiv");
+  // shepControl = createCheckbox("Control Shepherd");
+  // shepControl.parent("zoneDiv");
+
+
 
   // Initialize starting environment (with agents/objects)
   environment = new Environment();
@@ -161,9 +214,13 @@ function setup() {
   shepherdDisplay = createP("Number of Shepherds: " + environment.shepherds.length);
   shepherdDisplay.parent("numAnimalsDiv");
 
-  var fixedStress = environment.accumulatedStress.toFixed(2);
+  var fixedStress = environment.totalStress().toFixed(2);
   stressDisplay = createP("Accumulated Stress: " + fixedStress);
   stressDisplay.parent("numAnimalsDiv");
+
+  var fixedSpeed = environment.avgSpeed().toFixed(2);
+  speedDisplay = createP("Average Speed: " + fixedSpeed);
+  speedDisplay.parent("numAnimalsDiv");
 
 }
 
@@ -179,6 +236,7 @@ function display() {
   animalDisplay.remove();
   shepherdDisplay.remove();
   stressDisplay.remove();
+  speedDisplay.remove();
 
   animalDisplay = createP("Number of Animals: " + environment.herd.length);
   animalDisplay.parent("numAnimalsDiv");
@@ -186,24 +244,99 @@ function display() {
   shepherdDisplay = createP("Number of Shepherds: " + environment.shepherds.length);
   shepherdDisplay.parent("numAnimalsDiv");
 
-  var fixedStress = environment.accumulatedStress.toFixed(2);
+  var fixedStress = environment.totalStress().toFixed(2);
   stressDisplay = createP("Accumulated Stress: " + fixedStress);
   stressDisplay.parent("numAnimalsDiv");
+
+  var fixedSpeed = environment.avgSpeed().toFixed(2);
+  speedDisplay = createP("Average Speed: " + fixedSpeed);
+  speedDisplay.parent("numAnimalsDiv");
 }
 
-// Method to update the behavioral rules of each boid
-function updateValue() {
-  speVal = speedSlider.value();
-  speOut.html(speVal);
+// Method to update slider values
+function mouseDragged() {
+  // Update zone sizes
+  preSizeVal = preSizeSlider.value();
+  preSizeOut.html(preSizeVal);
 
-  sepVal = separationSlider.value();
-  sepOut.html(sepVal);
+  fliSizeVal = fliSizeSlider.value();
+  fliSizeOut.html(fliSizeVal);
 
-  aliVal = alignSlider.value();
-  aliOut.html(aliVal);
+  // Update Force Sizes
+  sepSizeVal = sepSizeSlider.value();
+  sepSizeOut.html(sepSizeVal);
 
-  cohVal = cohesionSlider.value();
-  cohOut.html(cohVal);
+  aliSizeVal = aliSizeSlider.value();
+  aliSizeOut.html(aliSizeVal);
+
+  cohSizeVal = cohSizeSlider.value();
+  cohSizeOut.html(cohSizeVal);
+
+  dSepSizeVal = dSepSizeSlider.value();
+  dSepSizeOut.html(dSepSizeVal);
+
+  // Update max speeds
+  wSpeedVal = wSpeedSlider.value();
+  wSpeOut.html(wSpeedVal);
+
+  pSpeedVal = pSpeedSlider.value();
+  pSpeOut.html(pSpeedVal);
+
+  fSpeedVal = fSpeedSlider.value();
+  fSpeOut.html(fSpeedVal);
+
+  // Update velocity
+  wVelVal = wVelSlider.value();
+  wVelOut.html(wVelVal);
+
+  pVelVal = pVelSlider.value();
+  pVelOut.html(pVelVal);
+
+  fVelVal = fVelSlider.value();
+  fVelOut.html(fVelVal);
+
+  // Update Seperation
+  sepWanVal = sepWanSlider.value();
+  sepWanOut.html(sepWanVal);
+
+  sepPreVal = sepPreSlider.value();
+  sepPreOut.html(sepPreVal);
+
+  sepFliVal = sepFliSlider.value();
+  sepFliOut.html(sepFliVal);
+
+  // Update Alignment
+  aliWanVal = aliWanSlider.value();
+  aliWanOut.html(aliWanVal);
+
+  aliPreVal = aliPreSlider.value();
+  aliPreOut.html(aliPreVal);
+
+  aliFliVal = aliFliSlider.value();
+  aliFliOut.html(aliFliVal);
+
+  // Update Cohesion
+  cohWanVal = cohWanSlider.value();
+  cohWanOut.html(cohWanVal);
+
+  cohPreVal = cohPreSlider.value();
+  cohPreOut.html(cohPreVal);
+
+  cohFliVal = cohFliSlider.value();
+  cohFliOut.html(cohFliVal);
+
+  // Update Drone Seperation
+  dSepPreVal = dSepPreSlider.value();
+  dSepPreOut.html(dSepPreVal);
+
+  dSepFliVal = dSepFliSlider.value();
+  dSepFliOut.html(dSepFliVal);
+
+
+}
+
+function updateValue () {
+
 }
 
 // Call add functions to add agents/objects on mouse co-ords

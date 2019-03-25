@@ -7,6 +7,8 @@ function Environment() {
   this.gates = [];
   this.accumulatedStress = 0;
   this.accumulatedStress.toFixed(2);
+  this.stress = 0;
+  this.averageSpeed = 0;
 }
 
 Environment.prototype.run = function() {
@@ -64,6 +66,23 @@ Environment.prototype.deleteNovelty = function() {
 
 Environment.prototype.displayNums = function () {
   return this.herd.length;
+}
+
+Environment.prototype.avgSpeed = function() {
+  this.averageSpeed = 0;
+  for (var i = 0; i < this.herd.length; i++) {
+    this.averageSpeed += this.herd[i].velocity.mag();
+  }
+  this.averageSpeed = this.averageSpeed / this.herd.length;
+  return this.averageSpeed;
+}
+
+Environment.prototype.totalStress = function() {
+  this.stress = 0;
+  for (var i = 0; i < this.herd.length; i++) {
+    this.stress += this.herd[i].stressLevel;
+  }
+  return this.stress;
 }
 
 // Remove selected animal once they enter gate

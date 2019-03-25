@@ -39,6 +39,9 @@ Animal.prototype.run = function(herd, shepherds, novelObjects) {
   if(nameCheck.checked() == true) {
     this.showName();    // Render Animal info
   }
+  if(forceCheck.checked() == true) {
+    this.renderForces();
+  }
 }
 
 // Apply each behavioural rule to each animal
@@ -61,60 +64,61 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
 
   // WHEN SHEPHERD IN FLIGHT ZONE
   if (fli > 0) {
-    mov.mult(2);
-    sep.mult(.8);
-    ali.mult(.5);
-    coh.mult(.8);
-    this.maxspeed = 0.5;
-    this.velocity.setMag(0.5);
+    mov.mult(dSepFliSlider.value());
+    sep.mult(sepFliSlider.value());
+    ali.mult(aliFliSlider.value());
+    coh.mult(cohFliSlider.value());
+    this.maxspeed = fSpeedSlider.value();
+    this.velocity.setMag(fVelSlider.value());
   }
 
   // WHEN SHEPHERD IN PRESSURE ZONE
   if (pre > 0) {
     if (bun == false) {
-      this.maxspeed = 0.5;
-      this.velocity.setMag(0.5);
-      mov.mult(0);
-      sep.mult(.8);
-      ali.mult(.5);
-      coh.mult(1.5);
+      this.maxspeed = pSpeedSlider.value();
+      this.velocity.setMag(pVelSlider.value());
+      mov.mult(dSepPreSlider.value());
+      sep.mult(sepPreSlider.value());
+      ali.mult(aliPreSlider.value());
+      coh.mult(cohPreSlider.value());
     } else if (bun == true) {
       this.maxspeed = this.timeCount / 10 + .1;
-      mov.mult(0);
-      sep.mult(.8);
-      ali.mult(.5);
-      coh.mult(.5);
+      mov.mult(dSepPreSlider.value());
+      sep.mult(sepPreSlider.value());
+      ali.mult(aliPreSlider.value());
+      coh.mult(cohFliSlider.value());
     }
     if (this.oldFli > fli && bun == true) {
       this.timeCount = (Math.round(this.velocity.mag()*10));
       this.speedRed();
-      mov.mult(0);
-      sep.mult(.8);
-      ali.mult(.5);
-      coh.mult(.5);
+      mov.mult(dSepPreSlider.value());
+      sep.mult(sepPreSlider.value());
+      ali.mult(aliPreSlider.value());
+      coh.mult(cohFliSlider.value());
     }
   }
 
   // WHEN SHEPHERDS ARE NOT IN EITHER ZONE
   if (!pre && !fli) {
-    sep.mult(4);
-    ali.mult(0);
-    coh.mult(0);
-    this.maxspeed = 0.5;
+    sep.mult(sepWanSlider.value());
+    ali.mult(aliWanSlider.value());
+    coh.mult(cohWanSlider.value());
+    this.maxspeed = wSpeedSlider.value();
+    // this.velocity.setMag(wVelSlider.value());
     if (this.oldPre > pre) {
       this.timeCount = Math.round(this.velocity.mag()*10);
       this.speedRed();
     }
     if (this.velocity.mag() < 0.15) {
-      this.maxspeed = .5;
-      this.velocity.setMag(.1);
+      this.maxspeed = wSpeedSlider.value();
+      this.velocity.setMag(wVelSlider.value());
       var wan = this.wander();
       wan.mult(.1);
       this.applyForce(wan);
     } else if (this.velocity.mag() > 0.15) {
-      sep.mult(.8);
-      ali.mult(.5);
-      coh.mult(.5);
+      sep.mult(sepPreSlider.value());
+      ali.mult(aliPreSlider.value());
+      coh.mult(cohFliSlider.value());
     }
   }
 
@@ -127,7 +131,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects) {
   this.applyForce(coh);
 
   this.oldFli = fli;
-  this.oldPre = pre; // Store old bun array value (Used for comparison in following frame)
+  this.oldPre = pre; // Store old array values (Used for comparison in following frame)
 }
 
 // Method to update location
@@ -154,7 +158,7 @@ Animal.prototype.seek = function(target) {
   return steer;
 }
 
-// ----- ANIMAL DRAWING FUNCTIONS
+// ----- ANIMAL RENDER FUNCTIONS
 
 // Method to draw animal
 Animal.prototype.render = function () {
@@ -176,18 +180,18 @@ Animal.prototype.render = function () {
 Animal.prototype.showName = function () {
   var stressFixed = this.stressLevel.toFixed(2);
 
-  // // Render Animal Name
-  // fill(this.red, this.green, this.blue);
-  // // fill(0);
-  // stroke(0);
-  // textSize(12);
-  // text(this.name, this.position.x, this.position.y);
-  //
-  // // Render Animal Name
-  // fill(this.red, this.green, this.blue);
-  // stroke(0);
-  // textSize(12);
-  // text(stressFixed, this.position.x, this.position.y + 10);
+  // Render Animal Name
+  fill(this.red, this.green, this.blue);
+  // fill(0);
+  stroke(0);
+  textSize(12);
+  text(this.name, this.position.x, this.position.y);
+
+  // Render Animal Name
+  fill(this.red, this.green, this.blue);
+  stroke(0);
+  textSize(12);
+  text(stressFixed, this.position.x, this.position.y + 10);
 
   // Render Animal Name
   fill(this.red, this.green, this.blue);
@@ -201,13 +205,32 @@ Animal.prototype.renderZones = function () {
   // Draw flight zone
   fill(0,0,0,0.0)
   stroke(255, 0, 0);
-  ellipse(this.position.x,this.position.y, 100, 100);
+  ellipse(this.position.x,this.position.y, fliSizeSlider.value() * 2, fliSizeSlider.value() * 2);
 
   // Draw pressure zone
   fill(0,0,0,0.0)
   stroke(0, 0, 0);
-  ellipse(this.position.x,this.position.y, 250, 250);
+  ellipse(this.position.x,this.position.y, preSizeSlider.value() * 2, preSizeSlider.value() * 2);
 };
+
+Animal.prototype.renderForces = function () {
+  fill(0,0,0,0.0)
+  stroke(255, 0, 0);
+  ellipse(this.position.x,this.position.y, sepSizeSlider.value() * 2, sepSizeSlider.value() * 2);
+
+  fill(0,0,0,0.0)
+  stroke(255);
+  ellipse(this.position.x,this.position.y, aliSizeSlider.value() * 2, aliSizeSlider.value() * 2);
+
+  fill(0,0,0,0.0)
+  stroke(0);
+  ellipse(this.position.x,this.position.y, cohSizeSlider.value() * 2, cohSizeSlider.value() * 2);
+
+  fill(0,0,0,0.0)
+  stroke(0, 0, 255);
+  ellipse(this.position.x,this.position.y, dSepSizeSlider.value() * 2, dSepSizeSlider.value() * 2);
+
+}
 
 // Method to keep animal in enclosure
 Animal.prototype.borders = function () {
@@ -231,7 +254,7 @@ Animal.prototype.borders = function () {
 // Separation
 // Method checks for nearby animals and steers away
 Animal.prototype.separate = function(herd) {
-  var desiredseparation = 15.0;
+  var desiredseparation = sepSizeSlider.value();
   var steer = createVector(0,0);
   var count = 0;
   // For every animal in the system, check if it's too close
@@ -266,7 +289,7 @@ Animal.prototype.separate = function(herd) {
 // Alignment
 // For every nearby animal in the system, calculate the average velocity
 Animal.prototype.align = function(herd) {
-  var neighbordist = 50;
+  var neighbordist = aliSizeSlider.value();
   var sum = createVector(0,0);
   var count = 0;
   for (var i = 0; i < herd.length; i++) {
@@ -291,7 +314,7 @@ Animal.prototype.align = function(herd) {
 // Cohesion
 // For the average location (i.e. center) of all nearby animals, calculate steering vector towards that location
 Animal.prototype.cohesion = function(herd) {
-  var neighbordist = 200;
+  var neighbordist = cohSizeSlider.value();
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   for (var i = 0; i < herd.length; i++) {
@@ -313,8 +336,8 @@ Animal.prototype.cohesion = function(herd) {
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
 Animal.prototype.pressure = function(herd, shepherds) {
-  var neighbordistMax = 125;
-  var neighbordistMin = 50;
+  var neighbordistMax = preSizeSlider.value();
+  var neighbordistMin = fliSizeSlider.value();
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   var neighCount = 0;
@@ -331,7 +354,7 @@ Animal.prototype.pressure = function(herd, shepherds) {
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
 Animal.prototype.flightZone = function(herd, shepherds) {
-  var neighbordistMax = 50;
+  var neighbordistMax = fliSizeSlider.value();
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   var neighCount = 0;
@@ -392,7 +415,7 @@ Animal.prototype.wander = function() {
 
 // When shepherd enters flight zone, move in opposite direction
 Animal.prototype.move = function(shepherds) {
-  var desiredseparation = 125.0;
+  var desiredseparation = dSepSizeSlider.value();
   var steer = createVector(0,0);
   var count = 0;
   // For every animal in the system, check if it's too close

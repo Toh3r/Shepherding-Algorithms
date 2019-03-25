@@ -2,6 +2,21 @@ label {
   font-size: 12px;
 }
 
+h6 {
+  padding-left: 10px;
+}
+
 p {
   font-size: 12px;
+}
+
+.con {
+  text-align: left;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-right: 5px solid white;
+}
+
+#control6 {
+    border-right: 0px;
 }

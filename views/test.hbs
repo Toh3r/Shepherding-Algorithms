@@ -35,36 +35,67 @@
       <div class="row" id="simRow">
         <div class="col-lg-2" id="moreControls">
           <div>
-            <h7><strong><u>Speeds</u></strong></h7>
+            <h6><strong><u>Sep Strength</u></strong></h6>
           </div>
-          <div id="wSpeSli">
-            <label for="wSpeedSlider">Wan: </label>
+          <div id="sepWan">
+            <label for="sepWanSlider">Wan: </label>
           </div>
-          <div id="pSpeSli">
-            <label for="pSpeedSlider">Pre: </label>
+          <div id="sepPre">
+            <label for="sepWanSlider">Pre: </label>
           </div>
-          <div id="fSpeSli">
-            <label for="fSpeedSlider">Fli: </label>
-          </div>
-          <br>
-          <div>
-            <h7><strong><u>Force Strength</u></strong></h7>
-          </div>
-          <div id="sepSli">
-            <label for="separationSlider">Sep: </label>
-          </div>
-          <div id="aliSli">
-            <label for="aliSlider">Ali: </label>
-          </div>
-          <div id="cohSli">
-            <label for="cohesionSlider">Coh: </label>
-          </div>
-          <div id="dSepSli">
-            <label for="droneSepSlider">dSep: </label>
+          <div id="sepFli">
+            <label for="sepWanSlider">Fli: </label>
           </div>
           <br>
           <div>
-            <h7><strong><u>Force Radius</u></strong></h7>
+            <h6><strong><u>Ali Strength</u></strong></h6>
+          </div>
+          <div id="aliWan">
+            <label for="aliWanSlider">Wan: </label>
+          </div>
+          <div id="aliPre">
+            <label for="aliPreSlider">Pre: </label>
+          </div>
+          <div id="aliFli">
+            <label for="aliFliSlider">Fli: </label>
+          </div>
+          <br>
+          <div>
+            <h6><strong><u>Coh Strength</u></strong></h6>
+          </div>
+          <div id="cohWan">
+            <label for="cohWanSlider">Wan: </label>
+          </div>
+          <div id="cohPre">
+            <label for="cohPreSlider">Pre: </label>
+          </div>
+          <div id="cohFli">
+            <label for="cohFliSlider">Fli: </label>
+          </div>
+          <br>
+
+          <div>
+            <h6><strong><u>dSep Strength</u></strong></h6>
+          </div>
+          <div id="dSepPre">
+            <label for="dSepPreSlider">Pre: </label>
+          </div>
+          <div id="dSepFli">
+            <label for="dSepFliSlider">Fli: </label>
+          </div>
+
+        </div>
+
+        <div class="col-lg-10">
+          <div id="myCanvas"></div>
+        </div>
+      </div>
+
+      <!-- Behaviour Sliders -->
+      <div class="row" id="controls">
+        <div class="col-lg-2 con" id='control1'>
+          <div>
+            <h6><strong><u>Force Radius</u></strong></h6>
           </div>
           <div id="sepSizeSli">
             <label for="sepSizeSlider">Sep: </label>
@@ -78,23 +109,55 @@
           <div id="dSepSizeSli">
             <label for="dSepSizeSlider">dSep: </label>
           </div>
-        </div>
 
-        <div class="col-lg-10">
-          <div id="myCanvas"></div>
-        </div>
-      </div>
+          <br>
 
-      <!-- Behaviour Sliders -->
-      <div class="row" id="controls">
-        <div class="col-lg-2" id='controlsLeft'>
-
+          <div>
+            <h6><strong><u>Zone Radius</u></strong></h6>
+          </div>
+          <div id="preSizeSli">
+            <label for="preSizeSlider">Pre: </label>
+          </div>
+          <div id="fliSizeSli">
+            <label for="fliSizeSlider">Fli: </label>
+          </div>
         </div>
 
         <!-- Add/Delete Buttons -->
-        <div class="col-lg-2" id="controlsMiddle" align="center">
+        <div class="col-lg-2 con" id="control2" align="center">
+          <div>
+            <h6><strong><u>Max Speeds</u></strong></h6>
+          </div>
+          <div id="wSpeSli">
+            <label for="wSpeedSlider">Wan: </label>
+          </div>
+          <div id="pSpeSli">
+            <label for="pSpeedSlider">Pre: </label>
+          </div>
+          <div id="fSpeSli">
+            <label for="fSpeedSlider">Fli: </label>
+          </div>
+
+          <br>
+
+          <div>
+            <h6><strong><u>Set Velocity</u></strong></h6>
+          </div>
+          <div id="wVelSli">
+            <label for="wVelSlider">Wan: </label>
+          </div>
+          <div id="pVelSli">
+            <label for="pVelSlider">Pre: </label>
+          </div>
+          <div id="fVelSli">
+            <label for="fVelSlider">Fli: </label>
+          </div>
+        </div>
+
+        <!-- CheckBox xontorls -->
+        <div class="col-lg-2 con" id="control3">
           <div id="midName">
-            <h7><strong><u>Zone Sizes</u></strong></h7>
+            <h6><strong><u>Edit Canvas</u></strong></h6>
           </div>
           <br>
           <div id="addDrop">
@@ -111,9 +174,9 @@
         </div>
 
         <!-- CheckBox xontorls -->
-        <div class="col-lg-2" id="controlsRight">
+        <div class="col-lg-2 con" id="control4">
           <div>
-            <h7><strong><u>Edit Zones</u></strong></h7>
+            <h6><strong><u>Canvas Info</u></strong></h6>
           </div>
           <br>
           <div id="zoneDiv">
@@ -121,12 +184,22 @@
         </div>
 
         <!-- CheckBox xontorls -->
-        <div class="col-lg-2" id="controlsInfo">
+        <div class="col-lg-2 con" id="control5">
           <div>
-            <h7><strong><u>Sim Info</u></strong></h7>
+            <h6><strong><u>Sim Info</u></strong></h6>
           </div>
           <br>
           <div id="numAnimalsDiv">
+
+          </div>
+        </div>
+
+        <!-- CheckBox xontorls -->
+        <div class="col-lg-2 con" id="control6">
+          <div>
+            <h6><strong><u>Stuff</u></strong></h6>
+
+            <h6></h6>
 
           </div>
         </div>
