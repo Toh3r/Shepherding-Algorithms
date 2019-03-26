@@ -116,15 +116,29 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
 
 
  if (this.movingUp == false) {
-   var target = createVector(left - 20, bottom);
+   var target = createVector(left - 40, bottom + 40);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
+   if (this.position.y >= bottom + 20 && this.position.x <= left){
+     console.log("Turning true");
+     this.movingUp = true;
+   }
    return steer;
- } else if (this.movingUp == false) {
-
+ } else if (this.movingUp == true) {
+   var target = createVector(left - 40, top - 40);
+   var desired = p5.Vector.sub(target, this.position);
+   desired.normalize();
+   desired.mult(this.maxspeed);
+   var steer = p5.Vector.sub(desired, this.velocity);
+   steer.limit(this.maxforce);
+   if (this.position.y <= top + 20 ){
+     this.movingUp = false;
+     console.log("Turning false")
+   }
+   return steer;
  }
 }
 
@@ -135,15 +149,29 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   var right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
 
 
- if (this.movingUp == false) {
-   var target = createVector(left - 20, top);
-   var desired = p5.Vector.sub(target, this.position);
-   desired.normalize();
-   desired.mult(this.maxspeed);
-   var steer = p5.Vector.sub(desired, this.velocity);
-   steer.limit(this.maxforce);
-   return steer;
- } else {
-
- }
+  if (this.movingUp == false) {
+    var target = createVector(left - 10, bottom);
+    var desired = p5.Vector.sub(target, this.position);
+    desired.normalize();
+    desired.mult(this.maxspeed);
+    var steer = p5.Vector.sub(desired, this.velocity);
+    steer.limit(this.maxforce);
+    if (this.position.y >= bottom && this.position.x <= left){
+      console.log("Turning true");
+      this.movingUp = true;
+    }
+    return steer;
+  } else if (this.movingUp == true) {
+    var target = createVector(left -10, top);
+    var desired = p5.Vector.sub(target, this.position);
+    desired.normalize();
+    desired.mult(this.maxspeed);
+    var steer = p5.Vector.sub(desired, this.velocity);
+    steer.limit(this.maxforce);
+    if (this.position.y <= top){
+      this.movingUp = false;
+      console.log("Turning false")
+    }
+    return steer;
+  }
 }
