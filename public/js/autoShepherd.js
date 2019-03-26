@@ -150,7 +150,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
 
 
   if (this.movingUp == false) {
-    var target = createVector(left - 10, bottom);
+    var target = createVector(left - 20, bottom);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -162,7 +162,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     }
     return steer;
   } else if (this.movingUp == true) {
-    var target = createVector(left -10, top);
+    var target = createVector(left -20, top);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
