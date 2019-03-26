@@ -179,6 +179,9 @@ function setup() {
   // shepControl = createCheckbox("Control Shepherd");
   // shepControl.parent("zoneDiv");
 
+  droneHerd = createButton('Magic Button');
+  droneHerd.parent('droneHerd');
+  droneHerd.mouseClicked(herd);
 
 
   // Initialize starting environment (with agents/objects)
@@ -194,6 +197,12 @@ function setup() {
   for (var i = 0; i < 0; i++) {
     var s = new Shepherd(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
     environment.addShepherd(s);
+  }
+
+  // Create starting auto shepherd
+  for (var i = 0; i < 0; i++) {
+    var as = new AutoShepherd();
+    environment.addAutoShepherd(as);
   }
 
   // Create starting novelties in random positions
@@ -366,6 +375,8 @@ function delNovelty() {
 function deleteAll() {
   environment.removeAll();
 }
-function displayInfo() {
 
+function herd() {
+  console.log("Goin' Herding");
+  environment.addAutoShepherd(new AutoShepherd());
 }

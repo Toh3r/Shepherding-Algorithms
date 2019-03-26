@@ -23,7 +23,7 @@ Gate.prototype.goalZone = function () {
   rect(850, 180, 150, 150);
   pop();
 
-  textSize(20);
+  textSize(13);
   fill(255);
   text('GoalZone', 890, 180);
 }

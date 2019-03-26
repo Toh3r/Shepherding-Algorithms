@@ -28,8 +28,8 @@ function Animal(x,y) {
 // ----- ANIMAL UPDATE FUNCTIONS
 
 // Call functions for each animal each frame
-Animal.prototype.run = function(herd, shepherds, novelObjects) {
-  this.herd(herd, shepherds, novelObjects); // Apply forces
+Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds) {
+  this.herd(herd, shepherds, novelObjects, autoShepherds); // Apply forces
   this.update();    // Update position based on forces
   this.borders();   // Keep animal in enclosure
   this.render();    // Render animal
@@ -50,13 +50,13 @@ Animal.prototype.applyForce = function(force) {
 }
 
 // Accumulate a new acceleration each time based on all rules
-Animal.prototype.herd = function(herd, shepherds, novelObjects) {
+Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds) {
   var sep = this.separate(herd);      // Separation
   var ali = this.align(herd);         // Alignment
   var coh = this.cohesion(herd);      // Cohesion
-  var pre = this.pressure(herd, shepherds);   // shepherds in pressure zone
-  var fli = this.flightZone(herd, shepherds); // shepherds in pressure zone
-  var mov = this.move(shepherds);     // Steer herd
+  var pre = this.pressure(herd, shepherds, autoShepherds);   // shepherds in pressure zone
+  var fli = this.flightZone(herd, shepherds, autoShepherds); // shepherds in pressure zone
+  var mov = this.move(shepherds, autoShepherds);     // Steer herd
   var goa = this.goal();              // Seek (Goal area)
   var avo = this.avoid(novelObjects); // Avoid Novelty
   var bun = this.bunched(herd);       // Bunched
@@ -217,18 +217,30 @@ Animal.prototype.renderForces = function () {
   fill(0,0,0,0.0)
   stroke(255, 0, 0);
   ellipse(this.position.x,this.position.y, sepSizeSlider.value() * 2, sepSizeSlider.value() * 2);
+  fill(0)
+  textSize(12);
+  text("Sep", this.position.x + sepSizeSlider.value(), this.position.y);
 
   fill(0,0,0,0.0)
   stroke(255);
   ellipse(this.position.x,this.position.y, aliSizeSlider.value() * 2, aliSizeSlider.value() * 2);
+  fill(0)
+  textSize(12);
+  text("Ali", this.position.x + aliSizeSlider.value(), this.position.y);
 
   fill(0,0,0,0.0)
   stroke(0);
   ellipse(this.position.x,this.position.y, cohSizeSlider.value() * 2, cohSizeSlider.value() * 2);
+  fill(0)
+  textSize(12);
+  text("Coh", this.position.x + cohSizeSlider.value(), this.position.y);
 
   fill(0,0,0,0.0)
   stroke(0, 0, 255);
   ellipse(this.position.x,this.position.y, dSepSizeSlider.value() * 2, dSepSizeSlider.value() * 2);
+  fill(0)
+  textSize(12);
+  text("dSep", this.position.x + dSepSizeSlider.value(), this.position.y);
 
 }
 
@@ -335,7 +347,7 @@ Animal.prototype.cohesion = function(herd) {
 // ----- ANIMAL BEHAVIOURAL RULES WITH DRONE
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
-Animal.prototype.pressure = function(herd, shepherds) {
+Animal.prototype.pressure = function(herd, shepherds, autoShepherds) {
   var neighbordistMax = preSizeSlider.value();
   var neighbordistMin = fliSizeSlider.value();
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
@@ -349,11 +361,18 @@ Animal.prototype.pressure = function(herd, shepherds) {
       count++;
     }
   }
+  for (var i = 0; i < autoShepherds.length; i++) {
+    var d = p5.Vector.dist(this.position,autoShepherds[i].position);
+    if ((d > 0) && (d < neighbordistMax) && (d > neighbordistMin)) {
+      sum.add(autoShepherds[i].position); // Add location
+      count++;
+    }
+  }
   return count; // Return number of shepherds in pressure zone
 }
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
-Animal.prototype.flightZone = function(herd, shepherds) {
+Animal.prototype.flightZone = function(herd, shepherds, autoShepherds) {
   var neighbordistMax = fliSizeSlider.value();
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
@@ -363,6 +382,13 @@ Animal.prototype.flightZone = function(herd, shepherds) {
     var d = p5.Vector.dist(this.position,shepherds[i].position);
     if ((d > 0) && (d < neighbordistMax)) {
       sum.add(shepherds[i].position); // Add location
+      count++;
+    }
+  }
+  for (var i = 0; i < autoShepherds.length; i++) {
+    var d = p5.Vector.dist(this.position,autoShepherds[i].position);
+    if ((d > 0) && (d < neighbordistMax)) {
+      sum.add(autoShepherds[i].position); // Add location
       count++;
     }
   }
@@ -414,7 +440,7 @@ Animal.prototype.wander = function() {
 }
 
 // When shepherd enters flight zone, move in opposite direction
-Animal.prototype.move = function(shepherds) {
+Animal.prototype.move = function(shepherds, autoShepherds) {
   var desiredseparation = dSepSizeSlider.value();
   var steer = createVector(0,0);
   var count = 0;
@@ -425,6 +451,18 @@ Animal.prototype.move = function(shepherds) {
     if ((d > 0) && (d < desiredseparation)) {
       // Calculate vector pointing away from neighbor
       var diff = p5.Vector.sub(this.position,shepherds[i].position);
+      diff.normalize();
+      diff.div(d);        // Weight by distance
+      steer.add(diff);
+      count++;            // Keep track of how many
+    }
+  }
+  for (var i = 0; i < autoShepherds.length; i++) {
+    var d = p5.Vector.dist(this.position,autoShepherds[i].position);
+    // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
+    if ((d > 0) && (d < desiredseparation)) {
+      // Calculate vector pointing away from neighbor
+      var diff = p5.Vector.sub(this.position,autoShepherds[i].position);
       diff.normalize();
       diff.div(d);        // Weight by distance
       steer.add(diff);
@@ -514,11 +552,11 @@ Animal.prototype.speedRed = function() {
       if (self.timeCount == 0) {
         self.velocity.setMag(0);
         self.reducingSpeed = false;
-        console.log(self.name + "'s SPEED: " + self.velocity.mag());
+        // console.log(self.name + "'s SPEED: " + self.velocity.mag());
         clearInterval(timer);
       } else {
         self.velocity.setMag(self.timeCount * .1);
-        console.log(self.name + "'s SPEED: " + self.velocity.mag());
+        // console.log(self.name + "'s SPEED: " + self.velocity.mag());
         self.timeCount--;
       }
     }, 2000);

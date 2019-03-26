@@ -9,7 +9,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/testStyles.css">
+    <!-- Add Google font -->
     <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
+    <!-- Add favicon -->
+    <link rel="icon" type="image/png" href="css/images/favicon.ico">
 
     <!-- Add p5.js scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/p5.min.js"></script>
@@ -21,7 +24,8 @@
     <script src="js/test/sketchTest.js"></script>
     <script src="js/environment.js"></script>
     <script src="js/test/animalTest.js"></script>
-    <script src="js/shepherd.js"></script>
+    <script src="js/shepherdManual.js"></script>
+    <script src="js/autoShepherd.js"></script>
     <script src="js/novelty.js"></script>
     <script src="js/gate.js"></script>
 
@@ -33,7 +37,9 @@
     <!-- Canvas div -->
     <div class="container-fluid" align:'center'>
       <div class="row" id="simRow">
+
         <div class="col-lg-2" id="moreControls">
+
           <div>
             <h6><strong><u>Sep Strength</u></strong></h6>
           </div>
@@ -47,6 +53,7 @@
             <label for="sepWanSlider">Fli: </label>
           </div>
           <br>
+
           <div>
             <h6><strong><u>Ali Strength</u></strong></h6>
           </div>
@@ -60,6 +67,7 @@
             <label for="aliFliSlider">Fli: </label>
           </div>
           <br>
+
           <div>
             <h6><strong><u>Coh Strength</u></strong></h6>
           </div>
@@ -83,13 +91,13 @@
           <div id="dSepFli">
             <label for="dSepFliSlider">Fli: </label>
           </div>
-
-        </div>
+        </div> <!-- Close moreControls col -->
 
         <div class="col-lg-10">
           <div id="myCanvas"></div>
         </div>
-      </div>
+
+      </div> <!-- Close Simrow -->
 
       <!-- Behaviour Sliders -->
       <div class="row" id="controls">
@@ -197,20 +205,20 @@
         <!-- CheckBox xontorls -->
         <div class="col-lg-2 con" id="control6">
           <div>
-            <h6><strong><u>Stuff</u></strong></h6>
-
-            <h6></h6>
+            <h6><strong><u>Tester</u></strong></h6>
+            <br><br>
+            <div id="droneHerd">
+            </div>
 
           </div>
         </div>
 
-
-
-      </div>
-    </div>
+      </div> <!-- Close controls row -->
+    </div> <!-- Close container -->
 
     <!-- More scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-{{> footer}}
+
+{{> footer}} <!--Use footer partial -->

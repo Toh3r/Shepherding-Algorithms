@@ -3,6 +3,7 @@ function Environment() {
   // Initialize arrays to store agents/objects
   this.herd = [];
   this.shepherds = [];
+  this.autoShepherds = [];
   this.novelObjects = [];
   this.gates = [];
   this.accumulatedStress = 0;
@@ -13,7 +14,7 @@ function Environment() {
 
 Environment.prototype.run = function() {
   for (var i = 0; i < this.herd.length; i++) {
-    this.herd[i].run(this.herd, this.shepherds, this.novelObjects);  // Passing all arrays to each animal
+    this.herd[i].run(this.herd, this.shepherds, this.novelObjects, this.autoShepherds);  // Passing all arrays to each animal
   }
 
   for (var i = 0; i < this.shepherds.length; i++) {
@@ -26,6 +27,10 @@ Environment.prototype.run = function() {
 
   for (var i = 0; i < this.gates.length; i++) {
     this.gates[i].run();
+  }
+
+  for(var i = 0; i < this.autoShepherds.length; i++) {
+    this.autoShepherds[i].run(this.herd);
   }
 
   if (herdZoneCheck.checked() == true) {
@@ -41,6 +46,10 @@ Environment.prototype.addAnimal = function(a) {
 
 Environment.prototype.addShepherd = function(s) {
   this.shepherds.push(s);
+}
+
+Environment.prototype.addAutoShepherd = function(as) {
+  this.autoShepherds.push(as);
 }
 
 Environment.prototype.addNovelty = function(n) {
