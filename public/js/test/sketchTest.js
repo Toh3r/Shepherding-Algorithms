@@ -183,13 +183,47 @@ function setup() {
   droneHerd.parent('droneHerd');
   droneHerd.mouseClicked(herd);
 
+  resetBtn = createButton('Resest');
+  resetBtn.parent('resetBtn');
+  resetBtn.mouseClicked(createNewHerd);
+
 
   // Initialize starting environment (with agents/objects)
   environment = new Environment();
 
+  createNewHerd();
+
+  animalDisplay = createP("Number of Animals: " + environment.herd.length);
+  animalDisplay.parent("numAnimalsDiv");
+
+  shepherdDisplay = createP("Number of Shepherds: " + environment.shepherds.length);
+  shepherdDisplay.parent("numAnimalsDiv");
+
+  var fixedStress = environment.totalStress().toFixed(2);
+  stressDisplay = createP("Accumulated Stress: " + fixedStress);
+  stressDisplay.parent("numAnimalsDiv");
+
+  var fixedSpeed = environment.avgSpeed().toFixed(2);
+  speedDisplay = createP("Average Speed: " + fixedSpeed);
+  speedDisplay.parent("numAnimalsDiv");
+}
+
+// Call run to begin simulation
+function draw() {
+  background(36, 188, 25);
+  environment.run();
+  display();
+}
+
+function createNewHerd () {
+  // Initialize starting environment (with agents/objects)
+  environment = new Environment();
+
   //Create starting animals in random positions
-  for (var i = 0; i < 10; i++) {
-    var a = new Animal(Math.floor(Math.random() * 200) + 1,Math.floor(Math.random() * 500) + 1);
+  for (var i = 0; i < 40; i++) {
+    x = random(201);
+    y = random(501);
+    var a = new Animal(x, y);
     environment.addAnimal(a);
   }
 
@@ -216,29 +250,6 @@ function setup() {
     var g = new Gate(990, 230);
     environment.addGate(g);
   }
-
-  animalDisplay = createP("Number of Animals: " + environment.herd.length);
-  animalDisplay.parent("numAnimalsDiv");
-
-  shepherdDisplay = createP("Number of Shepherds: " + environment.shepherds.length);
-  shepherdDisplay.parent("numAnimalsDiv");
-
-  var fixedStress = environment.totalStress().toFixed(2);
-  stressDisplay = createP("Accumulated Stress: " + fixedStress);
-  stressDisplay.parent("numAnimalsDiv");
-
-  var fixedSpeed = environment.avgSpeed().toFixed(2);
-  speedDisplay = createP("Average Speed: " + fixedSpeed);
-  speedDisplay.parent("numAnimalsDiv");
-
-}
-
-// Call run to begin simulation
-function draw() {
-  background(36, 188, 25);
-  environment.run();
-
-  display();
 }
 
 function display() {
@@ -340,12 +351,6 @@ function mouseDragged() {
 
   dSepFliVal = dSepFliSlider.value();
   dSepFliOut.html(dSepFliVal);
-
-
-}
-
-function updateValue () {
-
 }
 
 // Call add functions to add agents/objects on mouse co-ords

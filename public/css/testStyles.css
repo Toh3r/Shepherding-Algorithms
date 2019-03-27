@@ -20,3 +20,12 @@ p {
 #control6 {
     border-right: 0px;
 }
+
+.con2 {
+  border-top: 5px solid white;
+  border-right: 5px solid white;
+}
+
+#controlsRow2 {
+  min-height: 200px;
+}

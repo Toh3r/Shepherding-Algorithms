@@ -24,7 +24,6 @@ AutoShepherd.prototype.applyForce = function(force) {
 
 AutoShepherd.prototype.herdAnimals = function (herd) {
   var bun = this.bunched(herd);
-
   if (bun == true) {
     var mov = this.moveAnimals(herd);
     this.applyForce(mov);
