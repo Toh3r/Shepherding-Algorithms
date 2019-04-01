@@ -238,7 +238,7 @@ function createNewHerd () {
   environment = new Environment();
 
   //Create starting animals in random positions
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < 10; i++) {
     x = random(201);
     y = random(501);
     var a = new Animal(x, y);
