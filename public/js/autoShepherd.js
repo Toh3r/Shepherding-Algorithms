@@ -6,7 +6,7 @@ function AutoShepherd() {
   this.position = createVector(950, 250);
   this.r = 3.0;
   this.maxspeed = 1;
-  this.movingUp = false;
+  this.movingUp = true;
 }
 
 // Call methods for each shepherd

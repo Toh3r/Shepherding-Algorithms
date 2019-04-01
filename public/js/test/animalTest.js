@@ -559,7 +559,7 @@ Animal.prototype.speedRed = function() {
         // console.log(self.name + "'s SPEED: " + self.velocity.mag());
         self.timeCount--;
       }
-    }, 2000);
+    }, 3000);
   } else {
     // console.log("ALREADY DECREASING SPEED");
   }
