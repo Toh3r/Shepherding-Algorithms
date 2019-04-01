@@ -178,6 +178,7 @@ Environment.prototype.displayHerd = function() {
   fill(0);
   stroke(0);
   ellipse(right, bottom, 10, 10);
+
 }
 
 // // Method to allow for class extensions

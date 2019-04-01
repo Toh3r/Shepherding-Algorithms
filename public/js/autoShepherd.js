@@ -115,19 +115,19 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
 
 
  if (this.movingUp == false) {
-   var target = createVector(left - 40, bottom + 40);
+   var target = createVector(left - 20, bottom + 40);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
    if (this.position.y >= bottom + 20 && this.position.x <= left){
-     console.log("Turning true");
+     // console.log("Turning true");
      this.movingUp = true;
    }
    return steer;
  } else if (this.movingUp == true) {
-   var target = createVector(left - 40, top - 40);
+   var target = createVector(left - 20, top - 40);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
@@ -135,7 +135,7 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
    steer.limit(this.maxforce);
    if (this.position.y <= top + 20 ){
      this.movingUp = false;
-     console.log("Turning false")
+     // console.log("Turning false")
    }
    return steer;
  }
@@ -147,21 +147,51 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   var left = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
   var right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
 
+  var mid1 = (top + bottom) / 2;
+  var mid2 = (right + left) / 2;
 
+  var center = createVector(mid1, mid2);
+  var goaly = 250;
+  var goal = createVector(980,250);
+
+  var diffCPos = mid1 - goaly;
+  console.log("Difference: " + diffCPos);
+
+  stroke(0);
+  line(mid2, mid1, 980,250);
+
+  // var deg = 45;
+  // var rad = radians(deg);
+
+  stroke(0, 0, 255);
+  // rotate(rad);
+  line(mid2 + (diffCPos) /2, mid1 + 40, mid2 - (diffCPos) / 2, mid1 - 40);
+  // stroke(0, 0, 255);
+  // // rotate(rad);
+  // line(mid2, mid1, mid2 + (diffCPos) /2, mid1 + 40);
+
+  // Draw pressure zone
+  fill(255,0,0);
+  stroke(0);
+  ellipse(mid2,mid1, 10, 10);
+
+  // if (diffCPos > 60 || diffCPos < - 60) {
+  //   console.log("Need to avert course");
+  // }
   if (this.movingUp == false) {
-    var target = createVector(left - 20, bottom);
+    var target = createVector(left - 20, bottom + 40);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
     if (this.position.y >= bottom && this.position.x <= left){
-      console.log("Turning true");
+      // console.log("Turning true");
       this.movingUp = true;
     }
     return steer;
   } else if (this.movingUp == true) {
-    var target = createVector(left -20, top);
+    var target = createVector(left - 20, top - 40);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -169,7 +199,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     steer.limit(this.maxforce);
     if (this.position.y <= top){
       this.movingUp = false;
-      console.log("Turning false")
+      // console.log("Turning false")
     }
     return steer;
   }

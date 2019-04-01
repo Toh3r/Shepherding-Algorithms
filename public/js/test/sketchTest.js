@@ -187,6 +187,10 @@ function setup() {
   resetBtn.parent('resetBtn');
   resetBtn.mouseClicked(createNewHerd);
 
+  pauseBtn = createButton('Pause');
+  pauseBtn.parent('pauseBtn');
+  pauseBtn.mouseClicked(togglePlay);
+
 
   // Initialize starting environment (with agents/objects)
   environment = new Environment();
@@ -215,12 +219,26 @@ function draw() {
   display();
 }
 
+var isPlaying = false;
+function togglePlay() {
+  if (isPlaying == true) {
+     loop();
+     pauseBtn.html('Pause');
+     isPlaying = false;
+  } else if (isPlaying == false) {
+     noLoop();
+     pauseBtn.html('Play');
+     isPlaying = true;
+  }
+}
+
+
 function createNewHerd () {
   // Initialize starting environment (with agents/objects)
   environment = new Environment();
 
   //Create starting animals in random positions
-  for (var i = 0; i < 40; i++) {
+  for (var i = 0; i < 1; i++) {
     x = random(201);
     y = random(501);
     var a = new Animal(x, y);
