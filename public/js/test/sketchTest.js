@@ -49,12 +49,12 @@ function setup() {
   sepWanOut = createElement("h6", sepWanSlider.value());
   sepWanOut.parent('sepWan');
 
-  sepPreSlider = createSlider(0, 5, 0.8, 0.1);
+  sepPreSlider = createSlider(0, 5, 1.2, 0.1);
   sepPreSlider.parent('sepPre');
   sepPreOut = createElement("h6", sepPreSlider.value());
   sepPreOut.parent('sepPre');
 
-  sepFliSlider = createSlider(0, 5, 0.8, 0.1);
+  sepFliSlider = createSlider(0, 5, 1.2, 0.1);
   sepFliSlider.parent('sepFli');
   sepFliOut = createElement("h6", sepFliSlider.value());
   sepFliOut.parent('sepFli');
@@ -124,7 +124,7 @@ function setup() {
   dSepSizeOut.parent('dSepSizeSli');
 
   // Zone Size Sliders
-  preSizeSlider = createSlider(0, 200, 130, 10);
+  preSizeSlider = createSlider(0, 200, 200, 10);
   preSizeSlider.parent('preSizeSli');
   preSizeOut = createElement("h6", preSizeSlider.value());
   preSizeOut.parent('preSizeSli');
@@ -238,7 +238,7 @@ function createNewHerd () {
   environment = new Environment();
 
   //Create starting animals in random positions
-  for (var i = 0; i < 1; i++) {
+  for (var i = 0; i < 5; i++) {
     x = random(201);
     y = random(501);
     var a = new Animal(x, y);

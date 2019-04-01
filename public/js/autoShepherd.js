@@ -155,7 +155,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   var goal = createVector(980,250);
 
   var diffCPos = mid1 - goaly;
-  console.log("Difference: " + diffCPos);
+  // console.log("Difference: " + diffCPos);
 
   stroke(0);
   line(mid2, mid1, 980,250);
@@ -179,25 +179,25 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   //   console.log("Need to avert course");
   // }
   if (this.movingUp == false) {
-    var target = createVector(left - 20, bottom + 40);
+    var target = createVector(mid2 + (diffCPos) /2 - 40, mid1 + 40);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
-    if (this.position.y >= bottom && this.position.x <= left){
-      // console.log("Turning true");
+    if (this.position.y >= mid1 + 40 && this.position.x <= mid2 + (diffCPos) /2 -20){
+      console.log("Turning true");
       this.movingUp = true;
     }
     return steer;
   } else if (this.movingUp == true) {
-    var target = createVector(left - 20, top - 40);
+    var target = createVector(mid2 - (diffCPos) / 2 - 40,  mid1 - 40);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
-    if (this.position.y <= top){
+    if (this.position.y <= mid1 - 40){
       this.movingUp = false;
       // console.log("Turning false")
     }
