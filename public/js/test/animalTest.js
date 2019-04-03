@@ -547,6 +547,7 @@ Animal.prototype.avoid = function (novelObjects) {
 Animal.prototype.speedRed = function() {
   if (this.reducingSpeed == false) {
     this.reducingSpeed = true;
+    // console.log(this);
     var self = this;
     var timer = setInterval(function () {
       if (self.timeCount == 0) {

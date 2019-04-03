@@ -6,7 +6,7 @@ function AutoShepherd() {
   this.position = createVector(950, 250);
   this.r = 3.0;
   this.maxspeed = 1;
-  this.movingUp = true;
+  this.movingUp = false;
 }
 
 // Call methods for each shepherd
@@ -147,51 +147,64 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   var left = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
   var right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
 
-  var mid1 = (top + bottom) / 2;
-  var mid2 = (right + left) / 2;
+  var mid1 = (top + bottom) / 2; // Y co-ord of herd
+  var mid2 = (right + left) / 2; // X co-ord of herd
 
-  var center = createVector(mid1, mid2);
-  var goaly = 250;
-  var goal = createVector(980,250);
+  var center = createVector(mid1, mid2); // Centre co-ords of herd
+  var goal = createVector(980,250); // Location of exit
 
-  var diffCPos = mid1 - goaly;
-  // console.log("Difference: " + diffCPos);
+  var diffCPos = mid1 - goal.y; //Diff of herd y co-ord to goal y co-ord
+  var diffBPos = mid2 - goal.x; // del
+  animalFB = mid2 - left;
+  animalFB2 = mid1 - top; //del
+  // console.log(mid2 - left);
+  // console.log(mid2 - goal.x); //del
+
 
   stroke(0);
   line(mid2, mid1, 980,250);
 
-  // var deg = 45;
-  // var rad = radians(deg);
+  stroke(0, 0, 255);
+  line(mid2 + (diffCPos) /2, mid1 + 40, mid2 - (diffCPos) / 2, mid1 - 40);
 
   stroke(0, 0, 255);
-  // rotate(rad);
-  line(mid2 + (diffCPos) /2, mid1 + 40, mid2 - (diffCPos) / 2, mid1 - 40);
-  // stroke(0, 0, 255);
-  // // rotate(rad);
-  // line(mid2, mid1, mid2 + (diffCPos) /2, mid1 + 40);
+  line(mid2 + (diffCPos) /2 - 40, mid1 + 40, mid2 - (diffCPos) / 2 - 40,  mid1 - 40);
+
+
+  stroke(255, 255, 0);
+  line(mid2 + (diffCPos) /2 - (animalFB *2) - 60, mid1 + 40, mid2 - (diffCPos) / 2 - (animalFB*2) - 60, mid1 - 40);
 
   // Draw pressure zone
   fill(255,0,0);
   stroke(0);
   ellipse(mid2,mid1, 10, 10);
 
-  // if (diffCPos > 60 || diffCPos < - 60) {
-  //   console.log("Need to avert course");
-  // }
   if (this.movingUp == false) {
-    var target = createVector(mid2 + (diffCPos) /2 - 40, mid1 + 40);
+    if (environment.avgSpeed() < 0.350) {
+      console.log("TARGET + Flight");
+      console.log(environment.avgSpeed());
+      var target = createVector(mid2 + (diffCPos) /2 - 40, mid1 + 40);
+    } else {
+      console.log("TARGET + Pressure");
+      console.log(environment.avgSpeed());
+      var target = createVector(mid2 + (diffCPos) /2 - (animalFB *2) - 60, mid1 + 40);
+    }
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
-    if (this.position.y >= mid1 + 40 && this.position.x <= mid2 + (diffCPos) /2 -20){
+    if (this.position.y >= mid1 + 40 && this.position.x <= mid2 + (diffCPos) /2 - 20){
       console.log("Turning true");
       this.movingUp = true;
     }
     return steer;
   } else if (this.movingUp == true) {
-    var target = createVector(mid2 - (diffCPos) / 2 - 40,  mid1 - 40);
+    if (environment.avgSpeed() < 0.350) {
+      var target = createVector(mid2 - (diffCPos) / 2 - 40,  mid1 - 40);
+    } else {
+      var target = createVector(mid2 - (diffCPos) / 2 - (animalFB*2) - 60, mid1 - 40);
+    }
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -199,7 +212,6 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     steer.limit(this.maxforce);
     if (this.position.y <= mid1 - 40){
       this.movingUp = false;
-      // console.log("Turning false")
     }
     return steer;
   }

@@ -118,7 +118,7 @@ function setup() {
   cohSizeOut = createElement("h6", cohSizeSlider.value());
   cohSizeOut.parent('cohSizeSli');
 
-  dSepSizeSlider = createSlider(0, 200, 125, 5);
+  dSepSizeSlider = createSlider(0, 200, 50, 5);
   dSepSizeSlider.parent('dSepSizeSli');
   dSepSizeOut = createElement("h6", dSepSizeSlider.value());
   dSepSizeOut.parent('dSepSizeSli');
