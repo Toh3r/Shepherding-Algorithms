@@ -1,0 +1,18 @@
+body {
+  background-image: linear-gradient(to right,rgb(10,10,10), rgb(170,210,170), rgb(10,10,10));
+  text-align: center;
+}
+
+.col-lg-4 {
+  padding-top: 40px;
+}
+
+ h4 {
+   font-weight: bold;
+ }
+
+h5 {
+  padding-top: 40px;
+  font-weight: bold;
+
+}

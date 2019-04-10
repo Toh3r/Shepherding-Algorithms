@@ -349,7 +349,7 @@ Animal.prototype.cohesion = function(herd) {
 // When shepherd enters pressure zone, initiate bunching with neighbours
 Animal.prototype.pressure = function(herd, shepherds, autoShepherds) {
   var neighbordistMax = preSizeSlider.value();
-  var neighbordistMin = fliSizeSlider.value();
+  var neighbordistMin = fliSizeSlider.value(); 
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   var neighCount = 0;

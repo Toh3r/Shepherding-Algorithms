@@ -6,6 +6,7 @@ function setup() {
 
   // Create Canvas
   var canvas = createCanvas(1000,500);
+  img = loadImage('./css/images/field3REM.jpg');
   canvas.parent('myCanvas'); // .parent allows item to manipulated on html page
 
   // Set framerate of canvas
@@ -214,7 +215,8 @@ function setup() {
 
 // Call run to begin simulation
 function draw() {
-  background(36, 188, 25);
+  // background(36, 188, 25);
+  background(img);
   environment.run();
   display();
 }

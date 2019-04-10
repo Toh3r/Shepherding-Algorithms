@@ -23,10 +23,10 @@ app.get('/test', (req, res) => {
   res.render('test.hbs');
 });
 
-// // Render TODO page
-// app.get('/todo', (req, res) => {
-//   res.render('todo.hbs');
-// });
+// Render TODO page
+app.get('/todo', (req, res) => {
+  res.render('todo.hbs');
+});
 
 // Render About page
 app.get('/about', (req, res) => {

@@ -7,6 +7,12 @@ function AutoShepherd() {
   this.r = 3.0;
   this.maxspeed = 1;
   this.movingUp = false;
+  this.target = createVector(0,0);
+  this.targetLock = false;
+  this.herdBottom = 0;
+  this.herdTop = 0;
+  this.herdLeft = 0;
+  this.herdRight = 0;
 }
 
 // Call methods for each shepherd
@@ -94,12 +100,12 @@ AutoShepherd.prototype.render = function() {
 }
 
 AutoShepherd.prototype.bunched = function (herd) {
-  var bottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
-  var top = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
-  var left = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
-  var right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
+  this.herdBottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
+  this.herdTop = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
+  this.herdLeft = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
+  this.herdRight = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
 
-  herDist = dist(left, top, right, bottom);
+  herDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
   if (herDist < 200) {
     return true;
   } else {
@@ -108,32 +114,29 @@ AutoShepherd.prototype.bunched = function (herd) {
 }
 
 AutoShepherd.prototype.collectAnimals = function (herd) {
-  var bottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
-  var top = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
-  var left = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
-  var right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
-
 
  if (this.movingUp == false) {
-   var target = createVector(left - 20, bottom + 40);
+   var target = createVector(this.herdLeft - 20, this.herdBottom + 40);
+   this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
-   if (this.position.y >= bottom + 20 && this.position.x <= left){
+   if (this.position.y >= this.herdBottom + 20 && this.position.x <= this.herdLeft){
      // console.log("Turning true");
      this.movingUp = true;
    }
    return steer;
  } else if (this.movingUp == true) {
-   var target = createVector(left - 20, top - 40);
+   var target = createVector(this.herdLeft - 20, this.herdTop - 40);
+   this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
-   if (this.position.y <= top + 20 ){
+   if (this.position.y <= this.herdTop + 20 ){
      this.movingUp = false;
      // console.log("Turning false")
    }
@@ -142,77 +145,95 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
 }
 
 AutoShepherd.prototype.moveAnimals = function (herd) {
-  var bottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
-  var top = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
-  var left = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
-  var right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
 
-  var mid1 = (top + bottom) / 2; // Y co-ord of herd
-  var mid2 = (right + left) / 2; // X co-ord of herd
+  var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
+  var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
-  var center = createVector(mid1, mid2); // Centre co-ords of herd
+  var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = createVector(980,250); // Location of exit
 
-  var diffCPos = mid1 - goal.y; //Diff of herd y co-ord to goal y co-ord
-  var diffBPos = mid2 - goal.x; // del
-  animalFB = mid2 - left;
-  animalFB2 = mid1 - top; //del
-  // console.log(mid2 - left);
-  // console.log(mid2 - goal.x); //del
+  // var diffXPos = herdX - goal.x; // Diff of herd x co-ord to goal x co-ord
+  var diffYPos = herdY - goal.y; // Diff of herd y co-ord to goal y co-ord
+
+  animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
+  animalFR = Math.abs(herdX - this.herdRight);  // Cords of animal furthest right
+  animalFT = Math.abs(herdY - this.herdTop); // Cords of animal furthest top
+  animalFB = Math.abs(herdY - this.herdBottom); // Cords of animal furthest bottom
+  console.log("Top and Bot: " + animalFT, animalFB)
 
 
-  stroke(0);
-  line(mid2, mid1, 980,250);
-
-  stroke(0, 0, 255);
-  line(mid2 + (diffCPos) /2, mid1 + 40, mid2 - (diffCPos) / 2, mid1 - 40);
-
-  stroke(0, 0, 255);
-  line(mid2 + (diffCPos) /2 - 40, mid1 + 40, mid2 - (diffCPos) / 2 - 40,  mid1 - 40);
+  furthestAnimal = Math.max(animalFL);
 
 
-  stroke(255, 255, 0);
-  line(mid2 + (diffCPos) /2 - (animalFB *2) - 60, mid1 + 40, mid2 - (diffCPos) / 2 - (animalFB*2) - 60, mid1 - 40);
-
-  // Draw pressure zone
+  // Herd centre circle
   fill(255,0,0);
   stroke(0);
-  ellipse(mid2,mid1, 10, 10);
+  ellipse(herdX,herdY, 10, 10);
+
+  // Line to gate
+  stroke(0);
+  line(herdX, herdY, 980,250);
+
+  // line through herd
+  stroke(0, 0, 255);
+  line(herdX + (diffYPos) /2, herdY + 40, herdX - (diffYPos) / 2, herdY - 40);
+
+  // Fli Zone Line
+  stroke(255, 255, 0);
+  line(herdX + (diffYPos)/2 - (furthestAnimal + 30), herdY + 40, herdX - (diffYPos)/2 - (furthestAnimal + 30),herdY  - 40);
+  // ellipse(herdX + (diffYPos)/2 - (furthestAnimal + 30), herdY + (furthestAnimal + 30), 10, 10)
+  // Pre Zone Line
+  stroke(255, 255, 0);
+  line(herdX + (diffYPos) /2 - (furthestAnimal + 50) - 40, herdY +  40 ,herdX - (diffYPos) / 2 - (furthestAnimal + 50) - 40, herdY - 40);
+
 
   if (this.movingUp == false) {
-    if (environment.avgSpeed() < 0.350) {
-      console.log("TARGET + Flight");
-      console.log(environment.avgSpeed());
-      var target = createVector(mid2 + (diffCPos) /2 - 40, mid1 + 40);
+    if (environment.avgSpeed() < 0.35) {
+      // console.log(environment.avgSpeed());
+      var target = createVector(herdX + (diffYPos)/2 - (furthestAnimal + 30), herdY + (furthestAnimal + 30));
     } else {
-      console.log("TARGET + Pressure");
-      console.log(environment.avgSpeed());
-      var target = createVector(mid2 + (diffCPos) /2 - (animalFB *2) - 60, mid1 + 40);
+      // console.log(environment.avgSpeed());
+      var target = createVector(herdX + (diffYPos) /2 - (furthestAnimal + 50) - 40, herdY +  (furthestAnimal + 50));
     }
+    this.targetInBounds(target);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
-    if (this.position.y >= mid1 + 40 && this.position.x <= mid2 + (diffCPos) /2 - 20){
-      console.log("Turning true");
+    if (this.position.y >= herdY + 40 && this.position.x <= herdX + (diffYPos) /2 - 20){
       this.movingUp = true;
     }
     return steer;
   } else if (this.movingUp == true) {
-    if (environment.avgSpeed() < 0.350) {
-      var target = createVector(mid2 - (diffCPos) / 2 - 40,  mid1 - 40);
+    if (environment.avgSpeed() < 0.35) {
+      var target = createVector(herdX - (diffYPos)/2 - (furthestAnimal + 30),herdY  - (furthestAnimal+30));
     } else {
-      var target = createVector(mid2 - (diffCPos) / 2 - (animalFB*2) - 60, mid1 - 40);
+      var target = createVector(herdX - (diffYPos) / 2 - (furthestAnimal + 50) - 40, herdY - (furthestAnimal + 50));
     }
+    this.targetInBounds(target);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
-    if (this.position.y <= mid1 - 40){
+    if (this.position.y <= herdY - 40){
       this.movingUp = false;
     }
     return steer;
   }
+}
+
+AutoShepherd.prototype.targetInBounds = function (target) {
+  if (target.x < 15) {
+    target.x = 15;
+  } else if (target.y < 15) {
+    target.y = 15;
+  } else if (target.x > width - 15) {
+    target.x = width - 15;
+  } else if (target.y > height - 15) {
+    target.y = height - 15;
+  }
+
+  return target;
 }
