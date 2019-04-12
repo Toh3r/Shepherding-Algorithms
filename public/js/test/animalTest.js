@@ -23,6 +23,7 @@ function Animal(x,y) {
   this.wanderCenter = 0;
   this.wanderAngle = random(50);
   this.wanderForce = createVector(0,0);
+  this.vocalizing = false;
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS
@@ -349,7 +350,7 @@ Animal.prototype.cohesion = function(herd) {
 // When shepherd enters pressure zone, initiate bunching with neighbours
 Animal.prototype.pressure = function(herd, shepherds, autoShepherds) {
   var neighbordistMax = preSizeSlider.value();
-  var neighbordistMin = fliSizeSlider.value(); 
+  var neighbordistMin = fliSizeSlider.value();
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   var neighCount = 0;
@@ -527,7 +528,12 @@ Animal.prototype.avoid = function (novelObjects) {
   // Average -- divide by how many
   if (count > 0) {
     steer.div(count);
+    // this.velocity.setMag(0.1);
+    this.vocalizing = true;
+    console.log("Vocalizing");
     this.stressLevel = (this.stressLevel + 0.1);
+  } else {
+    this.vocalizing = false;
   }
 
   // As long as the vector is greater than 0

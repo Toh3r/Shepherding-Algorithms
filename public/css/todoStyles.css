@@ -14,5 +14,9 @@ body {
 h5 {
   padding-top: 40px;
   font-weight: bold;
+}
 
+.done {
+  text-decoration: line-through;
+  text-decoration-color: red;
 }

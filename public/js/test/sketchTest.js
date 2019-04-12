@@ -177,6 +177,10 @@ function setup() {
   nameCheck = createCheckbox("Display Animal Info");
   nameCheck.parent("zoneDiv");
 
+  // Create checkbox to display flight/Pressure zones
+  lineCheck = createCheckbox("Show Shep Lines");
+  lineCheck.parent("zoneDiv");
+
   // shepControl = createCheckbox("Control Shepherd");
   // shepControl.parent("zoneDiv");
 

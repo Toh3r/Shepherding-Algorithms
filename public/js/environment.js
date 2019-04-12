@@ -10,6 +10,10 @@ function Environment() {
   this.accumulatedStress.toFixed(2);
   this.stress = 0;
   this.averageSpeed = 0;
+  this.herdBottom = 0;
+  this.herdTop = 0;
+  this.herdLeft = 0;
+  this.herdRight = 0;
 }
 
 Environment.prototype.run = function() {
@@ -114,25 +118,25 @@ Environment.prototype.removeAll = function() {
 }
 
 Environment.prototype.displayHerd = function() {
-  var bottom = Math.max.apply(Math, this.herd.map(function(o) { return o.position.y; }));
-  var top = Math.min.apply(Math, this.herd.map(function(o) { return o.position.y; }));
-  var left = Math.min.apply(Math, this.herd.map(function(o) { return o.position.x; }));
-  var right = Math.max.apply(Math, this.herd.map(function(o) { return o.position.x; }));
+  this.herdBottom = Math.max.apply(Math, this.herd.map(function(o) { return o.position.y; }));
+  this.herdTop = Math.min.apply(Math, this.herd.map(function(o) { return o.position.y; }));
+  this.herdLeft = Math.min.apply(Math, this.herd.map(function(o) { return o.position.x; }));
+  this.herdRight = Math.max.apply(Math, this.herd.map(function(o) { return o.position.x; }));
 
-  var yPos = (bottom + top) / 2;
-  var xPos = (left + right) / 2;
+  var yPos = (this.herdBottom + this.herdTop) / 2;
+  var xPos = (this.herdLeft + this.herdRight) / 2;
 
   // console.log("/Top/XPOS: " + bottom +"/"+ top + "/"+ xPos);
 
   var topDist, botDist, leftDist, rightDist, ylen, xlen;
 
-  topDist = yPos - top;
-  botDist = bottom - yPos;
+  topDist = yPos - this.herdTop;
+  botDist = this.herdBottom - yPos;
 
   // console.log("Top/Bottom/YPOS: " + top + "/" + bottom + "/" + ysPos);
   // console.log("Top Dist/Bottom Dist: " + topDist + "/" + botDist);
-  leftDist = xPos - left;
-  rightDist = right - xPos;
+  leftDist = xPos - this.herdLeft;
+  rightDist = this.herdRight - xPos;
 
 
   if (topDist > botDist) {
@@ -162,22 +166,11 @@ Environment.prototype.displayHerd = function() {
   // Draw pressure zone
   fill(0);
   stroke(0);
-  ellipse(left,top, 10, 10);
+  ellipse(this.herdLeft,this.herdTop, 10, 10);
 
-  // // Draw pressure zone
-  // fill(0);
-  // stroke(0);
-  // ellipse(left,bottom, 10, 10);
-  //
-  // // Draw pressure zone
-  // fill(0);
-  // stroke(0);
-  // ellipse(right,top, 10, 10);
-
-  // Draw pressure zone
   fill(0);
   stroke(0);
-  ellipse(right, bottom, 10, 10);
+  ellipse(this.herdRight,this.herdBottom, 10, 10);
 
 }
 
