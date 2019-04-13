@@ -14,6 +14,7 @@ function Environment() {
   this.herdTop = 0;
   this.herdLeft = 0;
   this.herdRight = 0;
+  this.vocalizing = false;
 }
 
 Environment.prototype.run = function() {
@@ -172,6 +173,14 @@ Environment.prototype.displayHerd = function() {
   stroke(0);
   ellipse(this.herdRight,this.herdBottom, 10, 10);
 
+}
+
+Environment.prototype.vocalizing = function () {
+  // for (var i = 0; i < this.herd.length; i++) {
+  //   this.averageSpeed += this.herd[i].velocity.mag();
+  // }
+  // this.averageSpeed = this.averageSpeed / this.herd.length;
+  // return this.averageSpeed;
 }
 
 // // Method to allow for class extensions

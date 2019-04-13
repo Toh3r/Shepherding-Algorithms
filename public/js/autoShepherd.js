@@ -119,30 +119,81 @@ AutoShepherd.prototype.bunched = function (herd) {
 
 AutoShepherd.prototype.collectAnimals = function (herd) {
 
+  var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
+  var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
+
+  var center = createVector(herdX, herdY); // Centre co-ords of herd
+  var goal = createVector(980,250); // Location of exit
+
+  var diffXPos = herdX - goal.x; // Diff of herd x co-ord to goal x co-ord
+  var diffYPos = herdY - goal.y; // Diff of herd y co-ord to goal y co-ord
+
+  animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
+  animalFR = Math.abs(herdX - this.herdRight);  // Cords of animal furthest right
+  animalFT = Math.abs(herdY - this.herdTop); // Cords of animal furthest top
+  animalFB = Math.abs(herdY - this.herdBottom); // Cords of animal furthest bottom
+  furthestAnimal = Math.max(animalFL, animalFR, animalFT, animalFB);
+
+  // extend line from goal to herd centre to fz and pre zone
+  let d = int(dist(herdX, herdY, goal.x,goal.y));
+  x3 = herdX + (herdX - goal.x) / d * (furthestAnimal + 20);
+  y3 = herdY + (herdY - goal.y) / d * (furthestAnimal + 20);
+
+  x4 = herdX + (herdX - goal.x) / d * (furthestAnimal + 60);
+  y4 = herdY + (herdY - goal.y) / d * (furthestAnimal + 60);
+
+  // Get Co-ords for line through pre
+  xDiff = x3 - herdX;
+  yDiff = y3 - herdY;
+  a1 = x3 - yDiff;
+  b1 = y3 + xDiff;
+  a2 = x3 + yDiff;
+  b2 = y3 - xDiff;
+  // Co-ords for line through fli
+  xDiff1 = x4 - herdX;
+  yDiff1 = y4 - herdY;
+  c1 = x4 - yDiff1;
+  d1 = y4 + xDiff1;
+  c2 = x4 + yDiff1;
+  d2 = y4 - xDiff1;
+  // Co-ords for line through herd
+  xDiff2 = herdX - x3;
+  yDiff2 = herdY - y3;
+  e1 = herdX - yDiff2;
+  f1 = herdY + xDiff2;
+  e2 = herdX + yDiff2;
+  f2 = herdY - xDiff2;
+
+  //Shortened lines through pre
+  let pzDist = int(dist(c1, d1, x4, y4));
+  let pzDist2 = int(dist(c2, d2, x4, y4));
+  px1 = c1 + (c1 - x4) / pzDist * (-40);
+  py1 = d1 + (d1 - y4) / pzDist * (-40);
+  px2 = c2 + (c2 - x4) / pzDist2 * (-40);
+  py2 = d2 + (d2 - y4) / pzDist2 * (-40);
+
  if (this.movingUp == false) {
-   var target = createVector(this.herdLeft - 20, this.herdBottom + 40);
+   var target = createVector(px1,py1);
    this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
-   if (this.position.y >= this.herdBottom + 20 && this.position.x <= this.herdLeft){
-     // console.log("Turning true");
+   if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
      this.movingUp = true;
    }
    return steer;
  } else if (this.movingUp == true) {
-   var target = createVector(this.herdLeft - 20, this.herdTop - 40);
+   var target = createVector(px2,py2);
    this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
-   if (this.position.y <= this.herdTop + 20 ){
+   if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
      this.movingUp = false;
-     // console.log("Turning false")
    }
    return steer;
  }
@@ -163,20 +214,50 @@ AutoShepherd.prototype.moveAnimals = function () {
   animalFR = Math.abs(herdX - this.herdRight);  // Cords of animal furthest right
   animalFT = Math.abs(herdY - this.herdTop); // Cords of animal furthest top
   animalFB = Math.abs(herdY - this.herdBottom); // Cords of animal furthest bottom
-  // console.log("Top and Bot: " + animalFT, animalFB)
-  furthestAnimal = Math.max(animalFL);
+  furthestAnimal = Math.max(animalFL, animalFR, animalFT, animalFB);
 
-  // var target = createVector(0,0);
-  // this.targetSelect(goal, target);
+  // extend line from goal to herd centre to fz and pre zone
+  let d = int(dist(herdX, herdY, goal.x,goal.y));
+  x3 = herdX + (herdX - goal.x) / d * (furthestAnimal + 20);
+  y3 = herdY + (herdY - goal.y) / d * (furthestAnimal + 20);
 
+  x4 = herdX + (herdX - goal.x) / d * (furthestAnimal + 60);
+  y4 = herdY + (herdY - goal.y) / d * (furthestAnimal + 60);
+
+  // Get Co-ords for line through pre
+  xDiff = x3 - herdX;
+  yDiff = y3 - herdY;
+  a1 = x3 - yDiff;
+  b1 = y3 + xDiff;
+  a2 = x3 + yDiff;
+  b2 = y3 - xDiff;
+  // Co-ords for line through fli
+  xDiff1 = x4 - herdX;
+  yDiff1 = y4 - herdY;
+  c1 = x4 - yDiff1;
+  d1 = y4 + xDiff1;
+  c2 = x4 + yDiff1;
+  d2 = y4 - xDiff1;
+  // Co-ords for line through herd
+  xDiff2 = herdX - x3;
+  yDiff2 = herdY - y3;
+  e1 = herdX - yDiff2;
+  f1 = herdY + xDiff2;
+  e2 = herdX + yDiff2;
+  f2 = herdY - xDiff2;
+
+  //Shortened lines through pre
+  let pzDist = int(dist(c1, d1, x4, y4));
+  px1 = c1 + (c1 - x4) / pzDist * (-40);
+  py1 = d1 + (d1 - y4) / pzDist * (-40);
+  px2 = c2 + (c2 - x4) / pzDist * (-40);
+  py2 = d2 + (d2 - y4) / pzDist * (-40);
 
   if (this.movingUp == false) {
     if (environment.avgSpeed() < 0.35) {
-      // console.log(environment.avgSpeed());
-      var target = createVector(herdX + (diffYPos)/2 - (furthestAnimal + 30), herdY + (furthestAnimal + 30));
+      var target = createVector(a1,b1);
     } else {
-      // console.log(environment.avgSpeed());
-      var target = createVector(herdX + (diffYPos) /2 - (furthestAnimal + 50) - 40, herdY +  (furthestAnimal + 50));
+      var target = createVector(px1,py1);
     }
     this.targetInBounds(target);
     var desired = p5.Vector.sub(target, this.position);
@@ -184,15 +265,17 @@ AutoShepherd.prototype.moveAnimals = function () {
     desired.mult(this.maxspeed);
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
-    if (this.position.y >= herdY + 40 && this.position.x <= herdX + (diffYPos) /2 - 20){
+    if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
       this.movingUp = true;
+      console.log(this.position.y)
+      console.log(target.y)
     }
     return steer;
   } else if (this.movingUp == true) {
     if (environment.avgSpeed() < 0.35) {
-      var target = createVector(herdX - (diffYPos)/2 - (furthestAnimal + 30),herdY  - (furthestAnimal+30));
+      var target = createVector(a2,b2);
     } else {
-      var target = createVector(herdX - (diffYPos) / 2 - (furthestAnimal + 50) - 40, herdY - (furthestAnimal + 50));
+      var target = createVector(px2, py2);
     }
     this.targetInBounds(target);
     var desired = p5.Vector.sub(target, this.position);
@@ -200,7 +283,7 @@ AutoShepherd.prototype.moveAnimals = function () {
     desired.mult(this.maxspeed);
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
-    if (this.position.y <= herdY - 40){
+    if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
       this.movingUp = false;
     }
     return steer;
@@ -220,29 +303,6 @@ AutoShepherd.prototype.targetInBounds = function (target) {
   return target;
 }
 
-// AutoShepherd.prototype.targetSelect = function (goal, target) {
-//   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
-//   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
-//
-//   var diffXPos = herdX - goal.x; // Diff of herd x co-ord to goal x co-ord
-//   var diffYPos = herdY - goal.y; // Diff of herd y co-ord to goal y co-ord
-//
-//   animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
-//   animalFR = Math.abs(herdX - this.herdRight);  // Cords of animal furthest right
-//   animalFT = Math.abs(herdY - this.herdTop); // Cords of animal furthest top
-//   animalFB = Math.abs(herdY - this.herdBottom); // Cords of animal furthest bottom
-//
-//   if (goal.x >= 980) {
-//     this.targetDir = "right";
-//   } else if (goal.x <= 20) {
-//     this.targetDir = "left";
-//   } else if (goal.y >= 20) {
-//     this.targetDir = "top";
-//   } else if (goal.y >= 480) {
-//     this.targetDir = "bottom";
-//   }
-// }
-
 AutoShepherd.prototype.displayShepLines = function () {
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
@@ -250,16 +310,11 @@ AutoShepherd.prototype.displayShepLines = function () {
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = createVector(980,250); // Location of exit
 
-  // var diffXPos = herdX - goal.x; // Diff of herd x co-ord to goal x co-ord
-  var diffYPos = herdY - goal.y; // Diff of herd y co-ord to goal y co-ord
-
   animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
   animalFR = Math.abs(herdX - this.herdRight);  // Cords of animal furthest right
   animalFT = Math.abs(herdY - this.herdTop); // Cords of animal furthest top
   animalFB = Math.abs(herdY - this.herdBottom); // Cords of animal furthest bottom
-  // console.log("Top and Bot: " + animalFT, animalFB)
-  furthestAnimal = Math.max(animalFL, animalFR,animalFT,animalDisplay);
-
+  furthestAnimal = Math.max(animalFL, animalFR,animalFT,animalFB);
 
   // Herd centre circle
   fill(255,0,0);
@@ -272,15 +327,11 @@ AutoShepherd.prototype.displayShepLines = function () {
 
   // extend line from goal to herd centre to fz and pre zone
   let d = int(dist(herdX, herdY, goal.x,goal.y));
-  x3 = herdX + (herdX - goal.x) / d * (animalFL + 30);
-  y3 = herdY + (herdY - goal.y) / d * (animalFL + 30);
+  x3 = herdX + (herdX - goal.x) / d * (furthestAnimal + 20);
+  y3 = herdY + (herdY - goal.y) / d * (furthestAnimal + 20);
 
-  x4 = herdX + (herdX - goal.x) / d * (animalFL + 90);
-  y4 = herdY + (herdY - goal.y) / d * (animalFL + 90);
-
-
-
-  // console.log(x3 + ", " + y3);
+  x4 = herdX + (herdX - goal.x) / d * (furthestAnimal + 60);
+  y4 = herdY + (herdY - goal.y) / d * (furthestAnimal + 60);
 
   // Line to fli
   stroke(99,52,211);
@@ -301,20 +352,17 @@ AutoShepherd.prototype.displayShepLines = function () {
   fill(255,0,0);
   ellipse(goal.x,goal.y, 10,10)
 
-  // // line through herd
-  // stroke(0, 0, 255);
-  // line(herdX + (diffYPos) /2, herdY + 40, herdX - (diffYPos) / 2, herdY - 40);
 
-  // Get Co-ords for line through pre
+  // Get Co-ords for line through fli
   xDiff = x3 - herdX;
   yDiff = y3 - herdY;
   a1 = x3 - yDiff;
   b1 = y3 + xDiff;
   a2 = x3 + yDiff;
   b2 = y3 - xDiff;
-  // Co-ords for line through fli
-  xDiff1 = x4 - x3;
-  yDiff1 = y4 - y3;
+  // Co-ords for line through pre
+  xDiff1 = x4 - herdX;
+  yDiff1 = y4 - herdY;
   c1 = x4 - yDiff1;
   d1 = y4 + xDiff1;
   c2 = x4 + yDiff1;
@@ -327,19 +375,33 @@ AutoShepherd.prototype.displayShepLines = function () {
   e2 = herdX + yDiff2;
   f2 = herdY - xDiff2;
 
-  //Line through Pre
-  line(a1,b1,a2,b2);
+  //Shortened lines through pre
+  let pzDist = int(dist(c1, d1, x4, y4));
+  px1 = c1 + (c1 - x4) / pzDist * (-40);
+  py1 = d1 + (d1 - y4) / pzDist * (-40);
+  px2 = c2 + (c2 - x4) / pzDist * (-40);
+  py2 = d2 + (d2 - y4) / pzDist * (-40);
 
   //Line through Fli
-  line(c1,d1,c2,d2);
+  stroke(0);
+  line(a1,b1,a2,b2);
+
+  //Line through Pre
+  stroke(255,255,0);
+  line(px1,py1,px2,py2);
 
   //Line Through herd
   line(e1,f1,e2,f2);
 
-  // // Fli Zone Line
-  // stroke(255, 255, 0);
-  // line(herdX + (diffYPos)/2 - (furthestAnimal + 30), herdY + 40, herdX - (diffYPos)/2 - (furthestAnimal + 30),herdY  - 40);
-  // // Pre Zone Line
-  // stroke(255, 255, 0);
-  // line(herdX + (diffYPos) /2 - (furthestAnimal + 50) - 40, herdY +  40 ,herdX - (diffYPos) / 2 - (furthestAnimal + 50) - 40, herdY - 40);
+  // dot on fli line
+  ellipse(a1,b1,10,10);
+  ellipse(a2,b2,10,10);
+
+  //dots on pre line
+  ellipse(px1,py1,10,10);
+  ellipse(px2,py2,10,10);
+}
+
+AutoShepherd.prototype.avoidObstacle = function (goal,target) {
+
 }

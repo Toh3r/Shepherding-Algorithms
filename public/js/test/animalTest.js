@@ -165,6 +165,8 @@ Animal.prototype.seek = function(target) {
 Animal.prototype.render = function () {
   // Draw a triangle rotated in the direction of velocity
   var theta = this.velocity.heading() + radians(90);
+  // var theta = 4.7;
+  // console.log(theta);
   fill(0, 0, 0);
   stroke(255);
   push();
