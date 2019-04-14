@@ -14,7 +14,7 @@ function Environment() {
   this.herdTop = 0;
   this.herdLeft = 0;
   this.herdRight = 0;
-  this.vocalizing = false;
+  this.vocal = false;
 }
 
 Environment.prototype.run = function() {
@@ -176,11 +176,13 @@ Environment.prototype.displayHerd = function() {
 }
 
 Environment.prototype.vocalizing = function () {
-  // for (var i = 0; i < this.herd.length; i++) {
-  //   this.averageSpeed += this.herd[i].velocity.mag();
-  // }
-  // this.averageSpeed = this.averageSpeed / this.herd.length;
-  // return this.averageSpeed;
+  this.vocal = false;
+  for (var i = 0; i < this.herd.length; i++) {
+    if (this.herd[i].vocalizing == true){
+      this.vocal = true;
+    }
+  }
+  return this.vocal;
 }
 
 // // Method to allow for class extensions

@@ -532,7 +532,7 @@ Animal.prototype.avoid = function (novelObjects) {
     steer.div(count);
     // this.velocity.setMag(0.1);
     this.vocalizing = true;
-    console.log("Vocalizing");
+    // console.log("Vocalizing");
     this.stressLevel = (this.stressLevel + 0.1);
   } else {
     this.vocalizing = false;
