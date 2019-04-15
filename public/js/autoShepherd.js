@@ -2,13 +2,14 @@
 // Create shepherd attributes
 function AutoShepherd() {
   this.acceleration = createVector(0,0);
-  this.velocity = createVector(random(-3,3),random(-3,3));
+  this.velocity = createVector(random(-1,1),random(-1,1));
   this.position = createVector(950, 250);
   this.r = 3.0;
   this.maxspeed = 1;
   this.movingUp = false;
   this.target = createVector(0,0);
   this.targetLock = false;
+  this.oldTarget = createVector(0,0);
   this.herdBottom = 0;
   this.herdTop = 0;
   this.herdLeft = 0;
@@ -178,7 +179,7 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
  }
 }
 
-AutoShepherd.prototype.moveAnimals = function () {
+AutoShepherd.prototype.moveAnimals = function (herd) {
 
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
@@ -186,7 +187,7 @@ AutoShepherd.prototype.moveAnimals = function () {
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = createVector(980,250); // Location of exit
 
-  if (environment.vocalizing() == true) {
+  if (environment.vocalizing() == true && environment.avgSpeed() < 0.20) {
     goal = this.avoidObstacle(center, goal);
   }
 
@@ -213,15 +214,14 @@ AutoShepherd.prototype.moveAnimals = function () {
   pzp1 = this.adjustLineLen(pzp1,l2pz, -40);
   pzp2 = this.adjustLineLen(pzp2,l2pz, -40);
 
+  herdHeading = this.checkHeading(herd);
+
   if (this.movingUp == false) {
-    if (environment.avgSpeed() < 0.35) {
+    if (environment.avgSpeed() < 0.35 || !(-0.75 < herdHeading && herdHeading < 0.75)) {
       var target = createVector(fzp1.x,fzp1.y);
     } else {
       var target = createVector(pzp1.x,pzp1.y);
     }
-    // if (environment.vocalizig() == true) {
-    //   target = this.avoidObstacle(center,hlp1,flp2)
-    // }
     this.targetInBounds(target);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
@@ -233,7 +233,7 @@ AutoShepherd.prototype.moveAnimals = function () {
     }
     return steer;
   } else if (this.movingUp == true) {
-    if (environment.avgSpeed() < 0.35) {
+    if (environment.avgSpeed() < 0.35 || !(-0.75 < herdHeading && herdHeading < 0.75)) {
       var target = createVector(fzp2.x,fzp2.y);
     } else {
       var target = createVector(pzp2.x,pzp2.y);
@@ -271,7 +271,7 @@ AutoShepherd.prototype.displayShepLines = function () {
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = createVector(980,250); // Location of exit
 
-  if (environment.vocalizing() == true) {
+  if (environment.vocalizing() == true && environment.avgSpeed() < 0.20) {
     goal = this.avoidObstacle(center, goal);
   }
 
@@ -362,4 +362,12 @@ AutoShepherd.prototype.adjustLineLen = function (p1,p2,d) {
   lp2 = p1.y + (p1.y - p2.y) / originalDist * (d);
   point = createVector(lp1,lp2);
   return point;
+}
+AutoShepherd.prototype.checkHeading = function (herd) {
+  totalHeading = 0;
+  for (var i = 0; i < herd.length; i++) {
+    totalHeading += herd[i].velocity.heading();
+  }
+  averageHeading = totalHeading/ herd.length;
+  return averageHeading;
 }

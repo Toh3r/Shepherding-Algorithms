@@ -2,11 +2,11 @@
 // Set Animal attributes
 function Animal(x,y) {
   this.acceleration = createVector(0,0); // Starting accelertion
-  this.velocity = createVector(random(-3,3),random(-3,3)); // Create starting velocity direction
+  this.velocity = createVector(random(-1,1),random(-1,1)); // Create starting velocity direction
   this.position = createVector(x,y); // Starting position
   this.r = 3.0;         // Animal size
   this.maxspeed = .1;   // Maximum speed
-  this.maxforce = 0.03; // Maximum steering force
+  this.maxforce = 0.05; // Maximum steering force
   this.velocity.setMag(0.1);   // Create starting velocity speed
   this.name = chance.first();  // Give every animal a random name
   this.stressLevel = 0;        // Starting stress level of animal
@@ -165,8 +165,7 @@ Animal.prototype.seek = function(target) {
 Animal.prototype.render = function () {
   // Draw a triangle rotated in the direction of velocity
   var theta = this.velocity.heading() + radians(90);
-  // var theta = 4.7;
-  // console.log(theta);
+  // var theta = -1.5 + radians(90);
   fill(0, 0, 0);
   stroke(255);
   push();

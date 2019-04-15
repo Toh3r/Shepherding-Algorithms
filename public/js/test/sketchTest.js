@@ -13,17 +13,17 @@ function setup() {
   // setFrameRate(60);
 
   // Max Speed Sliders
-  wSpeedSlider = createSlider(0, 2, 0.5, 0.1);
+  wSpeedSlider = createSlider(0, 2, 0.2, 0.1);
   wSpeedSlider.parent('wSpeSli');
   wSpeOut = createElement("h6", wSpeedSlider.value());
   wSpeOut.parent('wSpeSli');
 
-  pSpeedSlider = createSlider(0, 2, 0.5, 0.1);
+  pSpeedSlider = createSlider(0, 2, 0.6, 0.1);
   pSpeedSlider.parent('pSpeSli');
   pSpeOut = createElement("h6", pSpeedSlider.value());
   pSpeOut.parent('pSpeSli');
 
-  fSpeedSlider = createSlider(0, 2, 0.5, 0.1);
+  fSpeedSlider = createSlider(0, 2, 0.6, 0.1);
   fSpeedSlider.parent('fSpeSli');
   fSpeOut = createElement("h6", fSpeedSlider.value());
   fSpeOut.parent('fSpeSli');
@@ -34,12 +34,12 @@ function setup() {
   wVelOut = createElement("h6", wVelSlider.value());
   wVelOut.parent('wVelSli');
 
-  pVelSlider = createSlider(0, 2, 0.5, 0.1);
+  pVelSlider = createSlider(0, 2, 0.6, 0.1);
   pVelSlider.parent('pVelSli');
   pVelOut = createElement("h6", pVelSlider.value());
   pVelOut.parent('pVelSli');
 
-  fVelSlider = createSlider(0, 2, 0.5, 0.1);
+  fVelSlider = createSlider(0, 2, 0.6, 0.1);
   fVelSlider.parent('fVelSli');
   fVelOut = createElement("h6", fVelSlider.value());
   fVelOut.parent('fVelSli');
@@ -82,7 +82,7 @@ function setup() {
   cohWanOut = createElement("h6", cohWanSlider.value());
   cohWanOut.parent('cohWan');
 
-  cohPreSlider = createSlider(0, 5, 1.5, 0.1);
+  cohPreSlider = createSlider(0, 5, 1, 0.1);
   cohPreSlider.parent('cohPre');
   cohPreOut = createElement("h6", cohPreSlider.value());
   cohPreOut.parent('cohPre');
@@ -109,7 +109,7 @@ function setup() {
   sepSizeOut = createElement("h6", sepSizeSlider.value());
   sepSizeOut.parent('sepSizeSli');
 
-  aliSizeSlider = createSlider(0, 200, 50, 5);
+  aliSizeSlider = createSlider(0, 200, 200, 5);
   aliSizeSlider.parent('aliSizeSli');
   aliSizeOut = createElement("h6", aliSizeSlider.value());
   aliSizeOut.parent('aliSizeSli');
