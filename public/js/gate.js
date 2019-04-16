@@ -5,6 +5,12 @@ function Gate (x, y) {
   this.r = 25.0;
 }
 
+// Render Gate on canvas
+Gate.prototype.run = function() {
+  this.goalZone();
+  this.render();
+}
+
 // Draw Gate
 Gate.prototype.render = function () {
   rectMode(CORNER);
@@ -28,8 +34,6 @@ Gate.prototype.goalZone = function () {
   text('GoalZone', 890, 180);
 }
 
-// Render Gate on canvas
-Gate.prototype.run = function() {
-  this.goalZone();
-  this.render();
-}
+// Gate.prototype.desiredHeading = function () {
+//
+// }
