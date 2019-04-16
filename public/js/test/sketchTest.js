@@ -181,6 +181,10 @@ function setup() {
   lineCheck = createCheckbox("Show Shep Lines");
   lineCheck.parent("zoneDiv");
 
+  // Create checkbox to display flight/Pressure zones
+  sectorCheck = createCheckbox("Show Sectors");
+  sectorCheck.parent("zoneDiv");
+
   // shepControl = createCheckbox("Control Shepherd");
   // shepControl.parent("zoneDiv");
 

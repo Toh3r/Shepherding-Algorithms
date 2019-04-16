@@ -42,6 +42,9 @@ Environment.prototype.run = function() {
     this.displayHerd(); // Render herd zone
   }
 
+  if (sectorCheck.checked() == true) {
+    this.sectors();
+  }
 }
 
 // Methods to add agents/Objects to arrays
@@ -183,6 +186,36 @@ Environment.prototype.vocalizing = function () {
     }
   }
   return this.vocal;
+}
+
+Environment.prototype.sectors = function () {
+  stroke(255);
+  fill(0,0,0,0.1);
+  rect(0,0, width/3, height/3);
+  rect(width/3,0, width/3, height/3);
+  rect(width-width/3,0, width/3,height/3);
+  // Middle Sectors
+  rect(0,height/3, width/3, height/3);
+  rect(width/3,height/3, width/3, height/3);
+  rect(width-width/3,height/3, width/3,height/3);
+  // Middle Sectors
+  rect(0,height-height/3, width/3, height/3);
+  rect(width/3,height -height/3, width/3, height/3);
+  rect(width-width/3,height-height/3, width/3,height/3);
+
+  //Sector labels
+  stroke(0,0,255);
+  text("Sector 1", 10, height/3 - 10);
+  text("Sector 2", width/3 + 10, height/3 - 10);
+  text("Sector 3", width-width/3 + 10, height/3 - 10);
+
+  text("Sector 4", 10, height-height/3 - 10);
+  text("Sector 5", width/3 + 10, height - height/3 - 10);
+  text("Sector 6", width-width/3 + 10, height - height/3 - 10);
+
+  text("Sector 7", 10, height - 10);
+  text("Sector 8", width/3 + 10, height - 10);
+  text("Sector 9", width-width/3 + 10, height - 10);
 }
 
 // // Method to allow for class extensions

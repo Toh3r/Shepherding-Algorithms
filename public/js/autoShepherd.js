@@ -187,7 +187,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = createVector(980,250); // Location of exit
 
-  if (environment.vocalizing() == true && environment.avgSpeed() < 0.20) {
+  if (environment.vocalizing() == true) {
     goal = this.avoidObstacle(center, goal);
   }
 
@@ -271,7 +271,7 @@ AutoShepherd.prototype.displayShepLines = function () {
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = createVector(980,250); // Location of exit
 
-  if (environment.vocalizing() == true && environment.avgSpeed() < 0.20) {
+  if (environment.vocalizing() == true) {
     goal = this.avoidObstacle(center, goal);
   }
 
