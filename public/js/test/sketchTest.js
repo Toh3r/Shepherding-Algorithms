@@ -192,6 +192,10 @@ function setup() {
   droneHerd.parent('droneHerd');
   droneHerd.mouseClicked(herd);
 
+  createOracle = createButton('Oracle');
+  createOracle.parent('oracleBtn');
+  createOracle.mouseClicked(oracle);
+
   resetBtn = createButton('Resest');
   resetBtn.parent('resetBtn');
   resetBtn.mouseClicked(createNewHerd);
@@ -265,6 +269,12 @@ function createNewHerd () {
   for (var i = 0; i < 0; i++) {
     var as = new AutoShepherd();
     environment.addAutoShepherd(as);
+  }
+
+  // Create starting auto shepherd
+  for (var i = 0; i < 0; i++) {
+    var o = new Oracle();
+    environment.Oracle(o);
   }
 
   // Create starting novelties in random positions
@@ -412,4 +422,9 @@ function deleteAll() {
 function herd() {
   console.log("Goin' Herding");
   environment.addAutoShepherd(new AutoShepherd());
+}
+
+function oracle() {
+  console.log("Goin' Herding");
+  environment.addOracle(new Oracle());
 }

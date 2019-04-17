@@ -4,6 +4,7 @@ function Environment() {
   this.herd = [];
   this.shepherds = [];
   this.autoShepherds = [];
+  this.oracles = [];
   this.novelObjects = [];
   this.gates = [];
   this.accumulatedStress = 0;
@@ -38,6 +39,10 @@ Environment.prototype.run = function() {
     this.autoShepherds[i].run(this.herd);
   }
 
+  for(var i = 0; i < this.oracles.length; i++) {
+    this.oracles[i].run(this.herd);
+  }
+
   if (herdZoneCheck.checked() == true) {
     this.displayHerd(); // Render herd zone
   }
@@ -58,6 +63,10 @@ Environment.prototype.addShepherd = function(s) {
 
 Environment.prototype.addAutoShepherd = function(as) {
   this.autoShepherds.push(as);
+}
+
+Environment.prototype.addOracle = function(o) {
+  this.oracles.push(o);
 }
 
 Environment.prototype.addNovelty = function(n) {

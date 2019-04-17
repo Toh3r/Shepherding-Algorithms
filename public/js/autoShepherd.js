@@ -5,6 +5,7 @@ function AutoShepherd() {
   this.velocity = createVector(random(-1,1),random(-1,1));
   this.position = createVector(950, 250);
   this.r = 3.0;
+  this.maxForce = 0.3;
   this.maxspeed = 1;
   this.movingUp = false;
   this.target = createVector(0,0);
@@ -55,19 +56,6 @@ AutoShepherd.prototype.update = function() {
   this.position.add(this.velocity);
   // Reset accelertion to 0 each cycle
   this.acceleration.mult(0);
-}
-
-// A method that calculates and applies a steering force towards a target
-// STEER = DESIRED MINUS VELOCITY
-AutoShepherd.prototype.seek = function(target) {
-  var desired = p5.Vector.sub(target,this.position);  // A vector pointing from the location to the target
-  // Normalize desired and scale to maximum speed
-  desired.normalize();
-  desired.mult(this.maxspeed);
-  // Steering = Desired minus Velocity
-  var steer = p5.Vector.sub(desired,this.velocity);
-  steer.limit(this.maxforce);  // Limit to maximum steering force
-  return steer;
 }
 
 // Method to prevent shepherd from leaving enclosure
