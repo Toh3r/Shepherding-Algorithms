@@ -186,7 +186,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   furthestAnimal = Math.max(animalFL, animalFR, animalFT, animalFB);
 
   // Lines to flight zone and pressure zone
-  let l2fz = this.adjustLineLen(center,goal,furthestAnimal+20);
+  let l2fz = this.adjustLineLen(center,goal,furthestAnimal+15);
   let l2pz = this.adjustLineLen(center,goal,furthestAnimal+60);
 
   // Get co-ords for flight zone line points

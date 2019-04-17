@@ -6,6 +6,11 @@ function Oracle () {
   this.r = 3.0;
   this.maxspeed = 1;
   this.maxForce = 0.3;
+  this.firstSearch = true;
+  this.moving = true;
+  this.oldTarget = createVector(0,0);
+  this.startx = width - 125;
+  this.starty = 125;
 }
 
 // Call methods for each shepherd
@@ -71,7 +76,22 @@ Oracle.prototype.render = function() {
 }
 
 Oracle.prototype.searchForAnimals = function () {
-  var target = createVector(width-125,125);
+  if (this.firstSearch == true) {
+    var target = createVector(width-125,125);
+    if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
+      this.firstSearch = false;
+    }
+  } else if (this.moving == false && height - this.position.y > 125) {
+      var target = createVector(width-125,this.position.y + 250);
+      this.moving = true;
+  } else if (this.moving == true) {
+      var target = this.oldTarget;
+  } else {
+    var target = this.oldTarget;
+    this.maxspeed = 0;
+  }
+
+  this.oldTarget = target;
 
   var desired = p5.Vector.sub(target, this.position);
   desired.normalize();
@@ -79,7 +99,11 @@ Oracle.prototype.searchForAnimals = function () {
   var steer = p5.Vector.sub(desired, this.velocity);
   steer.limit(this.maxforce);
   if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
-    this.maxspeed = 0;
+    // console.log("Hit target");
+    this.moving = false;
   }
   return steer;
+}
+
+Oracle.prototype.calculateTargets = function () {
 }

@@ -1,6 +1,7 @@
 body {
-  background-image: linear-gradient(to right,rgb(10,10,10), rgb(170,210,170), rgb(10,10,10));
+  background-image: linear-gradient(to right,rgb(10,10,10), rgb(63, 136, 191), rgb(10,10,10));
   text-align: center;
+  color: rgb(36, 188, 25)
 }
 
 .col-lg-4 {
