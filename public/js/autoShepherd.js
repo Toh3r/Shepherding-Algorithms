@@ -16,6 +16,7 @@ function AutoShepherd() {
   this.herdLeft = 0;
   this.herdRight = 0;
   this.targetDir = "right";
+  this.timestep = 0;
 }
 
 // Call methods for each shepherd
@@ -27,6 +28,11 @@ AutoShepherd.prototype.run = function(herd) {
   if(lineCheck.checked() == true) {
     this.displayShepLines();
   }
+  this.timestep++;
+  if (this.timestep % 50 == 0){
+    console.log("Timestep: " + this.timestep);
+  }
+
 }
 
 // Apply each behavioural rule to each animal

@@ -10,7 +10,7 @@ function setup() {
   canvas.parent('myCanvas'); // .parent allows item to manipulated on html page
 
   // Set framerate of canvas
-  // setFrameRate(60);
+  // setFrameRate(10);
 
   // Max Speed Sliders
   wSpeedSlider = createSlider(0, 2, 0.2, 0.1);
