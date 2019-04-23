@@ -34,6 +34,6 @@ Gate.prototype.goalZone = function () {
   text('GoalZone', 890, 180);
 }
 
-// Gate.prototype.desiredHeading = function () {
-//
-// }
+Gate.prototype.desiredHeading = function () {
+
+}

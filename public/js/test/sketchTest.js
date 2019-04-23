@@ -227,8 +227,9 @@ function setup() {
 
 // Call run to begin simulation
 function draw() {
-  // background(36, 188, 25);
-  background(img);
+  background(9, 123, 18);
+  // background(255);
+  // background(img);
   environment.run();
   display();
 }

@@ -123,6 +123,8 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds) {
     }
   }
 
+  avo.mult(0.1);
+
   // Add the force vectors to acceleration
   this.applyForce(mov);
   this.applyForce(sep);
@@ -208,11 +210,15 @@ Animal.prototype.renderZones = function () {
   fill(0,0,0,0.0)
   stroke(255, 0, 0);
   ellipse(this.position.x,this.position.y, fliSizeSlider.value() * 2, fliSizeSlider.value() * 2);
+  text("Flight", this.position.x + fliSizeSlider.value(), this.position.y);
+  text("Zone", this.position.x + fliSizeSlider.value(), this.position.y + 15);
 
   // Draw pressure zone
   fill(0,0,0,0.0)
   stroke(0, 0, 0);
   ellipse(this.position.x,this.position.y, preSizeSlider.value() * 2, preSizeSlider.value() * 2);
+  text("Pressure", this.position.x + preSizeSlider.value(), this.position.y);
+  text("Zone", this.position.x + preSizeSlider.value(), this.position.y + 15);
 };
 
 Animal.prototype.renderForces = function () {
@@ -228,7 +234,7 @@ Animal.prototype.renderForces = function () {
   ellipse(this.position.x,this.position.y, aliSizeSlider.value() * 2, aliSizeSlider.value() * 2);
   fill(0)
   textSize(12);
-  text("Ali", this.position.x + aliSizeSlider.value(), this.position.y);
+  text("Ali", this.position.x + aliSizeSlider.value(), this.position.y + 15);
 
   fill(0,0,0,0.0)
   stroke(0);
