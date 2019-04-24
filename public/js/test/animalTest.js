@@ -24,6 +24,7 @@ function Animal(x,y) {
   this.wanderAngle = random(50);
   this.wanderForce = createVector(0,0);
   this.vocalizing = false;
+  this.oldheading = 0;
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS
@@ -117,6 +118,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds) {
       wan.mult(.1);
       this.applyForce(wan);
     } else if (this.velocity.mag() > 0.15) {
+      this.velocity.heading = this.oldheading;
       sep.mult(sepPreSlider.value());
       ali.mult(aliPreSlider.value());
       coh.mult(cohFliSlider.value());
@@ -135,6 +137,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds) {
 
   this.oldFli = fli;
   this.oldPre = pre; // Store old array values (Used for comparison in following frame)
+  this.oldheading = this.velocity.heading;
 }
 
 // Method to update location
@@ -435,6 +438,10 @@ Animal.prototype.wander = function() {
 
     this.setAngle(displacement, this.wanderAngle);
     this.wanderAngle += random(-0.1, 0.1);
+
+    // fill(0,0,0,0.1);
+    // stroke(0);
+    // line(this.velocity.heading.x, this.position.y, this.wanderCenter.x, this.wanderCenter.y);
 
     this.wanderForce = this.wanderCenter.add(displacement);
     // this.wanderForce.limit(this.maxForce);
