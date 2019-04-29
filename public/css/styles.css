@@ -5,6 +5,7 @@ html, .container {
 
 body {
 	min-height: 100%;
+	min-width: 100%;
 	font-family: 'Orbitron', sans-serif;
   background-color: black;
   border: 5px solid white;
@@ -38,7 +39,8 @@ canvas {
   background-image: url('./images/herd.jpg');
   background-size: cover;
   background-position: center;
-	overflow: hidden;
+	overflow-x: auto;
+	overflow-y: hidden;
 }
 
 #controls {

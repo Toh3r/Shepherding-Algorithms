@@ -4,7 +4,7 @@ function Animal(x,y) {
   this.acceleration = createVector(0,0); // Starting accelertion
   this.velocity = createVector(random(-1,1),random(-1,1)); // Create starting velocity direction
   this.position = createVector(x,y); // Starting position
-  this.r = 3.0;         // Animal size
+  this.r = 2.5;         // Animal size
   this.maxspeed = .1;   // Maximum speed
   this.maxforce = 0.05; // Maximum steering force
   this.velocity.setMag(0.1);   // Create starting velocity speed
@@ -178,8 +178,9 @@ Animal.prototype.render = function () {
   rotate(theta);
   beginShape();
   vertex(0, -this.r*1.5);
-  vertex(-this.r, this.r*1.5);
-  vertex(this.r, this.r*1.5);
+  vertex(-this.r, this.r*2.5);
+  vertex(this.r, this.r*2.5);
+  // rect(0, 0, 25, 15, 10, 0);
   endShape(CLOSE);
   pop();
 }

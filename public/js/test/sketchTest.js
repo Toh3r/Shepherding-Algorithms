@@ -5,8 +5,11 @@ var environment;
 function setup() {
 
   // Create Canvas
-  var canvas = createCanvas(1000,500);
-  img = loadImage('./css/images/field3REM.jpg');
+  var canvas = createCanvas(2400,800);
+  img = loadImage('./css/images/Field1B.jpg');
+  img2 = loadImage('./css/images/Field_1.jpg');
+  img3 = loadImage('./css/images/Field_2.jpg');
+  img4 = loadImage('./css/images/Field_3.jpg');
   canvas.parent('myCanvas'); // .parent allows item to manipulated on html page
 
   // Set framerate of canvas
@@ -204,6 +207,16 @@ function setup() {
   pauseBtn.parent('pauseBtn');
   pauseBtn.mouseClicked(togglePlay);
 
+  envRadio = createRadio();
+  envRadio.parent("envRadio");
+  envRadio.option('Environment 1');
+  envRadio.option('Environment 2');
+  envRadio.option('Environment 3');
+  envRadio.option('Environment 4');
+  envRadio.style('width', '100px');
+  textAlign(CENTER);
+  fill(255, 0, 0);
+
 
   // Initialize starting environment (with agents/objects)
   environment = new Environment();
@@ -227,9 +240,9 @@ function setup() {
 
 // Call run to begin simulation
 function draw() {
-  background(9, 123, 18);
+  // background(9, 123, 18);
   // background(255);
-  // background(img);
+  background(img4);
   environment.run();
   display();
 }
