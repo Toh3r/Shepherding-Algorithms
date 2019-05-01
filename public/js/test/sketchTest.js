@@ -5,7 +5,7 @@ var environment;
 function setup() {
 
   // Create Canvas
-  var canvas = createCanvas(2400,800);
+  var canvas = createCanvas(1000,600);
   img = loadImage('./css/images/Field1B.jpg');
   img2 = loadImage('./css/images/Field_1.jpg');
   img3 = loadImage('./css/images/Field_2.jpg');
@@ -242,7 +242,7 @@ function setup() {
 function draw() {
   // background(9, 123, 18);
   // background(255);
-  background(img4);
+  background(img);
   environment.run();
   display();
 }
