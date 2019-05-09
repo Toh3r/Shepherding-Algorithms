@@ -209,10 +209,10 @@ function setup() {
 
   envRadio = createRadio();
   envRadio.parent("envRadio");
-  envRadio.option('Environment 1');
-  envRadio.option('Environment 2');
-  envRadio.option('Environment 3');
-  envRadio.option('Environment 4');
+  envRadio.option('Environment 1', 1);
+  envRadio.option('Environment 2', 2);
+  envRadio.option('Environment 3', 3);
+  envRadio.option('Environment 4', 4);
   envRadio.style('width', '100px');
   textAlign(CENTER);
   fill(255, 0, 0);
@@ -264,6 +264,29 @@ function togglePlay() {
 function createNewHerd () {
   // Initialize starting environment (with agents/objects)
   environment = new Environment();
+
+  var enVal = envRadio.value();
+  if (enVal == 1) {
+    canvas.remove();
+    canvas = createCanvas(1000,600);
+    img = loadImage('./css/images/Field1B.jpg');
+    canvas.parent('myCanvas');
+  } else if (enVal == 2) {
+    canvas.remove();
+    canvas = createCanvas(1000,600);
+    img = loadImage('./css/images/Field_1.jpg');
+    canvas.parent('myCanvas');
+  } else if (enVal == 3) {
+    canvas.remove();
+    canvas = createCanvas(1800,600);
+    img = loadImage('./css/images/Field_2.jpg');
+    canvas.parent('myCanvas');
+  } else if (enVal == 4) {
+    canvas.remove();
+    canvas = createCanvas(2400,800);
+    img = loadImage('./css/images/Field_3.jpg');
+    canvas.parent('myCanvas');
+  }
 
   //Create starting animals in random positions
   for (var i = 0; i < 10; i++) {
