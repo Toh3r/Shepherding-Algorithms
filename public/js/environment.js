@@ -7,6 +7,7 @@ function Environment() {
   this.oracles = [];
   this.novelObjects = [];
   this.gates = [];
+  this.obstacles = [];
   this.accumulatedStress = 0;
   this.accumulatedStress.toFixed(2);
   this.stress = 0;
@@ -43,6 +44,10 @@ Environment.prototype.run = function() {
     this.oracles[i].run(this.herd);
   }
 
+  for(var i = 0; i < this.obstacles.length; i++) {
+    this.obstacles[i].run();
+  }
+
   if (herdZoneCheck.checked() == true) {
     this.displayHerd(); // Render herd zone
   }
@@ -73,6 +78,10 @@ Environment.prototype.addNovelty = function(n) {
   this.novelObjects.push(n);
 }
 
+Environment.prototype.addObstacle = function(ob) {
+  this.obstacles.push(ob);
+}
+
 Environment.prototype.addGate = function(g) {
   this.gates.push(g);
 }
@@ -88,6 +97,10 @@ Environment.prototype.deleteShepherd = function() {
 
 Environment.prototype.deleteNovelty = function() {
   this.novelObjects.pop();
+}
+
+Environment.prototype.deleteObstacle = function() {
+  this.obstacles.pop();
 }
 
 Environment.prototype.displayNums = function () {
@@ -127,6 +140,7 @@ Environment.prototype.removeAll = function() {
   this.herd.length = 0;
   this.shepherds.length = 0;
   this.novelObjects.length = 0;
+  this.obstacles.length = 0;
   this.accumulatedStress = 0;
 }
 

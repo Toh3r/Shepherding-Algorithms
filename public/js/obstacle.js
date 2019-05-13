@@ -1,8 +1,10 @@
 //Novelty class
 // Set novelty attributes
-function Obstacle (x, y) {
+function Obstacle (x, y, w, h, rot) {
   this.position = createVector(x, y);
-  this.r = 0;
+  this.w = w;
+  this.h = h
+  this.rot = radians(rot);
 }
 
 // Render novelty on canvas
@@ -11,13 +13,11 @@ Obstacle.prototype.run = function() {
 }
 
 Obstacle.prototype.render = function () {
-  fill(190, 87, 23);
+  fill(125,125,125, 130);
   stroke(0);
   push();
-  ellipse(this.position.x,this.position.y, this.r, this.r);
+  translate(this.position.x, this.position.y);
+  rotate(this.rot);
+  rect(0,0, this.w, this.h);
   pop();
-
-  // fill(255);
-  // textSize(16);
-  // text('Novelty', this.position.x - 25, this.position.y + 25);
 }

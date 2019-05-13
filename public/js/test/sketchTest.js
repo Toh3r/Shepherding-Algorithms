@@ -145,6 +145,7 @@ function setup() {
   sel.option('Add Animal');
   sel.option('Add Shepherd');
   sel.option('Add Novelty');
+  sel.option('Add Obstacle');
   canvas.mouseClicked(addStuff);
 
   // Create delete buttons to remove agents/objects
@@ -159,6 +160,10 @@ function setup() {
   delN = createButton('Delete Novelty');
   delN.parent('novButtons');
   delN.mouseClicked(delNovelty);
+
+  delO = createButton('Delete Obstacle');
+  delO.parent('novButtons');
+  delO.mouseClicked(delObstacle);
 
   delAll = createButton('Delete All');
   delAll.parent('delAll');
@@ -217,6 +222,7 @@ function setup() {
   textAlign(CENTER);
   fill(255, 0, 0);
 
+  envRadio._getInputChildrenArray()[3].checked = true;
 
   // Initialize starting environment (with agents/objects)
   environment = new Environment();
@@ -320,9 +326,87 @@ function createNewHerd () {
     environment.addNovelty(n);
   }
 
+  // Create starting novelties in random positions
+  for (var i = 0; i < 0; i++) {
+    var ob = new Obstacle(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
+    environment.addNovelty(ob);
+  }
+
+  if (envRadio.value() == 2) {
+    var n = new NovelObject(800,550,230);
+    environment.addNovelty(n);
+
+    var ob = new Obstacle(240, 240, 50, 50);
+    environment.addObstacle(ob);
+  }
+
+  if (envRadio.value() == 3) {
+    var n = new NovelObject(1050,50,600,180);
+    environment.addNovelty(n);
+    var n = new NovelObject(1400,265,90,180);
+    environment.addNovelty(n);
+
+    var ob = new Obstacle(0, 0, 1500, 20, 1.5);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1500, 40, 70, 120, 2);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1560, 155, 10, 70, -60);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1615, 185, 160, 90, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1525, 275, 100, 50, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1750, 270, 20, 220, 20);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1680, 475, 20, 550, 80);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1030, 400, 220, 20, 55);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(160, 400, 865, 20, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(0, 200, 280, 20, 50);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1030, 180, 60, 170, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1220, 180, 75, 170, 3);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1030, 350, 255, 20, 0);
+    environment.addObstacle(ob);
+  }
+
+  if (envRadio.value() == 4) {
+    var n = new NovelObject(2350,180,220, 160);
+    environment.addNovelty(n);
+
+    var ob = new Obstacle(0, 440, 430, 20);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(500, 440, 600, 20);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(0, 100, 2400, 20, -3);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1080, 120, 20, 680, -2);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1730, 90, 20, 720);
+    environment.addObstacle(ob);
+  }
+
   // Create gate ('exit') at end of field
   for (var i = 0; i < 1; i++) {
+    var eNum;
     var g = new Gate(990, 230);
+    if (enVal == 1) {
+      var g = new Gate(990, 230);
+      eNum == 1;
+    } else if (enVal == 2) {
+      var g = new Gate(990, 580);
+      eNum == 2;
+    } else if (enVal == 3) {
+      var g = new Gate(1090, 230);
+      eNum == 3;
+    } else if (enVal == 4) {
+      var g = new Gate(2390, 10);
+      eNum == 1;
+    }
     environment.addGate(g);
   }
 }
@@ -438,7 +522,11 @@ function addStuff() {
     environment.addShepherd(new Shepherd(mouseX, mouseY));
   }
   if (dropSelect == "Add Novelty") {
-    environment.addNovelty(new NovelObject(mouseX, mouseY));
+    environment.addNovelty(new NovelObject(mouseX, mouseY, 25.0));
+  }
+
+  if (dropSelect == "Add Obstacle") {
+    environment.addObstacle(new Obstacle(mouseX, mouseY, 25.0, 25.0, 0));
   }
 }
 
@@ -451,6 +539,9 @@ function delShepherd() {
 }
 function delNovelty() {
   environment.deleteNovelty();
+}
+function delObstacle() {
+  environment.deleteObstacle();
 }
 function deleteAll() {
   environment.removeAll();
