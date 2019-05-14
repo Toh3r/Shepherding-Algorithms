@@ -294,14 +294,6 @@ function createNewHerd () {
     canvas.parent('myCanvas');
   }
 
-  //Create starting animals in random positions
-  for (var i = 0; i < 10; i++) {
-    x = random(201);
-    y = random(501);
-    var a = new Animal(x, y);
-    environment.addAnimal(a);
-  }
-
   // Create starting shepherds in random positions
   for (var i = 0; i < 0; i++) {
     var s = new Shepherd(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
@@ -328,19 +320,63 @@ function createNewHerd () {
 
   // Create starting novelties in random positions
   for (var i = 0; i < 0; i++) {
+    //Create starting animals in random positions
+    for (var i = 0; i < 10; i++) {
+      x = random(201);
+      y = random(501);
+      var a = new Animal(x, y);
+      environment.addAnimal(a);
+    }
+
     var ob = new Obstacle(Math.floor(Math.random() * 1000) + 1,Math.floor(Math.random() * 500) + 1);
     environment.addNovelty(ob);
   }
 
+  if (envRadio.value() == 1) {
+    //Create starting animals in random positions
+    for (var i = 0; i < 10; i++) {
+      x = random(201);
+      y = random(501);
+      var a = new Animal(x, y);
+      environment.addAnimal(a);
+    }
+
+    autoShepX = 970;
+    autoShepY = 250;
+    shepGoalX = 990;
+    shepGoalY = 255;
+  }
+
   if (envRadio.value() == 2) {
+    //Create starting animals in random positions
+    for (var i = 0; i < 10; i++) {
+      x = random(201);
+      y = random(501);
+      var a = new Animal(x, y);
+      environment.addAnimal(a);
+    }
+
     var n = new NovelObject(800,550,230);
     environment.addNovelty(n);
 
     var ob = new Obstacle(240, 240, 50, 50);
     environment.addObstacle(ob);
+
+    autoShepX = 970;
+    autoShepY = 570;
+    shepGoalX = 990;
+    shepGoalY = 580;
   }
 
   if (envRadio.value() == 3) {
+    //Create starting animals in random positions
+    for (var i = 0; i < 10; i++) {
+      x = random(100,251);
+      y = random(50,351);
+      var a = new Animal(x, y);
+      environment.addAnimal(a);
+    }
+
     var n = new NovelObject(1050,50,600,180);
     environment.addNovelty(n);
     var n = new NovelObject(1400,265,90,180);
@@ -364,7 +400,7 @@ function createNewHerd () {
     environment.addObstacle(ob);
     var ob = new Obstacle(160, 400, 865, 20, 0);
     environment.addObstacle(ob);
-    var ob = new Obstacle(0, 200, 280, 20, 50);
+    var ob = new Obstacle(0, 240, 240, 20, 45);
     environment.addObstacle(ob);
     var ob = new Obstacle(1030, 180, 60, 170, 0);
     environment.addObstacle(ob);
@@ -372,10 +408,25 @@ function createNewHerd () {
     environment.addObstacle(ob);
     var ob = new Obstacle(1030, 350, 255, 20, 0);
     environment.addObstacle(ob);
+
+    autoShepX = 1030;
+    autoShepY = 165;
+    shepGoalX = 1100;
+    shepGoalY = 255;
   }
 
   if (envRadio.value() == 4) {
+    //Create starting animals in random positions
+    for (var i = 0; i < 10; i++) {
+      x = random(801);
+      y = random(551,751);
+      var a = new Animal(x, y);
+      environment.addAnimal(a);
+    }
+
     var n = new NovelObject(2350,180,220, 160);
+    environment.addNovelty(n);
+    var n = new NovelObject(2150,20,400, 60);
     environment.addNovelty(n);
 
     var ob = new Obstacle(0, 440, 430, 20);
@@ -388,24 +439,26 @@ function createNewHerd () {
     environment.addObstacle(ob);
     var ob = new Obstacle(1730, 90, 20, 720);
     environment.addObstacle(ob);
+    var ob = new Obstacle(2010, 575, 50, 35);
+    environment.addObstacle(ob);
+
+    autoShepX = 450;
+    autoShepY = 450;
+    shepGoalX = 2370;
+    shepGoalY = 35;
   }
 
   // Create gate ('exit') at end of field
   for (var i = 0; i < 1; i++) {
-    var eNum;
     var g = new Gate(990, 230);
     if (enVal == 1) {
       var g = new Gate(990, 230);
-      eNum == 1;
     } else if (enVal == 2) {
       var g = new Gate(990, 580);
-      eNum == 2;
     } else if (enVal == 3) {
       var g = new Gate(1090, 230);
-      eNum == 3;
     } else if (enVal == 4) {
       var g = new Gate(2390, 10);
-      eNum == 1;
     }
     environment.addGate(g);
   }
@@ -524,7 +577,6 @@ function addStuff() {
   if (dropSelect == "Add Novelty") {
     environment.addNovelty(new NovelObject(mouseX, mouseY, 25.0));
   }
-
   if (dropSelect == "Add Obstacle") {
     environment.addObstacle(new Obstacle(mouseX, mouseY, 25.0, 25.0, 0));
   }
@@ -549,7 +601,7 @@ function deleteAll() {
 
 function herd() {
   console.log("Goin' Herding");
-  environment.addAutoShepherd(new AutoShepherd());
+  environment.addAutoShepherd(new AutoShepherd(autoShepX, autoShepY, shepGoalX, shepGoalY));
 }
 
 function oracle() {

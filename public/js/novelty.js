@@ -13,8 +13,8 @@ NovelObject.prototype.run = function() {
 
 // Draw novelty
 NovelObject.prototype.render = function () {
-  fill(190, 22, 23, 80);
-  stroke(0);
+  fill(190, 22, 23, 130);
+  stroke(190, 22, 23, 130);
   push();
   ellipse(this.position.x,this.position.y, this.w, this.h);
   pop();

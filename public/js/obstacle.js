@@ -13,8 +13,8 @@ Obstacle.prototype.run = function() {
 }
 
 Obstacle.prototype.render = function () {
-  fill(125,125,125, 130);
-  stroke(0);
+  fill(20,20,200, 130);
+  stroke(20,20,200, 130);
   push();
   translate(this.position.x, this.position.y);
   rotate(this.rot);

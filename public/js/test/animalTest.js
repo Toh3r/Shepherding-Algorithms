@@ -504,7 +504,7 @@ Animal.prototype.move = function(shepherds, autoShepherds) {
 
 // ----- ANIMAL BEHAVIOURAL RULES WITH ENVIRONMENT
 
-// Goal setting behaviour when animal comes within certain area of a gate
+// setting behaviour when animal comes within certain area of a gate
 Animal.prototype.goal = function () {
   if (this.position.x > 850 && this.position.y > 180 && this.position.y < 330) {
     var gate = createVector(980, 250);
