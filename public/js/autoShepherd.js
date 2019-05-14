@@ -120,7 +120,8 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
   var center = createVector(herdX, herdY); // Centre co-ords of herd
 
   if (environment.vocalizing() == true) {
-    this.goal = this.avoidObstacle(center, this.goal);
+    this.
+     = this.avoidObstacle(center);
   }
 
   animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
@@ -181,7 +182,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   var center = createVector(herdX, herdY); // Centre co-ords of herd
 
   if (environment.vocalizing() == true) {
-    this.goal = this.avoidObstacle(center, this.goal);
+    this.goal = this.avoidObstacle(center);
   }
 
   animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
@@ -264,7 +265,7 @@ AutoShepherd.prototype.displayShepLines = function () {
   var center = createVector(herdX, herdY); // Centre co-ords of herd
 
   if (environment.vocalizing() == true) {
-    this.goal = this.avoidObstacle(center, this.goal);
+    this.goal = this.avoidObstacle(center);
   }
 
   animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left

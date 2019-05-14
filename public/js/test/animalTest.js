@@ -1,6 +1,6 @@
 // Animal class
 // Set Animal attributes
-function Animal(x,y) {
+function Animal(x,y, gx, gy) {
   this.acceleration = createVector(0,0); // Starting accelertion
   this.velocity = createVector(random(-1,1),random(-1,1)); // Create starting velocity direction
   this.position = createVector(x,y); // Starting position
@@ -25,6 +25,7 @@ function Animal(x,y) {
   this.wanderForce = createVector(0,0);
   this.vocalizing = false;
   this.oldheading = 0;
+  this.gate = createVector(gx, gy);
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS

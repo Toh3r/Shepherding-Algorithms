@@ -222,7 +222,7 @@ function setup() {
   textAlign(CENTER);
   fill(255, 0, 0);
 
-  envRadio._getInputChildrenArray()[3].checked = true;
+  envRadio._getInputChildrenArray()[1].checked = true;
 
   // Initialize starting environment (with agents/objects)
   environment = new Environment();
