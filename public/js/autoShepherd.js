@@ -17,7 +17,8 @@ function AutoShepherd(x, y, gx, gy) {
   this.herdRight = 0;
   this.targetDir = "right";
   this.timestep = 0;
-  this.goal = createVector(gx, gy);
+  this.goalX = gx;
+  this.goalY = gy;
 }
 
 // Call methods for each shepherd
@@ -118,10 +119,10 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
+  var goal = createVector(this.goalX,this.goalY); // Location of exit
 
   if (environment.vocalizing() == true) {
-    this.
-     = this.avoidObstacle(center);
+    goal = this.avoidObstacle(center, goal);
   }
 
   animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
@@ -131,8 +132,8 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
   furthestAnimal = Math.max(animalFL, animalFR, animalFT, animalFB);
 
   // Lines to flight zone and pressure zone
-  let l2fz = this.adjustLineLen(center,this.goal,furthestAnimal+20);
-  let l2pz = this.adjustLineLen(center,this.goal,furthestAnimal+60);
+  let l2fz = this.adjustLineLen(center,goal,furthestAnimal+20);
+  let l2pz = this.adjustLineLen(center,goal,furthestAnimal+60);
 
   // Get co-ords for flight zone line points
   let fzp1 = this.createPCo1(l2fz.x,l2fz.y,herdX,herdY);
@@ -180,9 +181,10 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
+  var goal = createVector(this.goalX,this.goalY); // Location of exit
 
   if (environment.vocalizing() == true) {
-    this.goal = this.avoidObstacle(center);
+    goal = this.avoidObstacle(center, goal);
   }
 
   animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
@@ -192,8 +194,8 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   furthestAnimal = Math.max(animalFL, animalFR, animalFT, animalFB);
 
   // Lines to flight zone and pressure zone
-  let l2fz = this.adjustLineLen(center,this.goal,furthestAnimal+15);
-  let l2pz = this.adjustLineLen(center,this.goal,furthestAnimal+60);
+  let l2fz = this.adjustLineLen(center,goal,furthestAnimal+15);
+  let l2pz = this.adjustLineLen(center,goal,furthestAnimal+60);
 
   // Get co-ords for flight zone line points
   let fzp1 = this.createPCo1(l2fz.x,l2fz.y,herdX,herdY);
@@ -263,9 +265,10 @@ AutoShepherd.prototype.displayShepLines = function () {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
+  var goal = createVector(this.goalX,this.goalY); // Location of exit
 
   if (environment.vocalizing() == true) {
-    this.goal = this.avoidObstacle(center);
+    goal = this.avoidObstacle(center, goal);
   }
 
   animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
@@ -275,8 +278,8 @@ AutoShepherd.prototype.displayShepLines = function () {
   furthestAnimal = Math.max(animalFL, animalFR,animalFT,animalFB);
 
   // Lines to flight zone and pressure zone
-  let l2fz = this.adjustLineLen(center,this.goal,furthestAnimal+20);
-  let l2pz = this.adjustLineLen(center,this.goal,furthestAnimal+60);
+  let l2fz = this.adjustLineLen(center,goal,furthestAnimal+20);
+  let l2pz = this.adjustLineLen(center,goal,furthestAnimal+60);
 
   // Get co-ords for flight zone line points
   let fzp1 = this.createPCo1(l2fz.x,l2fz.y,herdX,herdY);
@@ -294,11 +297,11 @@ AutoShepherd.prototype.displayShepLines = function () {
   fill(0);
   stroke(7, 53, 171);
   ellipse(herdX,herdY, 10, 10);      // Herd centre circle
-  line(herdX, herdY, this.goal.x,this.goal.y); // Line to gate
+  line(herdX, herdY, goal.x,goal.y); // Line to gate
   ellipse(hlp1.x, hlp1.y, 10, 10);   // Point A on herd Line
   ellipse(hlp2.x, hlp2.y, 10, 10);   // Point B on Herd Line
   line(hlp1.x,hlp1.y,hlp2.x,hlp2.y); //Line Through herd
-  ellipse(this.goal.x,this.goal.y, 10,10)      // this.goal Point
+  ellipse(goal.x,goal.y, 10,10)      // Goal Point
 
   stroke(255,0,0);
   line(herdX, herdY, l2fz.x,l2fz.y);  // Line to fli
@@ -317,12 +320,12 @@ AutoShepherd.prototype.displayShepLines = function () {
 
 }
 
-AutoShepherd.prototype.avoidObstacle = function (center) {
+AutoShepherd.prototype.avoidObstacle = function (center, goal) {
   if (center.y < height/2) {
-    var avoidPointCentre = this.createPCo2(center.x, center.y, this.goal.x,this.goal.y); //  Use PCo2 for else statement
+    var avoidPointCentre = this.createPCo2(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
     this.targetInBounds(avoidPointCentre);
   } else {
-    var avoidPointCentre = this.createPCo1(center.x, center.y, this.goal.x,this.goal.y); //  Use PCo2 for else statement
+    var avoidPointCentre = this.createPCo1(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
     this.targetInBounds(avoidPointCentre);
   }
   return avoidPointCentre;
@@ -349,7 +352,7 @@ AutoShepherd.prototype.createPCo2 = function (x1,y1,x2,y2) {
 }
 
 AutoShepherd.prototype.adjustLineLen = function (p1,p2,d) {
-  // extend line from this.goal to herd centre to fz and pre zone
+  // extend line from goal to herd centre to fz and pre zone
   let originalDist = int(dist(p1.x, p1.y, p2.x,p2.y));
   lp1 = p1.x + (p1.x - p2.x) / originalDist * (d);
   lp2 = p1.y + (p1.y - p2.y) / originalDist * (d);

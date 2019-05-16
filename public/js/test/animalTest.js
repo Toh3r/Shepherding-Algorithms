@@ -1,6 +1,6 @@
 // Animal class
 // Set Animal attributes
-function Animal(x,y, gx, gy) {
+function Animal(x,y, gx, gy, gzX, gzY) {
   this.acceleration = createVector(0,0); // Starting accelertion
   this.velocity = createVector(random(-1,1),random(-1,1)); // Create starting velocity direction
   this.position = createVector(x,y); // Starting position
@@ -25,7 +25,11 @@ function Animal(x,y, gx, gy) {
   this.wanderForce = createVector(0,0);
   this.vocalizing = false;
   this.oldheading = 0;
-  this.gate = createVector(gx, gy);
+  // this.gate = createVector(gx, gy);
+  this.gateX = gx;
+  this.gateY = gy;
+  this.gzX = gzX;
+  this.gzY = gzY;
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS
@@ -507,10 +511,10 @@ Animal.prototype.move = function(shepherds, autoShepherds) {
 
 // setting behaviour when animal comes within certain area of a gate
 Animal.prototype.goal = function () {
-  if (this.position.x > 850 && this.position.y > 180 && this.position.y < 330) {
-    var gate = createVector(980, 250);
-    //console.log(this.animal);
-    if (this.position.x > 980 && this.position.y > 230 && this.position.y < 270) {
+  if (this.position.x > this.gzX.x && this.position.x < this.gzX.y && this.position.y > this.gzY.x && this.position.y < this.gzY.y) {
+    var gate = createVector(this.gateX, this.gateY);
+    console.log("In the gz now");
+    if (this.position.x > this.gateX - 20 && this.position.x < this.gateX + 20 && this.position.y > this.gateY - 20 && this.position.y < this.gateY + 20) {
       console.log("Name of animal leaving: " + this.name);
       environment.hitTheGap(this);
     }

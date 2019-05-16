@@ -212,6 +212,7 @@ Environment.prototype.vocalizing = function () {
 }
 
 Environment.prototype.sectors = function () {
+
   stroke(255);
   fill(0,0,0,0.1);
   rect(0,0, width/3, height/3);
@@ -239,6 +240,10 @@ Environment.prototype.sectors = function () {
   text("Sector 7", 10, height - 10);
   text("Sector 8", width/3 + 10, height - 10);
   text("Sector 9", width-width/3 + 10, height - 10);
+
+  fill(25,25,25);
+  stroke(0);
+  ellipse(980, 570, 20);
 }
 
 // // Method to allow for class extensions

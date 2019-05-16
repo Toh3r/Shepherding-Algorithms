@@ -222,7 +222,7 @@ function setup() {
   textAlign(CENTER);
   fill(255, 0, 0);
 
-  envRadio._getInputChildrenArray()[1].checked = true;
+  envRadio._getInputChildrenArray()[2].checked = true;
 
   // Initialize starting environment (with agents/objects)
   environment = new Environment();
@@ -333,26 +333,33 @@ function createNewHerd () {
   }
 
   if (envRadio.value() == 1) {
+    autoShepX = 970;
+    autoShepY = 250;
+    goalX = 990;
+    goalY = 255;
+    gzX = createVector(850, 1000);
+    gzY = createVector(180, 330);
     //Create starting animals in random positions
     for (var i = 0; i < 10; i++) {
       x = random(201);
       y = random(501);
-      var a = new Animal(x, y);
+      var a = new Animal(x, y, goalX, goalY, gzX, gzY);
       environment.addAnimal(a);
     }
-
-    autoShepX = 970;
-    autoShepY = 250;
-    shepGoalX = 990;
-    shepGoalY = 255;
   }
 
   if (envRadio.value() == 2) {
+    autoShepX = 970;
+    autoShepY = 570;
+    goalX = 970;
+    goalY = 580;
+    gzX = createVector(850, 1000);
+    gzY = createVector(450, 600);
     //Create starting animals in random positions
     for (var i = 0; i < 10; i++) {
       x = random(201);
       y = random(501);
-      var a = new Animal(x, y);
+      var a = new Animal(x, y, goalX, goalY, gzX, gzY);
       environment.addAnimal(a);
     }
 
@@ -361,19 +368,20 @@ function createNewHerd () {
 
     var ob = new Obstacle(240, 240, 50, 50);
     environment.addObstacle(ob);
-
-    autoShepX = 970;
-    autoShepY = 570;
-    shepGoalX = 990;
-    shepGoalY = 580;
   }
 
   if (envRadio.value() == 3) {
+    autoShepX = 1030;
+    autoShepY = 165;
+    goalX = 1100;
+    goalY = 255;
+    gzX = createVector(1100, 1250);
+    gzY = createVector(155, 305);
     //Create starting animals in random positions
     for (var i = 0; i < 10; i++) {
       x = random(100,251);
       y = random(50,351);
-      var a = new Animal(x, y);
+      var a = new Animal(x, y, goalX, goalY, gzX, gzY);
       environment.addAnimal(a);
     }
 
@@ -408,19 +416,20 @@ function createNewHerd () {
     environment.addObstacle(ob);
     var ob = new Obstacle(1030, 350, 255, 20, 0);
     environment.addObstacle(ob);
-
-    autoShepX = 1030;
-    autoShepY = 165;
-    shepGoalX = 1100;
-    shepGoalY = 255;
   }
 
   if (envRadio.value() == 4) {
+    autoShepX = 450;
+    autoShepY = 450;
+    goalX = 2370;
+    goalY = 35;
+    gzX = createVector(2250, 2400);
+    gzY = createVector(0, 85);
     //Create starting animals in random positions
     for (var i = 0; i < 10; i++) {
       x = random(801);
       y = random(551,751);
-      var a = new Animal(x, y);
+      var a = new Animal(x, y, goalX, goalY, gzX, gzY);
       environment.addAnimal(a);
     }
 
@@ -441,11 +450,6 @@ function createNewHerd () {
     environment.addObstacle(ob);
     var ob = new Obstacle(2010, 575, 50, 35);
     environment.addObstacle(ob);
-
-    autoShepX = 450;
-    autoShepY = 450;
-    shepGoalX = 2370;
-    shepGoalY = 35;
   }
 
   // Create gate ('exit') at end of field
@@ -601,7 +605,7 @@ function deleteAll() {
 
 function herd() {
   console.log("Goin' Herding");
-  environment.addAutoShepherd(new AutoShepherd(autoShepX, autoShepY, shepGoalX, shepGoalY));
+  environment.addAutoShepherd(new AutoShepherd(autoShepX, autoShepY, goalX, goalY));
 }
 
 function oracle() {
