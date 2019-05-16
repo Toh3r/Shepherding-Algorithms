@@ -6,10 +6,10 @@ function setup() {
 
   // Create Canvas
   var canvas = createCanvas(1000,600);
-  img1 = loadImage('./css/images/Field1Maps.jpg');
-  img2 = loadImage('./css/images/FieldMaps2.jpg');
-  img3 = loadImage('./css/images/Field3Maps.jpg');
-  img4 = loadImage('./css/images/FieldMaps4.jpg');
+  img1 = loadImage('./css/images/Field1B.jpg');
+  img2 = loadImage('./css/images/Field_1.jpg');
+  img3 = loadImage('./css/images/Field_2.jpg');
+  img4 = loadImage('./css/images/Field_3.jpg');
   canvas.parent('myCanvas'); // .parent allows item to manipulated on html page
 
   // Set framerate of canvas
@@ -246,9 +246,9 @@ function setup() {
 
 // Call run to begin simulation
 function draw() {
-  // background(9, 123, 18);
+  background(9, 123, 18);
   // background(255);
-  background(img);
+  // background(img);
   environment.run();
   display();
 }
