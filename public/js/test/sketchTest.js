@@ -6,10 +6,10 @@ function setup() {
 
   // Create Canvas
   var canvas = createCanvas(1000,600);
-  img = loadImage('./css/images/code.jpg');
-  img2 = loadImage('./css/images/code.jpg');
-  img3 = loadImage('./css/images/code.jpg');
-  img4 = loadImage('./css/images/code.jpg');
+  img = loadImage('./css/images/Field1B.jpg');
+  img2 = loadImage('./css/images/Field_1.jpg');
+  img3 = loadImage('./css/images/Field_2.jpg');
+  img4 = loadImage('./css/images/Field_3.jpg');
   canvas.parent('myCanvas'); // .parent allows item to manipulated on html page
 
   // Set framerate of canvas
@@ -275,22 +275,22 @@ function createNewHerd () {
   if (enVal == 1) {
     canvas.remove();
     canvas = createCanvas(1000,600);
-    img = loadImage('./css/images/Field1B.jpg');
+    img = img;
     canvas.parent('myCanvas');
   } else if (enVal == 2) {
     canvas.remove();
     canvas = createCanvas(1000,600);
-    img = loadImage('./css/images/Field_1.jpg');
+    img = img2;
     canvas.parent('myCanvas');
   } else if (enVal == 3) {
     canvas.remove();
     canvas = createCanvas(1800,600);
-    img = loadImage('./css/images/Field_2.jpg');
+    img = img2;
     canvas.parent('myCanvas');
   } else if (enVal == 4) {
     canvas.remove();
     canvas = createCanvas(2400,800);
-    img = loadImage('./css/images/Field_3.jpg');
+    img = img3;
     canvas.parent('myCanvas');
   }
 
