@@ -513,7 +513,6 @@ Animal.prototype.move = function(shepherds, autoShepherds) {
 Animal.prototype.goal = function () {
   if (this.position.x > this.gzX.x && this.position.x < this.gzX.y && this.position.y > this.gzY.x && this.position.y < this.gzY.y) {
     var gate = createVector(this.gateX, this.gateY);
-    console.log("In the gz now");
     if (this.position.x > this.gateX - 20 && this.position.x < this.gateX + 20 && this.position.y > this.gateY - 20 && this.position.y < this.gateY + 20) {
       console.log("Name of animal leaving: " + this.name);
       environment.hitTheGap(this);
