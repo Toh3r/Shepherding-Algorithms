@@ -35,8 +35,8 @@ function Animal(x,y, gx, gy, gzX, gzY) {
 // ----- ANIMAL UPDATE FUNCTIONS
 
 // Call functions for each animal each frame
-Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds) {
-  this.herd(herd, shepherds, novelObjects, autoShepherds); // Apply forces
+Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, obstacles) {
+  this.herd(herd, shepherds, novelObjects, autoShepherds, obstacles); // Apply forces
   this.update();    // Update position based on forces
   this.borders();   // Keep animal in enclosure
   this.render();    // Render animal
@@ -57,7 +57,7 @@ Animal.prototype.applyForce = function(force) {
 }
 
 // Accumulate a new acceleration each time based on all rules
-Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds) {
+Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, obstacles) {
   var sep = this.separate(herd);      // Separation
   var ali = this.align(herd);         // Alignment
   var coh = this.cohesion(herd);      // Cohesion
@@ -67,6 +67,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds) {
   var goa = this.goal();              // Seek (Goal area)
   var avo = this.avoid(novelObjects); // Avoid Novelty
   var bun = this.bunched(herd);       // Bunched
+  var obs = this.avoidObstacle(obstacles)
 
 
   // WHEN SHEPHERD IN FLIGHT ZONE
@@ -139,6 +140,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds) {
   this.applyForce(goa);
   this.applyForce(avo);
   this.applyForce(coh);
+  this.applyForce(obs);
 
   this.oldFli = fli;
   this.oldPre = pre; // Store old array values (Used for comparison in following frame)
@@ -589,5 +591,45 @@ Animal.prototype.speedRed = function() {
   } else {
     // console.log("ALREADY DECREASING SPEED");
   }
-
 }
+
+Animal.prototype.avoidObstacle = function (obstacles) {
+
+  for (var i = 0; i < obstacles.length; i++) {
+    var obs = obstacles[i];
+    // obsRot = createVector(obs.position.x, obs.position.y)
+    // obsRot.rotate(obs.rot);
+    // console.log(obsRot);
+    xReach = obs.w;
+    yReach = obs.h;
+    if (this.position.x > obs.position.x && this.position.x < obs.position.x + xReach && this.position.y > obs.position.y && this.position.y < obs.position.y + yReach) {
+      // console.log("What is going on")
+      this.velocity.x *= -1;
+      this.velocity.y *= -1;
+    }
+  }
+
+  //   if (d < 5) {
+  //     this.velocity.x *= -1;
+  //     this.position.x = 15;
+  //   }
+  // }
+  // if (this.position.x < 15) {
+  //   this.velocity.x *= -1;
+  //   this.position.x = 15;
+  // } else if (this.position.y < 15) {
+  //   this.velocity.y *= -1;
+  //   this.position.y = 15;
+  // } else if (this.position.x > width - 15) {
+  //   this.velocity.x *= -1;
+  //   this.position.x = width - 15;
+  // } else if (this.position.y > height - 15) {
+  //   this.velocity.y *= -1;
+  //   this.position.y = height - 15;
+  // }
+}
+
+
+// Animal.prototype.getDistance = function () {
+//
+// }

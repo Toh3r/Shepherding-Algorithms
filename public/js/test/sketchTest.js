@@ -222,7 +222,7 @@ function setup() {
   textAlign(CENTER);
   fill(255, 0, 0);
 
-  envRadio._getInputChildrenArray()[2].checked = true;
+  envRadio._getInputChildrenArray()[1].checked = true;
 
   // Initialize starting environment (with agents/objects)
   environment = new Environment();
@@ -246,9 +246,9 @@ function setup() {
 
 // Call run to begin simulation
 function draw() {
-  background(9, 123, 18);
+  // background(9, 123, 18);
   // background(255);
-  // background(img);
+  background(img);
   environment.run();
   display();
 }

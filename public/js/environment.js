@@ -21,7 +21,7 @@ function Environment() {
 
 Environment.prototype.run = function() {
   for (var i = 0; i < this.herd.length; i++) {
-    this.herd[i].run(this.herd, this.shepherds, this.novelObjects, this.autoShepherds);  // Passing all arrays to each animal
+    this.herd[i].run(this.herd, this.shepherds, this.novelObjects, this.autoShepherds, this.obstacles);  // Passing all arrays to each animal
   }
 
   for (var i = 0; i < this.shepherds.length; i++) {
