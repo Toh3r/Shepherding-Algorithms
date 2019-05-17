@@ -21,3 +21,8 @@ h5 {
   text-decoration: line-through;
   text-decoration-color: red;
 }
+
+.kindaDone {
+  text-decoration: line-through;
+  text-decoration-color: orange;
+}

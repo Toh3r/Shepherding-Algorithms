@@ -597,36 +597,18 @@ Animal.prototype.avoidObstacle = function (obstacles) {
 
   for (var i = 0; i < obstacles.length; i++) {
     var obs = obstacles[i];
-    // obsRot = createVector(obs.position.x, obs.position.y)
-    // obsRot.rotate(obs.rot);
-    // console.log(obsRot);
     xReach = obs.w;
     yReach = obs.h;
-    if (this.position.x > obs.position.x && this.position.x < obs.position.x + xReach && this.position.y > obs.position.y && this.position.y < obs.position.y + yReach) {
-      // console.log("What is going on")
-      this.velocity.x *= -1;
+    if (this.position.x > obs.position.x && this.position.x < obs.position.x + xReach && this.position.y < obs.position.y + 5 && this.position.y > obs.position.y) {
       this.velocity.y *= -1;
+    } else if (this.position.x > obs.position.x && this.position.x < obs.position.x + xReach && this.position.y < obs.position.y + yReach + 5 && this.position.y > obs.position.y) {
+      this.velocity.y *= -1;
+    } else if (this.position.y > obs.position.y && this.position.y < obs.position.y + yReach && this.position.x < obs.position.x + xReach + 5 && this.position.x > obs.position.x) {
+      this.velocity.x *= -1;
+    } else if (this.position.y > obs.position.y && this.position.y < obs.position.y + yReach && this.position.x > obs.position.x - 5 && this.position.x < obs.position.x) {
+      this.velocity.x *= -1;
     }
   }
-
-  //   if (d < 5) {
-  //     this.velocity.x *= -1;
-  //     this.position.x = 15;
-  //   }
-  // }
-  // if (this.position.x < 15) {
-  //   this.velocity.x *= -1;
-  //   this.position.x = 15;
-  // } else if (this.position.y < 15) {
-  //   this.velocity.y *= -1;
-  //   this.position.y = 15;
-  // } else if (this.position.x > width - 15) {
-  //   this.velocity.x *= -1;
-  //   this.position.x = width - 15;
-  // } else if (this.position.y > height - 15) {
-  //   this.velocity.y *= -1;
-  //   this.position.y = height - 15;
-  // }
 }
 
 

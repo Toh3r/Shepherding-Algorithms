@@ -218,11 +218,12 @@ function setup() {
   envRadio.option('Environment 2', 2);
   envRadio.option('Environment 3', 3);
   envRadio.option('Environment 4', 4);
+  envRadio.option('Environment 5', 5);
   envRadio.style('width', '100px');
   textAlign(CENTER);
   fill(255, 0, 0);
 
-  envRadio._getInputChildrenArray()[1].checked = true;
+  envRadio._getInputChildrenArray()[4].checked = true;
 
   // Initialize starting environment (with agents/objects)
   environment = new Environment();
@@ -291,6 +292,11 @@ function createNewHerd () {
     canvas.remove();
     canvas = createCanvas(2400,800);
     img = img4;
+    canvas.parent('myCanvas');
+  } else if (enVal == 5) {
+    canvas.remove();
+    canvas = createCanvas(1800,600);
+    img = img3;
     canvas.parent('myCanvas');
   }
 
@@ -452,6 +458,50 @@ function createNewHerd () {
     environment.addObstacle(ob);
   }
 
+  if (envRadio.value() == 5) {
+    autoShepX = 1030;
+    autoShepY = 165;
+    goalX = 1100;
+    goalY = 255;
+    gzX = createVector(1100, 1250);
+    gzY = createVector(155, 305);
+    //Create starting animals in random positions
+    for (var i = 0; i < 10; i++) {
+      x = random(100,251);
+      y = random(50,351);
+      var a = new Animal(x, y, goalX, goalY, gzX, gzY);
+      environment.addAnimal(a);
+    }
+
+    var n = new NovelObject(1050,50,600,180);
+    environment.addNovelty(n);
+    var n = new NovelObject(1400,265,90,180);
+    environment.addNovelty(n);
+    var n = new NovelObject(700,260,90,150);
+    environment.addNovelty(n);
+
+    var ob = new Obstacle(0, 0, 1500, 20, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1500, 0, 70, 120, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1560, 120, 10, 160, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1615, 185, 160, 90, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1525, 275, 100, 50, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1680, 270, 20, 550, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(0, 450, 1700, 20, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1030, 180, 60, 170, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1220, 180, 75, 170, 0);
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1030, 350, 255, 20, 0);
+    environment.addObstacle(ob);
+  }
+
   // Create gate ('exit') at end of field
   for (var i = 0; i < 1; i++) {
     var g = new Gate(990, 230);
@@ -463,6 +513,8 @@ function createNewHerd () {
       var g = new Gate(1090, 230);
     } else if (enVal == 4) {
       var g = new Gate(2390, 10);
+    } else if (enVal == 5) {
+      var g = new Gate(1090, 230);
     }
     environment.addGate(g);
   }
