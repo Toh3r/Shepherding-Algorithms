@@ -47,3 +47,26 @@ h2 {
   padding-top: 50px;
   padding-bottom: 50px;
 }
+
+#controls {
+  background-color: black;
+  border-top: 5px solid white;
+  color: rgb(36, 188, 25);
+	text-align: center;
+	padding: 30px;
+}
+
+button {
+	min-width: 180px;
+	border: 3px solid rgb(36, 188, 25);
+}
+
+button:hover {
+	color: white;
+	background: black;
+}
+
+button:active {
+	color: white;
+	background: rgb(36, 188, 25);
+}
