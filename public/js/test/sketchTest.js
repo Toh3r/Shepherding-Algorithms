@@ -223,7 +223,7 @@ function setup() {
   textAlign(CENTER);
   fill(255, 0, 0);
 
-  envRadio._getInputChildrenArray()[4].checked = true;
+  envRadio._getInputChildrenArray()[1].checked = true;
 
   // Initialize starting environment (with agents/objects)
   environment = new Environment();
@@ -243,6 +243,10 @@ function setup() {
   var fixedSpeed = environment.avgSpeed().toFixed(2);
   speedDisplay = createP("Average Speed: " + fixedSpeed);
   speedDisplay.parent("numAnimalsDiv");
+
+  var timeSteps = environment.timeSteps();
+  timeDisplay = createP("Timesteps: " + timeSteps);
+  timeDisplay.parent("numAnimalsDiv");
 }
 
 // Call run to begin simulation
@@ -369,7 +373,7 @@ function createNewHerd () {
       environment.addAnimal(a);
     }
 
-    var n = new NovelObject(800,550,230);
+    var n = new NovelObject(775,550,115,115);
     environment.addNovelty(n);
 
     var ob = new Obstacle(240, 240, 50, 50);
@@ -391,9 +395,9 @@ function createNewHerd () {
       environment.addAnimal(a);
     }
 
-    var n = new NovelObject(1050,50,600,180);
+    var n = new NovelObject(1050,50,300,90);
     environment.addNovelty(n);
-    var n = new NovelObject(1400,265,90,180);
+    var n = new NovelObject(1400,265,45,90);
     environment.addNovelty(n);
 
     var ob = new Obstacle(0, 0, 1500, 20, 1.5);
@@ -439,17 +443,17 @@ function createNewHerd () {
       environment.addAnimal(a);
     }
 
-    var n = new NovelObject(2350,180,220, 160);
+    var n = new NovelObject(2350,180,110, 80);
     environment.addNovelty(n);
-    var n = new NovelObject(2150,20,400, 60);
+    var n = new NovelObject(2150,20,200, 30);
     environment.addNovelty(n);
 
     var ob = new Obstacle(0, 440, 430, 20);
     environment.addObstacle(ob);
     var ob = new Obstacle(500, 440, 600, 20);
     environment.addObstacle(ob);
-    var ob = new Obstacle(0, 100, 2400, 20, -3);
-    environment.addObstacle(ob);
+    // var ob = new Obstacle(0, 50, 2400, 20, 0);
+    // environment.addObstacle(ob);
     var ob = new Obstacle(1080, 120, 20, 680, -2);
     environment.addObstacle(ob);
     var ob = new Obstacle(1730, 90, 20, 720);
@@ -473,11 +477,11 @@ function createNewHerd () {
       environment.addAnimal(a);
     }
 
-    var n = new NovelObject(1050,50,600,180);
+    var n = new NovelObject(1050,50,300,90);
     environment.addNovelty(n);
-    var n = new NovelObject(1400,265,90,180);
+    var n = new NovelObject(1400,265,45,90);
     environment.addNovelty(n);
-    var n = new NovelObject(700,260,90,150);
+    var n = new NovelObject(700,260,45,75);
     environment.addNovelty(n);
 
     var ob = new Obstacle(0, 0, 1500, 20, 0);
@@ -525,6 +529,8 @@ function display() {
   shepherdDisplay.remove();
   stressDisplay.remove();
   speedDisplay.remove();
+  timeDisplay.remove();
+
 
   animalDisplay = createP("Number of Animals: " + environment.herd.length);
   animalDisplay.parent("numAnimalsDiv");
@@ -539,6 +545,10 @@ function display() {
   var fixedSpeed = environment.avgSpeed().toFixed(2);
   speedDisplay = createP("Average Speed: " + fixedSpeed);
   speedDisplay.parent("numAnimalsDiv");
+
+  var timeSteps = environment.timeSteps();
+  timeDisplay = createP("Timesteps: " + timeSteps);
+  timeDisplay.parent("numAnimalsDiv");
 }
 
 // Method to update slider values

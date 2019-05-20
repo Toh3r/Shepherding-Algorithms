@@ -17,6 +17,7 @@ function Environment() {
   this.herdLeft = 0;
   this.herdRight = 0;
   this.vocal = false;
+  this.oldTime = 0;
 }
 
 Environment.prototype.run = function() {
@@ -122,6 +123,20 @@ Environment.prototype.totalStress = function() {
     this.stress += this.herd[i].stressLevel;
   }
   return this.stress;
+}
+
+Environment.prototype.timeSteps = function() {
+  this.time = 0;
+  for (var i = 0; i < this.autoShepherds.length; i++) {
+    this.time += this.autoShepherds[i].timestep;
+  }
+  if (this.time % 50 == 0){
+    this.oldTime = this.time;
+    return this.time;
+  } else {
+    return this.oldTime;
+  }
+
 }
 
 // Remove selected animal once they enter gate

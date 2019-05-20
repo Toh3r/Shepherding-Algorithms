@@ -49,6 +49,10 @@ Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, ob
   if(forceCheck.checked() == true) {
     this.renderForces();
   }
+
+  // var avo = this.avoid(novelObjects);
+  // avo.mult(5);
+  // this.applyForce(avo);
 }
 
 // Apply each behavioural rule to each animal
@@ -131,7 +135,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, o
     }
   }
 
-  avo.mult(0.1);
+  avo.mult(0.3);
 
   // Add the force vectors to acceleration
   this.applyForce(mov);
@@ -530,27 +534,42 @@ Animal.prototype.goal = function () {
 
 // Try to avoid novel objects -- ** Code needs to be put out on the line **
 Animal.prototype.avoid = function (novelObjects) {
-  var desiredseparation = 50.0;
+  var desiredseparation = 0;
   var steer = createVector(0,0);
   var count = 0;
+
   // For every animal in the system, check if it's too close
   for (var i = 0; i < novelObjects.length; i++) {
-    var d = p5.Vector.dist(this.position,novelObjects[i].position);
-    // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
-    if ((d > 0) && (d < desiredseparation)) {
+
+    var ex = novelObjects[i].w + 50, ey = novelObjects[i].h + 50;
+    var xx = this.position.x - novelObjects[i].position.x
+    var yy = this.position.y - novelObjects[i].position.y;
+    var eyy = ey * sqrt(abs(ex * ex - xx * xx)) / ex;
+    // var d = p5.Vector.dist(this.position,ellipses[i].position);
+    // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself
+
+    if (this.position.x > novelObjects[i].position.x + ex|| this.position.x < novelObjects[i].position.x - ex||this.position.y > novelObjects[i].position.y + ey|| this.position.y < novelObjects[i].position.y - ey) {
+      count = count;
+    } else if (yy <= eyy && yy >= -eyy)  {
+      // console.log(random(200));
       // Calculate vector pointing away from neighbor
       var diff = p5.Vector.sub(this.position,novelObjects[i].position);
       diff.normalize();
-      diff.div(d);        // Weight by distance
+      diff.div(eyy);        // Weight by distance
       steer.add(diff);
       count++;            // Keep track of how many
     }
   }
+  // if (count > 0) {
+  //   // console.log("Count: ", count);
+  // }
+
   // Average -- divide by how many
   if (count > 0) {
     steer.div(count);
     // this.velocity.setMag(0.1);
     this.vocalizing = true;
+    // console.log("Vocalizing");
     // console.log("Vocalizing");
     this.stressLevel = (this.stressLevel + 0.1);
   } else {
@@ -566,6 +585,42 @@ Animal.prototype.avoid = function (novelObjects) {
     steer.limit(this.maxforce);
   }
   return steer;
+  // var desiredseparation = 50.0;
+  // var steer = createVector(0,0);
+  // var count = 0;
+  // // For every animal in the system, check if it's too close
+  // for (var i = 0; i < novelObjects.length; i++) {
+  //   var d = p5.Vector.dist(this.position,novelObjects[i].position);
+  //   // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
+  //   if ((d > 0) && (d < desiredseparation)) {
+  //     // Calculate vector pointing away from neighbor
+  //     var diff = p5.Vector.sub(this.position,novelObjects[i].position);
+  //     diff.normalize();
+  //     diff.div(d);        // Weight by distance
+  //     steer.add(diff);
+  //     count++;            // Keep track of how many
+  //   }
+  // }
+  // // Average -- divide by how many
+  // if (count > 0) {
+  //   steer.div(count);
+  //   // this.velocity.setMag(0.1);
+  //   this.vocalizing = true;
+  //   // console.log("Vocalizing");
+  //   this.stressLevel = (this.stressLevel + 0.1);
+  // } else {
+  //   this.vocalizing = false;
+  // }
+  //
+  // // As long as the vector is greater than 0
+  // if (steer.mag() > 0) {
+  //   // Implement Reynolds: Steering = Desired - Velocity
+  //   steer.normalize();
+  //   steer.mult(this.maxspeed);
+  //   steer.sub(this.velocity);
+  //   steer.limit(this.maxforce);
+  // }
+  // return steer;
 }
 
 // ----- ANIMAL SPEED FUNCTIONS

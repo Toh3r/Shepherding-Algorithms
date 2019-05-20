@@ -16,6 +16,7 @@ NovelObject.prototype.render = function () {
   fill(190, 22, 23, 130);
   stroke(190, 22, 23, 130);
   push();
-  ellipse(this.position.x,this.position.y, this.w, this.h);
+  translate(this.position.x, this.position.y)
+  ellipse(0,0, this.w * 2, this.h * 2);
   pop();
 }
