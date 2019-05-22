@@ -1,25 +1,30 @@
-// Environment object, holds/manages all objects in the simulation
+// Environment class, holds/manages all agents/objects in the simulation
 function Environment() {
   // Initialize arrays to store agents/objects
-  this.herd = [];
+  this.herd = []; // Stores animal agents
   this.shepherds = [];
   this.autoShepherds = [];
   this.oracles = [];
   this.novelObjects = [];
   this.gates = [];
   this.obstacles = [];
+
+  // Create environmental variables
   this.accumulatedStress = 0;
   this.accumulatedStress.toFixed(2);
-  this.stress = 0;
+  this.stress = 0; // **Delete when fixed in animal class**
   this.averageSpeed = 0;
+  this.vocal = false;
+  this.oldTime = 0; // Used for displaying timesteps, timestep variable currently held by shepherd **change to here**
+
+  // Hold positoins of herd to draw herd radius on canvas
   this.herdBottom = 0;
   this.herdTop = 0;
   this.herdLeft = 0;
   this.herdRight = 0;
-  this.vocal = false;
-  this.oldTime = 0;
 }
 
+// ------------ CREATES AGENTS/OBJECTS WHEN PASSED INFO FROM SKETCH ------------
 Environment.prototype.run = function() {
   for (var i = 0; i < this.herd.length; i++) {
     this.herd[i].run(this.herd, this.shepherds, this.novelObjects, this.autoShepherds, this.obstacles);  // Passing all arrays to each animal
@@ -49,6 +54,7 @@ Environment.prototype.run = function() {
     this.obstacles[i].run();
   }
 
+  // -- Draws herd radius/sectors on canvas
   if (herdZoneCheck.checked() == true) {
     this.displayHerd(); // Render herd zone
   }
@@ -58,7 +64,7 @@ Environment.prototype.run = function() {
   }
 }
 
-// Methods to add agents/Objects to arrays
+// ------------ FUNCTIONS TO ADD AGENTS/OBJECTS ------------
 Environment.prototype.addAnimal = function(a) {
   this.herd.push(a);
 }
@@ -87,7 +93,7 @@ Environment.prototype.addGate = function(g) {
   this.gates.push(g);
 }
 
-// Methods to delete agents/Obstructions
+// ------------ FUNCTIONS TO REMOVE AGENTS/OBJECTS ------------
 Environment.prototype.deleteAnimal = function() {
   this.herd.pop();
 }
@@ -104,6 +110,7 @@ Environment.prototype.deleteObstacle = function() {
   this.obstacles.pop();
 }
 
+// ------------ FUNCTIONS TO MANAGE ENV VARIABLES ------------
 Environment.prototype.displayNums = function () {
   return this.herd.length;
 }
@@ -136,10 +143,19 @@ Environment.prototype.timeSteps = function() {
   } else {
     return this.oldTime;
   }
-
 }
 
-// Remove selected animal once they enter gate
+Environment.prototype.vocalizing = function () {
+  this.vocal = false;
+  for (var i = 0; i < this.herd.length; i++) {
+    if (this.herd[i].vocalizing == true){
+      this.vocal = true;
+    }
+  }
+  return this.vocal;
+}
+
+// ------------ FUNCTIONS TO REMOVE ANIMAL FROM ENV WHEN THEY REACH GATE ------------
 Environment.prototype.hitTheGap = function(animal) {
   this.accumulatedStress = (this.accumulatedStress + animal.stressLevel);
   console.log('Accumulated stress: ' + this.accumulatedStress);
@@ -150,7 +166,7 @@ Environment.prototype.hitTheGap = function(animal) {
   this.herd.splice(index, 1); // Remove selected animal after they have left field
 }
 
-// Method to clear the canvas
+// ------------ FUNCTIONS TO CLEAR ALL AGENTS/OBJECTS FROM CANVAS ------------
 Environment.prototype.removeAll = function() {
   this.herd.length = 0;
   this.shepherds.length = 0;
@@ -159,28 +175,26 @@ Environment.prototype.removeAll = function() {
   this.accumulatedStress = 0;
 }
 
+// ------------ FUNCTIONS TO DISPLAY HERD RADIUS ------------
 Environment.prototype.displayHerd = function() {
+  // Find animal agents that are furthest left, right, highest, lowest on canvas
   this.herdBottom = Math.max.apply(Math, this.herd.map(function(o) { return o.position.y; }));
   this.herdTop = Math.min.apply(Math, this.herd.map(function(o) { return o.position.y; }));
   this.herdLeft = Math.min.apply(Math, this.herd.map(function(o) { return o.position.x; }));
   this.herdRight = Math.max.apply(Math, this.herd.map(function(o) { return o.position.x; }));
 
+  // Find centre of herd based on locations of furthest animals
   var yPos = (this.herdBottom + this.herdTop) / 2;
   var xPos = (this.herdLeft + this.herdRight) / 2;
 
-  // console.log("/Top/XPOS: " + bottom +"/"+ top + "/"+ xPos);
-
+  // Find which animals are furthest from herd centre
   var topDist, botDist, leftDist, rightDist, ylen, xlen;
-
   topDist = yPos - this.herdTop;
   botDist = this.herdBottom - yPos;
-
-  // console.log("Top/Bottom/YPOS: " + top + "/" + bottom + "/" + ysPos);
-  // console.log("Top Dist/Bottom Dist: " + topDist + "/" + botDist);
   leftDist = xPos - this.herdLeft;
   rightDist = this.herdRight - xPos;
 
-
+  // Use length from furthest two animals ** This needs some work**
   if (topDist > botDist) {
     ylen = topDist;
   } else {
@@ -213,19 +227,10 @@ Environment.prototype.displayHerd = function() {
   fill(0);
   stroke(0);
   ellipse(this.herdRight,this.herdBottom, 10, 10);
-
 }
 
-Environment.prototype.vocalizing = function () {
-  this.vocal = false;
-  for (var i = 0; i < this.herd.length; i++) {
-    if (this.herd[i].vocalizing == true){
-      this.vocal = true;
-    }
-  }
-  return this.vocal;
-}
-
+// ------------ FUNCTIONS TO DRAW SECTORS ------------
+// Currently not used for anything, will be used for oracle drone
 Environment.prototype.sectors = function () {
 
   stroke(255);

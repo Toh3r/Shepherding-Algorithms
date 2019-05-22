@@ -3,6 +3,7 @@ function ManageControls () {}
 
 // Function run at start up, creates all starting controls
 ManageControls.prototype.createControls = function () {
+  
   // ---------- CREATE CANVAS ----------
   // Have to create canvas here for buttons to be able to manipulate it
   var canvas = createCanvas(1000,600);
@@ -367,50 +368,4 @@ ManageControls.prototype.updateSimInfo = function () {
 // ---------- CALLED ON MOUSE DRAG TO UPDATE ALL SLIDERS ----------
 function mouseDragged() {
   manageFE.applyControls();
-}
-
-// ---------- FUNCTION TO ADD AGENT/OBJECT ON MOUSE CO-ORDS ----------
-function addStuff() {
-  var dropSelect = sel.value();
-  if (dropSelect == "Add Animal") {
-    environment.addAnimal(new Animal(mouseX, mouseY));
-  }
-  if (dropSelect == "Add Shepherd") {
-    environment.addShepherd(new Shepherd(mouseX, mouseY));
-  }
-  if (dropSelect == "Add Novelty") {
-    environment.addNovelty(new NovelObject(mouseX, mouseY, 25.0));
-  }
-  if (dropSelect == "Add Obstacle") {
-    environment.addObstacle(new Obstacle(mouseX, mouseY, 25.0, 25.0, 0));
-  }
-}
-
-// ---------- DELETE FUNCTIONS FOR AGENTS.OBJECTS ----------
-// Calling functions directly from buttons is throwing errors
-function delAnimal() {
-  environment.deleteAnimal();
-}
-function delShepherd() {
-  environment.deleteShepherd();
-}
-function delNovelty() {
-  environment.deleteNovelty();
-}
-function delObstacle() {
-  environment.deleteObstacle();
-}
-function deleteAll() {
-  environment.removeAll();
-}
-
-// ---------- FUNCTIONS TO CREATE SHEPHERDS ON BUTTON CLICKS ----------
-function herd() {
-  console.log("Goin' Herding");
-  environment.addAutoShepherd(new AutoShepherd(autoShepX, autoShepY, goalX, goalY));
-}
-
-function oracle() {
-  console.log("Goin' Herding");
-  environment.addOracle(new Oracle());
 }

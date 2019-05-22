@@ -71,7 +71,9 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, o
   var goa = this.goal();              // Seek (Goal area)
   var avo = this.avoid(novelObjects); // Avoid Novelty
   var bun = this.bunched(herd);       // Bunched
-  var obs = this.avoidObstacle(obstacles)
+  var obs = this.avoidObstacle(obstacles);
+  var moveChance = int(random(1,6));
+  console.log(moveChance);
 
 
   // WHEN SHEPHERD IN FLIGHT ZONE
@@ -122,11 +124,17 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, o
       this.speedRed();
     }
     if (this.velocity.mag() < 0.15) {
-      this.maxspeed = wSpeedSlider.value();
-      this.velocity.setMag(wVelSlider.value());
-      var wan = this.wander();
-      wan.mult(.1);
-      this.applyForce(wan);
+      if (moveChance == 2) {
+        this.maxspeed = wSpeedSlider.value();
+        this.velocity.setMag(wVelSlider.value());
+        var wan = this.wander();
+        wan.mult(.1);
+        this.applyForce(wan);
+        console.log("nerp");
+      } else {
+        this.maxspeed = 0.05;
+        this.velocity.setMag(0.05);
+      }
     } else if (this.velocity.mag() > 0.15) {
       this.velocity.heading = this.oldheading;
       sep.mult(sepPreSlider.value());
