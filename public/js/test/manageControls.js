@@ -3,7 +3,7 @@ function ManageControls () {}
 
 // Function run at start up, creates all starting controls
 ManageControls.prototype.createControls = function () {
-  
+
   // ---------- CREATE CANVAS ----------
   // Have to create canvas here for buttons to be able to manipulate it
   var canvas = createCanvas(1000,600);
@@ -12,6 +12,8 @@ ManageControls.prototype.createControls = function () {
   img3 = loadImage('./css/images/Field_2.jpg'); // in sketchTest
   img4 = loadImage('./css/images/Field_3.jpg');
   canvas.parent('myCanvas'); // .parent allows item to manipulated on html page
+
+  // frameRate(30); // Set Frame Rate
 
   // ---------- SPEED SLIDERS ----------
   wSpeedSlider = createSlider(0, 2, 0.2, 0.1);
@@ -188,7 +190,7 @@ ManageControls.prototype.createControls = function () {
   lineCheck.parent("zoneDiv");
 
   // Create checkbox to display flight/Pressure zones
-  sectorCheck = createCheckbox("Show Sectors");
+  sectorCheck = createCheckbox("Show Sectors", true);
   sectorCheck.parent("zoneDiv");
 
   // shepControl = createCheckbox("Control Shepherd");
@@ -227,7 +229,7 @@ ManageControls.prototype.createControls = function () {
   fill(255, 0, 0);
 
   //  Select starting environment
-  envRadio._getInputChildrenArray()[1].checked = true;
+  envRadio._getInputChildrenArray()[0].checked = true;
 
   // Initialize new environment
   environment = new Environment();
@@ -366,6 +368,10 @@ ManageControls.prototype.updateSimInfo = function () {
 }
 
 // ---------- CALLED ON MOUSE DRAG TO UPDATE ALL SLIDERS ----------
+function mouseReleased() {
+  manageFE.applyControls();
+}
+
 function mouseDragged() {
   manageFE.applyControls();
 }

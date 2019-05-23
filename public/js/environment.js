@@ -59,9 +59,9 @@ Environment.prototype.run = function() {
     this.displayHerd(); // Render herd zone
   }
 
-  if (sectorCheck.checked() == true) {
-    this.sectors();
-  }
+  // if (sectorCheck.checked() == true) {
+  //   this.sectors();
+  // }
 }
 
 // ------------ FUNCTIONS TO ADD AGENTS/OBJECTS ------------

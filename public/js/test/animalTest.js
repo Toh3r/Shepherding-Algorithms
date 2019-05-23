@@ -73,7 +73,6 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, o
   var bun = this.bunched(herd);       // Bunched
   var obs = this.avoidObstacle(obstacles);
   var moveChance = int(random(1,6));
-  console.log(moveChance);
 
 
   // WHEN SHEPHERD IN FLIGHT ZONE
@@ -130,10 +129,9 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, o
         var wan = this.wander();
         wan.mult(.1);
         this.applyForce(wan);
-        console.log("nerp");
       } else {
-        this.maxspeed = 0.05;
-        this.velocity.setMag(0.05);
+        this.maxspeed = 0.01;
+        this.velocity.setMag(0.01);
       }
     } else if (this.velocity.mag() > 0.15) {
       this.velocity.heading = this.oldheading;
@@ -673,8 +671,3 @@ Animal.prototype.avoidObstacle = function (obstacles) {
     }
   }
 }
-
-
-// Animal.prototype.getDistance = function () {
-//
-// }

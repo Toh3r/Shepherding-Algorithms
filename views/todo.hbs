@@ -11,16 +11,24 @@
     <link rel="stylesheet" href="css/todoStyles.css">
     <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
 
-
   </head>
   <body>
     <!-- Use header partial -->
     {{> header}}
 
     <div class="container">
-
       <div class="row">
-
+        <div class="col-lg-4">
+          <h5>*** Oracle ***</h5>
+        </div>
+        <div class="col-lg-4">
+          <h5>*** Collection ***</h5>
+        </div>
+        <div class="col-lg-4">
+          <h5>*** Obstacle avoidance ***</h5>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-lg-4" id="write_up">
 
           <h4><u>Write Up Stuff</u></h4>
@@ -29,7 +37,7 @@
           <br><br>
           <h5 class="done">Lit Review 2nd Draft draft</h5>
           <br><br>
-          <h5>Simualtion Creation</h5>
+          <h5 class="kindaDone">Simualtion Creation</h5>
           <br><br>
           <h5 class="done">More Lit Review</h5>
           <br><br>
@@ -43,11 +51,12 @@
 
       </div>
         <div class="col-lg-4" id="simStuff">
-
+          <!-- ************ General ************* -->
           <h4><u>Sim Stuff</u></h4>
           <br><br>
           <h5 class="done">Make to Scale</h5>
           <br><br>
+          <!-- ************ Drone ************* -->
           <h5>Drone</h5>
           <br><br>
           <h5 class="done">-> Fix Lines</h5>
@@ -70,6 +79,7 @@
           <br><br>
           <h5>-> Add noise to drone</h5>
           <br><br>
+          <!-- ************ Animals ************* -->
           <h5>Animals</h5>
           <br><br>
           <h5>-> Fix speed decrease problem</h5>
@@ -91,7 +101,9 @@
           <br><br>
           <h5>Add 'Good Movement' output</h5>
           <br><br>
-          <h5>Add straight line env for a test</h5>
+          <h5 class="done">Add straight line env for a test</h5>
+          <br><br>
+          <h5 class="done">Add straight line env for a test</h5>
 
 
       </div>

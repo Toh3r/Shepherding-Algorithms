@@ -13,7 +13,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     img = img1;      // Use image one loaded in manageControl.js
     canvas.parent('myCanvas');
 
-    autoShepX = 970, autoShepY = 250; // Create shepherd starting co-ords
+    shepX = 970, shepY = 250; // Create shepherd starting co-ords
     goalX = 990, goalY = 255;         // Create goal co-ords for shepherd and animal agents
     gzX = createVector(850, 1000), gzY = createVector(180, 330); // Create goalzone co-ords
 
@@ -36,7 +36,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     img = img2;
     canvas.parent('myCanvas');
 
-    autoShepX = 970, autoShepY = 570; // Various Co-ords
+    shepX = 970, shepY = 570; // Various Co-ords
     goalX = 970, goalY = 580;
     gzX = createVector(850, 1000), gzY = createVector(450, 600);
 
@@ -67,7 +67,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     img = img3;
     canvas.parent('myCanvas');
 
-    autoShepX = 1030, autoShepY = 165; // Create various co-ordinates
+    shepX = 1030, shepY = 165; // Create various co-ordinates
     goalX = 1100, goalY = 255;
     gzX = createVector(1100, 1250), gzY = createVector(155, 305);
 
@@ -125,7 +125,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     img = img4;
     canvas.parent('myCanvas');
 
-    autoShepX = 450, autoShepY = 450; // Create various co-ords
+    shepX = 450, shepY = 450; // Create various co-ords
     goalX = 2370, goalY = 35;
     gzX = createVector(2250, 2400), gzY = createVector(0, 85);
 
@@ -150,7 +150,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     environment.addObstacle(ob);
     // var ob = new Obstacle(0, 50, 2400, 20, 0);
     // environment.addObstacle(ob);
-    var ob = new Obstacle(1080, 120, 20, 680, -2);
+    var ob = new Obstacle(1080, 120, 20, 680, 0);
     environment.addObstacle(ob);
     var ob = new Obstacle(1730, 90, 20, 720);
     environment.addObstacle(ob);
@@ -169,7 +169,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     img = img3;
     canvas.parent('myCanvas');
 
-    autoShepX = 1030, autoShepY = 165; // Create various co-ords
+    shepX = 1030, shepY = 165; // Create various co-ords
     goalX = 1100, goalY = 255;
     gzX = createVector(1100, 1250), gzY = createVector(155, 305);
 
@@ -223,7 +223,7 @@ function addStuff() {
     environment.addAnimal(new Animal(mouseX, mouseY));
   }
   if (dropSelect == "Add Shepherd") {
-    environment.addShepherd(new Shepherd(mouseX, mouseY));
+    environment.addAutoShepherd(new AutoShepherd(mouseX, mouseY));
   }
   if (dropSelect == "Add Novelty") {
     environment.addNovelty(new NovelObject(mouseX, mouseY, 25.0));
@@ -254,10 +254,10 @@ function deleteAll() {
 // ---------- FUNCTIONS TO CREATE SHEPHERDS ON BUTTON CLICKS ----------
 function herd() {
   console.log("Goin' Herding");
-  environment.addAutoShepherd(new AutoShepherd(autoShepX, autoShepY, goalX, goalY));
+  environment.addAutoShepherd(new AutoShepherd(shepX, shepY, goalX, goalY));
 }
 
 function oracle() {
   console.log("Goin' Herding");
-  environment.addOracle(new Oracle());
+  environment.addOracle(new Oracle(shepX, shepY, goalX, goalY));
 }
