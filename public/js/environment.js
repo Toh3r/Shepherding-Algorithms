@@ -5,6 +5,7 @@ function Environment() {
   this.shepherds = [];
   this.autoShepherds = [];
   this.oracles = [];
+  this.oracleShepherds = [];
   this.novelObjects = [];
   this.gates = [];
   this.obstacles = [];
@@ -50,6 +51,10 @@ Environment.prototype.run = function() {
     this.oracles[i].run(this.herd);
   }
 
+  for(var i = 0; i < this.oracleShepherds.length; i++) {
+    this.oracleShepherds[i].run(this.oracles);
+  }
+
   for(var i = 0; i < this.obstacles.length; i++) {
     this.obstacles[i].run();
   }
@@ -79,6 +84,10 @@ Environment.prototype.addAutoShepherd = function(as) {
 
 Environment.prototype.addOracle = function(o) {
   this.oracles.push(o);
+}
+
+Environment.prototype.addOracleShepherd = function(os) {
+  this.oracleShepherds.push(os);
 }
 
 Environment.prototype.addNovelty = function(n) {

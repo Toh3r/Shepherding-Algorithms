@@ -31,9 +31,9 @@ AutoShepherd.prototype.run = function(herd) {
     this.displayShepLines();
   }
   this.timestep++;
-  if (this.timestep % 50 == 0){
-    console.log("Timestep: " + this.timestep);
-  }
+  // if (this.timestep % 50 == 0){
+  //   console.log("Timestep: " + this.timestep);
+  // }
 
 }
 

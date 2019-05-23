@@ -31,10 +31,10 @@ Oracle.prototype.run = function(herd) {
   }
 }
 
-Oracle.prototype.runTheShow = function () {
+Oracle.prototype.runTheShow = function (herd) {
 
   if (this.targetNum < this.numSectors) {
-    var search = this.searchForAnimals();
+    var search = this.searchForAnimals(herd);
     this.applyForce(search);
   } else {
     this.maxspeed = 0;
@@ -76,7 +76,7 @@ Oracle.prototype.borders = function () {
   }
 }
 
-Oracle.prototype.render = function() {
+Oracle.prototype.render = function(herd) {
   // Draw a triangle rotated in the direction of velocity
   var theta = this.velocity.heading() + radians(90);
   fill(0, 79, 249);
@@ -92,7 +92,7 @@ Oracle.prototype.render = function() {
   pop();
 }
 
-Oracle.prototype.searchForAnimals = function () {
+Oracle.prototype.searchForAnimals = function (herd) {
   if (this.firstSearch == true) {
     this.target = this.locateFirstTarget();
     if ((this.position.x - 2 < this.target.x && this.target.x < this.position.x + 2) && (this.position.y - 2 < this.target.y && this.target.y < this.position.y + 2)){
@@ -220,14 +220,13 @@ Oracle.prototype.drawSectors = function () {
 
 Oracle.prototype.saveAnimalPos = function (herd) {
   console.log("In Animal Pose");
-  console.log(herd);
   var viewWidth = this.secWidth/2;
   var viewHieght = this.secHeight/2;
   var count = 0;
   for (var i = 0; i < herd.length; i++) {
-    console.log(Math.abs(this.position.x - herd[i].positioin.x));
-    if (Math.abs(this.position.x - herd[i].positioin.x) < viewWidth && Math.abs(this.position.y - herd[i].positioin.y) < viewHieght) {
-      this.animalPositions.push(herd[i].positioin);
+    // console.log(Math.abs(this.position.x - herd[i].position.x));
+    if (Math.abs(this.position.x - herd[i].position.x) < viewWidth && Math.abs(this.position.y - herd[i].position.y) < viewHieght) {
+      this.animalPositions.push(herd[i].position);
       count++;
     }
   }

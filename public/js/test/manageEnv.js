@@ -258,6 +258,6 @@ function herd() {
 }
 
 function oracle() {
-  console.log("Goin' Herding");
   environment.addOracle(new Oracle(shepX, shepY, goalX, goalY));
+  environment.addOracleShepherd(new OracleShepherd(shepX, shepY, goalX, goalY));
 }
