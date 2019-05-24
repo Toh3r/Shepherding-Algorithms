@@ -10,7 +10,7 @@ function Oracle (x, y, gx, gy) {
   this.moving = true;
   this.movingUp = true;
   this.targets = [];
-  this.animalPositions = [];
+  this.animals = [];
   this.target = createVector(0,0);
   this.oldTarget = createVector(0,0);
   this.startx = x;
@@ -40,7 +40,6 @@ Oracle.prototype.runTheShow = function (herd) {
     this.maxspeed = 0;
     this.velocity.setMag(0);
   }
-
 }
 
 // Apply each behavioural rule to each animal
@@ -99,6 +98,7 @@ Oracle.prototype.searchForAnimals = function (herd) {
       this.firstSearch = false;
     }
   } else if (this.moving == false) {
+    console.log("Firing animal poses")
       this.target = this.calculateTarget();
       this.moving = true;
   } else if (this.moving == true) {
@@ -114,8 +114,9 @@ Oracle.prototype.searchForAnimals = function (herd) {
   if ((this.position.x - 2 < this.target.x && this.target.x < this.position.x + 2) && (this.position.y - 2 < this.target.y && this.target.y < this.position.y + 2)){
     this.moving = false;
     this.targetNum ++;
-    console.log(this.targetNum)
     this.saveAnimalPos(herd);
+    // console.log(this.targetNum)
+
   }
   return steer;
 }
@@ -219,16 +220,18 @@ Oracle.prototype.drawSectors = function () {
 }
 
 Oracle.prototype.saveAnimalPos = function (herd) {
-  console.log("In Animal Pose");
+  // console.log("In Animal Pose");
   var viewWidth = this.secWidth/2;
   var viewHieght = this.secHeight/2;
   var count = 0;
   for (var i = 0; i < herd.length; i++) {
     // console.log(Math.abs(this.position.x - herd[i].position.x));
-    if (Math.abs(this.position.x - herd[i].position.x) < viewWidth && Math.abs(this.position.y - herd[i].position.y) < viewHieght) {
-      this.animalPositions.push(herd[i].position);
+    if (this.targetNum <= this.numSectors && Math.abs(this.position.x - herd[i].position.x) < viewWidth && Math.abs(this.position.y - herd[i].position.y) < viewHieght) {
+      this.animals.push(herd[i]);
       count++;
+    } else if (this.targetNum >= this.numSectors){
+      console.log("Got ya")
     }
   }
-  console.log(this.animalPositions);
+
 }

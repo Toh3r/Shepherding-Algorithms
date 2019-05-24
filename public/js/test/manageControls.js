@@ -206,6 +206,11 @@ ManageControls.prototype.createControls = function () {
   createOracle.parent('oracleBtn');
   createOracle.mouseClicked(oracle);
 
+  // -------- START Multi-Drones --------
+  createMulti = createButton('Multi-Drones');
+  createMulti.parent('multiBtn');
+  createMulti.mouseClicked(multiDrone);
+
   // -------- RESET BUTTON --------
   resetBtn = createButton('Resest');
   resetBtn.parent('resetBtn');

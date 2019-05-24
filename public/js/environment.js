@@ -28,7 +28,7 @@ function Environment() {
 // ------------ CREATES AGENTS/OBJECTS WHEN PASSED INFO FROM SKETCH ------------
 Environment.prototype.run = function() {
   for (var i = 0; i < this.herd.length; i++) {
-    this.herd[i].run(this.herd, this.shepherds, this.novelObjects, this.autoShepherds, this.obstacles);  // Passing all arrays to each animal
+    this.herd[i].run(this.herd, this.shepherds, this.novelObjects, this.autoShepherds, this.obstacles, this.oracleShepherds);  // Passing all arrays to each animal
   }
 
   for (var i = 0; i < this.shepherds.length; i++) {
@@ -179,6 +179,8 @@ Environment.prototype.hitTheGap = function(animal) {
 Environment.prototype.removeAll = function() {
   this.herd.length = 0;
   this.shepherds.length = 0;
+  this.autoShepherds.length = 0;
+  this.oracleShepherds.length = 0;
   this.novelObjects.length = 0;
   this.obstacles.length = 0;
   this.accumulatedStress = 0;

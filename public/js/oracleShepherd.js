@@ -11,10 +11,10 @@ function OracleShepherd(x, y, gx, gy) {
   this.target = createVector(0,0);
   this.targetLock = false;
   this.oldTarget = createVector(0,0);
-  this.herdBottom = 0;
-  this.herdTop = 0;
-  this.herdLeft = 0;
-  this.herdRight = 0;
+  this.animalsBottom = 0;
+  this.animalsTop = 0;
+  this.animalsLeft = 0;
+  this.animalsRight = 0;
   this.targetDir = "right";
   this.timestep = 0;
   this.goalX = gx;
@@ -23,13 +23,13 @@ function OracleShepherd(x, y, gx, gy) {
 
 // Call methods for each shepherd
 OracleShepherd.prototype.run = function(oracles) {
-  var herd = oracles[0].animalPositions;
-  // console.log(oracles[0].numSectors);
-  if (herd.length >= 9) {
+  var animals = oracles[0].animals;
+  if (animals.length >= 2) {
+    console.log(animals);
     this.update();
     this.borders();
     this.render();
-    this.herdAnimals(herd);
+    this.herdAnimals(animals);
     if(lineCheck.checked() == true) {
       this.displayShepLines();
     }
@@ -42,15 +42,16 @@ OracleShepherd.prototype.applyForce = function(force) {
   this.acceleration.add(force);
 }
 
-OracleShepherd.prototype.herdAnimals = function (herd) {
-  var bun = this.bunched(herd);
+OracleShepherd.prototype.herdAnimals = function (animals) {
+  var bun = this.bunched(animals);
   if (bun == true) {
-    var mov = this.moveAnimals(herd);
+    // console.log(animals);
+    var mov = this.moveAnimals(animals);
     this.applyForce(mov);
   }
 
   if (bun == false) {
-    var col = this.collectAnimals(herd);
+    var col = this.collectAnimals(animals);
     this.applyForce(col);
   }
 }
@@ -100,23 +101,24 @@ OracleShepherd.prototype.render = function() {
   pop();
 }
 
-OracleShepherd.prototype.bunched = function (herd) {
-  this.herdBottom = Math.max.apply(Math, herd.map(function(o) { return o.y; }));
-  this.herdTop = Math.min.apply(Math, herd.map(function(o) { return o.y; }));
-  this.herdLeft = Math.min.apply(Math, herd.map(function(o) { return o.x; }));
-  this.herdRight = Math.max.apply(Math, herd.map(function(o) { return o.x; }));
+OracleShepherd.prototype.bunched = function (animals) {
+  this.animalsBottom = Math.max.apply(Math, animals.map(function(o) { return o.position.y; }));
+  this.animalsTop = Math.min.apply(Math, animals.map(function(o) { return o.position.y; }));
+  this.animalsLeft = Math.min.apply(Math, animals.map(function(o) { return o.position.x; }));
+  this.animalsRight = Math.max.apply(Math, animals.map(function(o) { return o.position.x; }));
 
-  herDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
+  herDist = dist(this.animalsLeft, this.animalsTop, this.animalsRight, this.animalsBottom);
   if (herDist < 200) {
+    // console.log(this.animalsBottom);
     return true;
   } else {
     return false;
   }
 }
 
-OracleShepherd.prototype.collectAnimals = function (herd) {
-  var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
-  var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
+OracleShepherd.prototype.collectAnimals = function (animals) {
+  var herdX = (this.animalsRight + this.animalsLeft) / 2; // X co-ord of herd centre
+  var herdY = (this.animalsTop + this.animalsBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = createVector(this.goalX,this.goalY); // Location of exit
@@ -125,10 +127,10 @@ OracleShepherd.prototype.collectAnimals = function (herd) {
     goal = this.avoidObstacle(center, goal);
   }
 
-  animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
-  animalFR = Math.abs(herdX - this.herdRight);  // Cords of animal furthest right
-  animalFT = Math.abs(herdY - this.herdTop); // Cords of animal furthest top
-  animalFB = Math.abs(herdY - this.herdBottom); // Cords of animal furthest bottom
+  animalFL = Math.abs(herdX - this.animalsLeft); // Cords of animal furthest left
+  animalFR = Math.abs(herdX - this.animalsRight);  // Cords of animal furthest right
+  animalFT = Math.abs(herdY - this.animalsTop); // Cords of animal furthest top
+  animalFB = Math.abs(herdY - this.animalsBottom); // Cords of animal furthest bottom
   furthestAnimal = Math.max(animalFL, animalFR, animalFT, animalFB);
 
   // Lines to flight zone and pressure zone
@@ -175,10 +177,10 @@ OracleShepherd.prototype.collectAnimals = function (herd) {
  }
 }
 
-OracleShepherd.prototype.moveAnimals = function (herd) {
+OracleShepherd.prototype.moveAnimals = function (animals) {
 
-  var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
-  var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
+  var herdX = (this.animalsRight + this.animalsLeft) / 2; // X co-ord of herd centre
+  var herdY = (this.animalsTop + this.animalsBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = createVector(this.goalX,this.goalY); // Location of exit
@@ -187,10 +189,10 @@ OracleShepherd.prototype.moveAnimals = function (herd) {
     goal = this.avoidObstacle(center, goal);
   }
 
-  animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
-  animalFR = Math.abs(herdX - this.herdRight);  // Cords of animal furthest right
-  animalFT = Math.abs(herdY - this.herdTop); // Cords of animal furthest top
-  animalFB = Math.abs(herdY - this.herdBottom); // Cords of animal furthest bottom
+  animalFL = Math.abs(herdX - this.animalsLeft); // Cords of animal furthest left
+  animalFR = Math.abs(herdX - this.animalsRight);  // Cords of animal furthest right
+  animalFT = Math.abs(herdY - this.animalsTop); // Cords of animal furthest top
+  animalFB = Math.abs(herdY - this.animalsBottom); // Cords of animal furthest bottom
   furthestAnimal = Math.max(animalFL, animalFR, animalFT, animalFB);
 
   // Lines to flight zone and pressure zone
@@ -210,7 +212,7 @@ OracleShepherd.prototype.moveAnimals = function (herd) {
   pzp1 = this.adjustLineLen(pzp1,l2pz, -40);
   pzp2 = this.adjustLineLen(pzp2,l2pz, -40);
 
-  herdHeading = this.checkHeading(herd);
+  herdHeading = this.checkHeading(animals);
 
   if (this.movingUp == false) {
     if (environment.avgSpeed() < 0.35 || !(-0.75 < herdHeading && herdHeading < 0.75)) {
@@ -261,8 +263,8 @@ OracleShepherd.prototype.targetInBounds = function (target) {
 }
 
 OracleShepherd.prototype.displayShepLines = function () {
-  var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
-  var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
+  var herdX = (this.animalsRight + this.animalsLeft) / 2; // X co-ord of herd centre
+  var herdY = (this.animalsTop + this.animalsBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = createVector(this.goalX,this.goalY); // Location of exit
@@ -271,10 +273,10 @@ OracleShepherd.prototype.displayShepLines = function () {
     goal = this.avoidObstacle(center, goal);
   }
 
-  animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
-  animalFR = Math.abs(herdX - this.herdRight);  // Cords of animal furthest right
-  animalFT = Math.abs(herdY - this.herdTop); // Cords of animal furthest top
-  animalFB = Math.abs(herdY - this.herdBottom); // Cords of animal furthest bottom
+  animalFL = Math.abs(herdX - this.animalsLeft); // Cords of animal furthest left
+  animalFR = Math.abs(herdX - this.animalsRight);  // Cords of animal furthest right
+  animalFT = Math.abs(herdY - this.animalsTop); // Cords of animal furthest top
+  animalFB = Math.abs(herdY - this.animalsBottom); // Cords of animal furthest bottom
   furthestAnimal = Math.max(animalFL, animalFR,animalFT,animalFB);
 
   // Lines to flight zone and pressure zone
@@ -359,11 +361,11 @@ OracleShepherd.prototype.adjustLineLen = function (p1,p2,d) {
   point = createVector(lp1,lp2);
   return point;
 }
-OracleShepherd.prototype.checkHeading = function (herd) {
+OracleShepherd.prototype.checkHeading = function (animals) {
   totalHeading = 0;
-  for (var i = 0; i < herd.length; i++) {
-    totalHeading += herd[i].velocity.heading();
+  for (var i = 0; i < animals.length; i++) {
+    totalHeading += animals[i].velocity.heading();
   }
-  averageHeading = totalHeading/ herd.length;
+  averageHeading = totalHeading/ animals.length;
   return averageHeading;
 }

@@ -223,7 +223,7 @@ function addStuff() {
     environment.addAnimal(new Animal(mouseX, mouseY));
   }
   if (dropSelect == "Add Shepherd") {
-    environment.addAutoShepherd(new AutoShepherd(mouseX, mouseY));
+    environment.addShepherd(new Shepherd(mouseX, mouseY));
   }
   if (dropSelect == "Add Novelty") {
     environment.addNovelty(new NovelObject(mouseX, mouseY, 25.0));
@@ -260,4 +260,8 @@ function herd() {
 function oracle() {
   environment.addOracle(new Oracle(shepX, shepY, goalX, goalY));
   environment.addOracleShepherd(new OracleShepherd(shepX, shepY, goalX, goalY));
+}
+
+function multiDrone() {
+  console.log("Well");
 }
