@@ -19,13 +19,14 @@ function OracleShepherd(x, y, gx, gy) {
   this.timestep = 0;
   this.goalX = gx;
   this.goalY = gy;
+  this.i = 0;
 }
 
 // Call methods for each shepherd
 OracleShepherd.prototype.run = function(oracles) {
   var animals = oracles[0].animals;
   if (animals.length >= 2) {
-    console.log(animals);
+    // console.log(animals);
     this.update();
     this.borders();
     this.render();
@@ -106,7 +107,8 @@ OracleShepherd.prototype.bunched = function (animals) {
   this.animalsTop = Math.min.apply(Math, animals.map(function(o) { return o.position.y; }));
   this.animalsLeft = Math.min.apply(Math, animals.map(function(o) { return o.position.x; }));
   this.animalsRight = Math.max.apply(Math, animals.map(function(o) { return o.position.x; }));
-
+  // console.log("Animals right: ", this.animalsRight );
+  // console.log(animals, " ", this.i++);
   herDist = dist(this.animalsLeft, this.animalsTop, this.animalsRight, this.animalsBottom);
   if (herDist < 200) {
     // console.log(this.animalsBottom);
@@ -364,7 +366,7 @@ OracleShepherd.prototype.adjustLineLen = function (p1,p2,d) {
 OracleShepherd.prototype.checkHeading = function (animals) {
   totalHeading = 0;
   for (var i = 0; i < animals.length; i++) {
-    totalHeading += animals[i].velocity.heading();
+    totalHeading += animals[i].heading;
   }
   averageHeading = totalHeading/ animals.length;
   return averageHeading;

@@ -10,7 +10,8 @@ function Oracle (x, y, gx, gy) {
   this.moving = true;
   this.movingUp = true;
   this.targets = [];
-  this.animals = [];
+  // this.animals = [];
+  // this.oldAnimals = [];
   this.target = createVector(0,0);
   this.oldTarget = createVector(0,0);
   this.startx = x;
@@ -98,7 +99,7 @@ Oracle.prototype.searchForAnimals = function (herd) {
       this.firstSearch = false;
     }
   } else if (this.moving == false) {
-    console.log("Firing animal poses")
+    // console.log("Firing animal poses")
       this.target = this.calculateTarget();
       this.moving = true;
   } else if (this.moving == true) {
@@ -115,7 +116,7 @@ Oracle.prototype.searchForAnimals = function (herd) {
     this.moving = false;
     this.targetNum ++;
     this.saveAnimalPos(herd);
-    // console.log(this.targetNum)
+    // console.log("Running da herd ting")
 
   }
   return steer;
@@ -224,14 +225,28 @@ Oracle.prototype.saveAnimalPos = function (herd) {
   var viewWidth = this.secWidth/2;
   var viewHieght = this.secHeight/2;
   var count = 0;
+  var animals = [];
   for (var i = 0; i < herd.length; i++) {
     // console.log(Math.abs(this.position.x - herd[i].position.x));
     if (this.targetNum <= this.numSectors && Math.abs(this.position.x - herd[i].position.x) < viewWidth && Math.abs(this.position.y - herd[i].position.y) < viewHieght) {
-      this.animals.push(herd[i]);
+      var pos = herd[i].position;
+      var vel = herd[i].velocity.heading();
+      var voc = herd[i].vocalizing;
+
+      var newAnimal = {
+        position: pos,
+        heading: vel,
+        vocalizing: voc
+      }
+      animals.push(newAnimal);
+      this.animals = animals;
       count++;
     } else if (this.targetNum >= this.numSectors){
-      console.log("Got ya")
+      // console.log("Got ya")
     }
   }
-
 }
+
+// this.animals.push(herd[i].position, herd[i].heading, herd[i].vocalizing);
+// this.animals.push(herd[i].heading);
+// this.animals.push(herd[i].vocalizing);
