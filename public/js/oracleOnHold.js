@@ -12,7 +12,7 @@ function Oracle (x, y, gx, gy) {
   this.firstRun= true;
   this.moving = true;
   this.movingUp = true;
-  // this.target = createVector(0,0);    //Holds position of current target
+  this.target = createVector(0,0);    //Holds position of current target
   this.oldTarget = createVector(0,0); //
   this.targets = [];   // Stores vectors for all targets in an enclosure
   this.animals = [];   // Stores herd information that is passed to shepherd
@@ -27,11 +27,8 @@ Oracle.prototype.run = function(herd) {
   this.update();
   this.borders();
   this.render();
-  // Create sectors on first call
-  if (this.targets.length == 0) {
-    this.createSectors();
-  }
   this.runTheShow(herd);
+  this.createSectors();
   if (sectorCheck.checked() == true) {
     this.drawSectors();
   }
@@ -47,8 +44,8 @@ Oracle.prototype.runTheShow = function (herd) {
       this.firstRun = false;
     }
   } else if (this.firstRun == false && bun == false) {
-    var cover = this.coverHerd();
-    this.applyForce(cover);
+    var follow = this.followHerd();
+    this.applyForce(follow);
   } else if (this.firstRun == false && bun == true) {
     var follow = this.followHerd();
     this.applyForce(follow);
@@ -106,24 +103,24 @@ Oracle.prototype.render = function(herd) {
 
 Oracle.prototype.searchForAnimals = function (herd) {
   if (this.firstSearch == true) {
-    this.target.position = this.locateFirstTarget();
-    if ((this.position.x - 2 < this.target.position.x && this.target.position.x < this.position.x + 2) && (this.position.y - 2 < this.target.position.y && this.target.position.y < this.position.y + 2)){
+    this.target = this.locateFirstTarget();
+    if ((this.position.x - 2 < this.target.x && this.target.x < this.position.x + 2) && (this.position.y - 2 < this.target.y && this.target.y < this.position.y + 2)){
       this.firstSearch = false;
     }
   } else if (this.moving == false) {
-      this.target.position = this.calculateTarget();
+      this.target = this.calculateTarget();
       this.moving = true;
   } else if (this.moving == true) {
-      this.target.position = this.oldTarget;
+      this.target = this.oldTarget;
   }
 
-  this.oldTarget = this.target.position;
-  var desired = p5.Vector.sub(this.target.position, this.position);
+  this.oldTarget = this.target;
+  var desired = p5.Vector.sub(this.target, this.position);
   desired.normalize();
   desired.mult(this.maxspeed);
   var steer = p5.Vector.sub(desired, this.velocity);
   steer.limit(this.maxforce);
-  if ((this.position.x - 2 < this.target.position.x && this.target.position.x < this.position.x + 2) && (this.position.y - 2 < this.target.position.y && this.target.position.y < this.position.y + 2)){
+  if ((this.position.x - 2 < this.target.x && this.target.x < this.position.x + 2) && (this.position.y - 2 < this.target.y && this.target.y < this.position.y + 2)){
     this.moving = false;
     this.targetNum ++;
     this.saveAnimalPos(herd);
@@ -133,59 +130,107 @@ Oracle.prototype.searchForAnimals = function (herd) {
 }
 
 Oracle.prototype.locateFirstTarget = function () {
+  secWidthNum = Math.ceil(width/250);
+  secHeightNum = Math.ceil(height/250);
+  this.numSectors = secWidthNum*secHeightNum;
+  this.secWidth = width/secWidthNum;
+  this.secHeight = height/secHeightNum;
+  sectorY = 0;
+  for(var sectorX = 0; sectorX < width; sectorX += this.secWidth){
+    this.target = createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2));
+    if(this.targets.length < this.numSectors) {
+      this.targets.push(this.target);
+    }
+    for(sectorY = this.secHeight; sectorY < height; sectorY += this.secHeight) {
+      this.target = createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2));
+      if(this.targets.length < this.numSectors) {
+        this.targets.push(this.target);
+      }
+    }
+    sectorY = 0;
+  }
 
-  this.bottomPoint = Math.max.apply(Math, this.targets.map(function(o) { return o.position.y; }));
-  this.topPoint = Math.min.apply(Math, this.targets.map(function(o) { return o.position.y; }));
-  this.leftPoint = Math.min.apply(Math, this.targets.map(function(o) { return o.position.x; }));
-  this.rightPoint = Math.max.apply(Math, this.targets.map(function(o) { return o.position.x; }));
+  this.bottomPoint = Math.max.apply(Math, this.targets.map(function(o) { return o.y; }));
+  this.topPoint = Math.min.apply(Math, this.targets.map(function(o) { return o.y; }));
+  this.leftPoint = Math.min.apply(Math, this.targets.map(function(o) { return o.x; }));
+  this.rightPoint = Math.max.apply(Math, this.targets.map(function(o) { return o.x; }));
 
   if (this.startx < width / 2 && this.starty < width / 2) {
-    this.target.position = createVector(this.leftPoint,this.topPoint);
+    this.target = createVector(this.leftPoint,this.topPoint);
     this.startPos = "tl";
     this.movingUp = false;
   } else if (this.startx < width / 2 && this.starty > width / 2) {
-    this.target.position = createVector(this.leftPoint, this.bottomPoint);
+    this.target = createVector(this.leftPoint, this.bottomPoint);
     this.startPos = "bl";
     this.movingUp = true;
   } else if (this.startx > width / 2 && this.starty < width / 2) {
-    this.target.position = createVector(this.rightPoint,this.topPoint);
+    this.target = createVector(this.rightPoint,this.topPoint);
     this.startPos = "tr";
     this.movingUp = false;
   } else if (this.startx > width / 2 && this.starty > width / 2) {
-    this.target.position = createVector(this.rightPoint, this.bottomPoint);
+    this.target = createVector(this.rightPoint, this.bottomPoint);
     this.startPos = "br";
     this.movingUp = true;
   }
-  return this.target.position;
+  return this.target;
 }
 
 Oracle.prototype.calculateTarget = function () {
-  floored = Math.floor(this.target.position.y - (this.secHeight/2)); // top
-  floored2 = Math.floor(this.target.position.y + (this.secHeight/2)); // bottom
-  floored3 = Math.floor(this.target.position.x - (this.secWidth/2)); // left
+  floored = Math.floor(this.target.y - (this.secHeight/2)); // top
+  floored2 = Math.floor(this.target.y + (this.secHeight/2)); // bottom
+  floored3 = Math.floor(this.target.x - (this.secWidth/2)); // left
   if (this.startPos == "br") {
     if (this.movingUp == true && floored > 0) {
-      this.target.position = createVector(this.position.x, this.position.y - this.secHeight);
+      this.target = createVector(this.position.x, this.position.y - this.secHeight);
     } else if (this.movingUp == false && floored2 <= height + 2) {
-      this.target.position = createVector(this.position.x, this.position.y + this.secHeight);
+      this.target = createVector(this.position.x, this.position.y + this.secHeight);
     } else {
-      this.target.position = createVector(this.position.x - this.secWidth,this.position.y);
+      this.target = createVector(this.position.x - this.secWidth,this.position.y);
       this.movingUp = !this.movingUp;
     }
   } else if (this.startPos == "tr") {
     if (this.movingUp == false && floored2 < height) {
-      this.target.position = createVector(this.position.x, this.position.y + this.secHeight);
+      this.target = createVector(this.position.x, this.position.y + this.secHeight);
     } else if (this.movingUp == true && floored > 0) {
-      this.target.position = createVector(this.position.x, this.position.y - this.secHeight);
+      this.target = createVector(this.position.x, this.position.y - this.secHeight);
     } else if (floored3 > 0){
-      this.target.position = createVector(this.position.x - this.secWidth,this.position.y);
+      this.target = createVector(this.position.x - this.secWidth,this.position.y);
       this.movingUp = !this.movingUp;
     } else {
-      this.target.position = this.oldTarget;
+      this.target = this.oldTarget;
     }
   }
 
-  return this.target.position;
+  return this.target;
+}
+
+
+Oracle.prototype.drawSectors = function () {
+  secWidthNum = Math.ceil(width/250);
+  secHeightNum = Math.ceil(height/250);
+  numSectors = secWidthNum*secHeightNum;
+  secWidth = width/secWidthNum;
+  secHeight = height/secHeightNum;
+  fill(40,40,40,40);
+  stroke(255);
+  sectorY = 0;
+  var c = 1;
+  for(var sectorX = 0; sectorX < width; sectorX += secWidth){
+    var r = 2;
+    var col = c + ".1";
+    rect(sectorX, sectorY, secWidth, secHeight);
+    ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 10, 10);
+    // text(col, sectorX + 10 + (secWidth/2),sectorY + (secHeight/2));
+    for(sectorY = secHeight; sectorY < height; sectorY += secHeight) {
+      var row = c + "." + r;
+      rect(sectorX, sectorY, secWidth, secHeight);
+      ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 10, 10);
+      // text(row, sectorX + 10 + (secWidth/2),sectorY + (secHeight/2));
+      r++;
+    }
+    sectorY = 0;
+    c++;
+  }
 }
 
 Oracle.prototype.saveAnimalPos = function (herd) {
@@ -207,82 +252,13 @@ Oracle.prototype.saveAnimalPos = function (herd) {
       var parsedAnimal = {
         position: createVector(parsedPosX, parsedPosY),
         heading: parsedVel,
-        vocalizing: parsedVoc,
-        inSector: this.target.id
+        vocalizing: parsedVoc
       }
-      console.log("Animal: ", parsedAnimal)
-      console.log(this.target)
       this.animals.push(parsedAnimal); // Add to animals array which is used by shepherd
       count++;
     } else if (this.targetNum >= this.numSectors){
 
     }
-  }
-}
-
-// Function to create target points for UAV Agent when locating animal agents
-Oracle.prototype.createSectors = function () {
-  secWidthNum = Math.ceil(width/250);           // Find number of sectors on x axis
-  secHeightNum = Math.ceil(height/250);         // Find number of sectors on y-axis
-  this.numSectors = secWidthNum*secHeightNum;   // Store number of sectors
-  console.log("Number of sectors: " + this.numSectors)
-  this.secWidth = width/secWidthNum;            // Create sectors with even width
-  this.secHeight = height/secHeightNum;         // Create sectors with even height
-  sectorY = 0; // Initiate y sector as 0
-  var c = 1;
-  for(var sectorX = 0; sectorX < width; sectorX += this.secWidth){
-    var r = .2;
-    this.target = {
-      position: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
-      id: c + .1
-    }
-    if(this.targets.length < this.numSectors) {
-      this.targets.push(this.target);
-    }
-    for(sectorY = this.secHeight; sectorY < height; sectorY += this.secHeight) {
-      this.target = {
-        position: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
-        id: c + r
-      }
-      if(this.targets.length < this.numSectors) {
-        this.targets.push(this.target);
-      }
-      r += .1;
-    }
-    sectorY = 0;
-    c++;
-  }
-}
-
-Oracle.prototype.drawSectors = function () {
-  for (var i = 0; i < this.targets.length; i++) {
-    text(this.targets[i].id, this.targets[i].position.x + 10, this.targets[i].position.y);
-
-  }
-  secWidthNum = Math.ceil(width/250);
-  secHeightNum = Math.ceil(height/250);
-  numSectors = secWidthNum*secHeightNum;
-  secWidth = width/secWidthNum;
-  secHeight = height/secHeightNum;
-  fill(40,40,40,40);
-  stroke(255);
-  sectorY = 0;
-  var c = 1;
-  for(var sectorX = 0; sectorX < width; sectorX += secWidth){
-    var r = 2;
-    var col = c + ".1";
-    rect(sectorX, sectorY, secWidth, secHeight);
-    ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 5, 5);
-    // text(col, sectorX + 10 + (secWidth/2),sectorY + (secHeight/2));
-    for(sectorY = secHeight; sectorY < height; sectorY += secHeight) {
-      var row = c + "." + r;
-      rect(sectorX, sectorY, secWidth, secHeight);
-      ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 5, 5);
-      // text(row, sectorX + 10 + (secWidth/2),sectorY + (secHeight/2));
-      r++;
-    }
-    sectorY = 0;
-    c++;
   }
 }
 
@@ -301,8 +277,9 @@ Oracle.prototype.bunched = function () {
 }
 
 Oracle.prototype.coverHerd = function () {
-  // console.log("Covering");
+
 }
+
 
 Oracle.prototype.followHerd = function () {
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
