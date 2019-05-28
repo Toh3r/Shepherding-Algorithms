@@ -1,5 +1,8 @@
 body {
 	background-color: black;
+	background-image: url('./images/moreGreenNeon.jpg'); /*Photo by Osman Rana on Unsplash, Photo by Fabio Tura on Unsplash*/
+	/* position: absolute; */
+	background-size: cover;
 }
 
 #landing-header {
@@ -40,71 +43,59 @@ body {
 .btn-black:active:focus {
 	background-color: black;
 	border: 5px groove rgb(36, 188, 25);
-}
-
+ /*
 .slideshow {
   position: fixed;
-  /*Take up 100% of the page*/
   width: 100%;
   height: 100%;
   top: 0;
   left: 0;
-  /*Places images behind other content*/
   z-index: 0;
-  /*Remove bullet points*/
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-/*Style list items (pictures)*/
 .slideshow li {
   width: 100%;
   height: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  /*allow images to take up entire page*/
   background-size: cover;
-  /*Centre images on the page*/
   background-position: 50% 50%;
   background-repeat: no-repeat;
-  /*Images start faded out*/
   opacity: 0;
   z-index: 0;
-  /*Allow images to fade in and out, loops infinatley*/
   animation: imageAnimation 50s linear infinite;
 }
 
-/*Background images*/
 .slideshow li:nth-child(1) {
   background-image: url('./images/herd.jpg');
 }
 .slideshow li:nth-child(2) {
-  background-image: url('./images/drone.jpg'); /* Image by LoggaWiggler from Pixabay  */
+  background-image: url('./images/drone.jpg');
   animation-delay: 10s;
 }
 .slideshow li:nth-child(3) {
-  background-image: url('./images/code.jpg'); /* Photo by Fabian Grohs on Unsplash  */
+  background-image: url('./images/code.jpg');
   animation-delay: 20s;
 }
 .slideshow li:nth-child(4) {
-  background-image: url('./images/dog.jpg');  /* Photo by Aitor Romero on Unsplash  */
+  background-image: url('./images/dog.jpg');
   animation-delay: 30s;
 }
 .slideshow li:nth-child(5) {
-  background-image: url('./images/sheep.jpg'); /* Photo by George Hiles on Unsplash  */
+  background-image: url('./images/sheep.jpg');
   animation-delay: 40s;
 }
 
-/*Fades images in and out*/
 @keyframes imageAnimation {
   0% {
     opacity: 0;
     animation-timing-function: ease-in;
   }
 
-/* Older browser support - .no-cssanimations class added by modernizr */
 .no-cssanimations .slideshow li {
 	opacity: 1;
 }
@@ -119,3 +110,5 @@ body {
     opacity: 0
   }
 }
+
+*/

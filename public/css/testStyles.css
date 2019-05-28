@@ -29,3 +29,12 @@ p {
 #controlsRow2 {
   min-height: 200px;
 }
+
+.simHeader {
+  border-top: 5px solid white;
+  text-align: center;
+}
+
+.white {
+  color: white;
+}

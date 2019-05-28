@@ -250,7 +250,7 @@ ManageControls.prototype.createControls = function () {
   shepherdDisplay.parent("numAnimalsDiv");
 
   var fixedStress = environment.totalStress().toFixed(2);
-  stressDisplay = createP("Accumulated Stress: " + fixedStress);
+  stressDisplay = createP("Adverse Conditions: " + fixedStress);
   stressDisplay.parent("numAnimalsDiv");
 
   var fixedSpeed = environment.avgSpeed().toFixed(2);
@@ -360,7 +360,7 @@ ManageControls.prototype.updateSimInfo = function () {
   shepherdDisplay.parent("numAnimalsDiv");
 
   var fixedStress = environment.totalStress().toFixed(2);
-  stressDisplay = createP("Accumulated Stress: " + fixedStress);
+  stressDisplay = createP("Adverse Conditions: " + fixedStress);
   stressDisplay.parent("numAnimalsDiv");
 
   var fixedSpeed = environment.avgSpeed().toFixed(2);
