@@ -7,6 +7,7 @@ function Oracle (x, y, gx, gy) {
   this.r = 3.0;
   this.maxspeed = 1;
   this.maxForce = 0.3;
+
   // Variables to control searching
   this.firstSearch = true;
   this.firstRun= true;
@@ -141,6 +142,7 @@ Oracle.prototype.searchForAnimals = function (herd) {
 }
 
 Oracle.prototype.locateFirstTarget = function () {
+
   var bottomRow = Math.max.apply(Math, this.targets.map(function(o) { return o.id.y; }));
   var topRow = Math.min.apply(Math, this.targets.map(function(o) { return o.id.y; }));
   var leftCol = Math.min.apply(Math, this.targets.map(function(o) { return o.id.x; }));
@@ -323,6 +325,7 @@ Oracle.prototype.bunched = function () {
 }
 
 Oracle.prototype.keepSearching = function () {
+  // Find
   this.bottomRow = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
   this.topRow = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
   this.leftCol = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
@@ -383,4 +386,3 @@ Oracle.prototype.checkSector = function () {
   currentID = createVector(current.id.x, current.id.y);
   return currentID;
 }
-// currentID = createVector(this.targets[i].id.x, this.targets[i].id.y);

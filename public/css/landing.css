@@ -2,6 +2,8 @@ body {
 	background-color: black;
 	background-image: url('./images/moreGreenNeon.jpg'); /*Photo by Osman Rana on Unsplash, Photo by Fabio Tura on Unsplash*/
 	/* position: absolute; */
+	background-position: center;
+	background-repeat: no-repeat;
 	background-size: cover;
 }
 

@@ -243,23 +243,50 @@ ManageControls.prototype.createControls = function () {
   createNewEnv();
 
   // ---------- CREATE PARAGRAPHS TO DISPLAY INFO ----------
-  animalDisplay = createP("Number of Animals: " + environment.herd.length);
-  animalDisplay.parent("numAnimalsDiv");
+  var timeSteps = environment.timeSteps();
+  timeDisplay = createP("Timesteps: " + timeSteps);
+  timeDisplay.parent("simInfoDiv");
 
-  shepherdDisplay = createP("Number of Shepherds: " + environment.shepherds.length);
-  shepherdDisplay.parent("numAnimalsDiv");
+  animalDisplay = createP("Number of Animals: " + environment.herd.length);
+  animalDisplay.parent("simInfoDiv");
+
+  vocalDisplay = createP("Vocalizing: false");
+  vocalDisplay.parent("simInfoDiv");
 
   var fixedStress = environment.totalStress().toFixed(2);
   stressDisplay = createP("Adverse Conditions: " + fixedStress);
-  stressDisplay.parent("numAnimalsDiv");
+  stressDisplay.parent("simInfoDiv");
 
   var fixedSpeed = environment.avgSpeed().toFixed(2);
   speedDisplay = createP("Average Speed: " + fixedSpeed);
-  speedDisplay.parent("numAnimalsDiv");
+  speedDisplay.parent("simInfoDiv");
 
-  var timeSteps = environment.timeSteps();
-  timeDisplay = createP("Timesteps: " + timeSteps);
-  timeDisplay.parent("numAnimalsDiv");
+  headingDisplay = createP("Average Heading: 0");
+  headingDisplay.parent("simInfoDiv");
+
+  bunchedDisplay = createP("Bunched: False");
+  bunchedDisplay.parent("simInfoDiv");
+
+  movementDisplay = createP("Good Movement Steps: ");
+  movementDisplay.parent("simInfoDiv");
+
+  shepherdManualDisplay = createP("Number of Manual Shepherds: " + environment.shepherds.length);
+  shepherdManualDisplay.parent("simInfoDiv");
+
+  shepherdGPSDisplay = createP("Number of GPS Shepherds: 0");
+  shepherdGPSDisplay.parent("simInfoDiv");
+
+  shepherdOracleDisplay = createP("NumbeOracle Shepherds: 0");
+  shepherdOracleDisplay.parent("simInfoDiv");
+
+  oracleDisplay = createP("Number of Oracles: 0");
+  oracleDisplay.parent("simInfoDiv");
+
+  numSectorDisplay = createP("Number of Sectors: 0");
+  numSectorDisplay.parent("simInfoDiv");
+
+  currentSectorDisplay = createP("Current Sector: 0");
+  currentSectorDisplay.parent("simInfoDiv");
 
 }
 
@@ -347,29 +374,65 @@ ManageControls.prototype.applyControls = function () {
 ManageControls.prototype.updateSimInfo = function () {
   // Destroy all info outputs from previous frame
   animalDisplay.remove();
-  shepherdDisplay.remove();
+  shepherdManualDisplay.remove();
+  shepherdGPSDisplay.remove();
+  shepherdOracleDisplay.remove();
   stressDisplay.remove();
   speedDisplay.remove();
   timeDisplay.remove();
+  movementDisplay.remove();
+  vocalDisplay.remove();
+  oracleDisplay.remove();
+  numSectorDisplay.remove();
+  currentSectorDisplay.remove();
+  headingDisplay.remove();
+  bunchedDisplay.remove();
 
   // Update with sim info from current frame
-  animalDisplay = createP("Number of Animals: " + environment.herd.length);
-  animalDisplay.parent("numAnimalsDiv");
+  var timeSteps = environment.timeSteps();
+  timeDisplay = createP("Timesteps: " + timeSteps);
+  timeDisplay.parent("simInfoDiv");
 
-  shepherdDisplay = createP("Number of Shepherds: " + environment.shepherds.length);
-  shepherdDisplay.parent("numAnimalsDiv");
+  animalDisplay = createP("Number of Animals: " + environment.herd.length);
+  animalDisplay.parent("simInfoDiv");
+
+  vocalDisplay = createP("Vocalizing: false");
+  vocalDisplay.parent("simInfoDiv");
 
   var fixedStress = environment.totalStress().toFixed(2);
   stressDisplay = createP("Adverse Conditions: " + fixedStress);
-  stressDisplay.parent("numAnimalsDiv");
+  stressDisplay.parent("simInfoDiv");
 
   var fixedSpeed = environment.avgSpeed().toFixed(2);
   speedDisplay = createP("Average Speed: " + fixedSpeed);
-  speedDisplay.parent("numAnimalsDiv");
+  speedDisplay.parent("simInfoDiv");
 
-  var timeSteps = environment.timeSteps();
-  timeDisplay = createP("Timesteps: " + timeSteps);
-  timeDisplay.parent("numAnimalsDiv");
+  headingDisplay = createP("Average Heading: 0");
+  headingDisplay.parent("simInfoDiv");
+
+  bunchedDisplay = createP("Bunched: False");
+  bunchedDisplay.parent("simInfoDiv");
+
+  movementDisplay = createP("Good Movement Steps: ");
+  movementDisplay.parent("simInfoDiv");
+
+  shepherdManualDisplay = createP("Num of Manual Shepherds: " + environment.shepherds.length);
+  shepherdManualDisplay.parent("simInfoDiv");
+
+  shepherdGPSDisplay = createP("Number of GPS Shepherds: 0");
+  shepherdGPSDisplay.parent("simInfoDiv");
+
+  shepherdOracleDisplay = createP("Num Oracle Shepherds: 0");
+  shepherdOracleDisplay.parent("simInfoDiv");
+
+  oracleDisplay = createP("Number of Oracles: 0");
+  oracleDisplay.parent("simInfoDiv");
+
+  numSectorDisplay = createP("Number of Sectors: 0");
+  numSectorDisplay.parent("simInfoDiv");
+
+  currentSectorDisplay = createP("Current Sector: 0");
+  currentSectorDisplay.parent("simInfoDiv");
 }
 
 // ---------- CALLED ON MOUSE DRAG TO UPDATE ALL SLIDERS ----------
