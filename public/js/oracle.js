@@ -53,9 +53,10 @@ Oracle.prototype.runTheShow = function (herd) {
     this.applyForce(search);
     if (this.targetNum >= this.numSectors) {
       this.firstRun = false;
+      this.movingUp = false;
     }
   } else if (this.firstRun == false && bun == false) {
-    var keep = this.keepSearching();
+    var keep = this.keepSearching(herd);
     this.applyForce(keep);
     // var follow = this.followHerd(herd);
     // this.applyForce(follow);
@@ -143,39 +144,57 @@ Oracle.prototype.searchForAnimals = function (herd) {
 
 Oracle.prototype.locateFirstTarget = function () {
 
-  var bottomRow = Math.max.apply(Math, this.targets.map(function(o) { return o.id.y; }));
-  var topRow = Math.min.apply(Math, this.targets.map(function(o) { return o.id.y; }));
-  var leftCol = Math.min.apply(Math, this.targets.map(function(o) { return o.id.x; }));
-  var rightCol = Math.max.apply(Math, this.targets.map(function(o) { return o.id.x; }));
+  this.bottomRow = Math.max.apply(Math, this.targets.map(function(o) { return o.id.y; }));
+  this.topRow = Math.min.apply(Math, this.targets.map(function(o) { return o.id.y; }));
+  this.leftCol = Math.min.apply(Math, this.targets.map(function(o) { return o.id.x; }));
+  this.rightCol = Math.max.apply(Math, this.targets.map(function(o) { return o.id.x; }));
 
   if (this.startx < width / 2 && this.starty < width / 2) {
-    target = this.targets.find(target => target.id.x === leftCol && target.id.y === topRow);
+    target = this.targets.find(target => target.id.x === this.leftCol && target.id.y === this.topRow);
     this.startPos = "tl";
     this.movingUp = false;
   } else if (this.startx < width / 2 && this.starty > width / 2) {
-    target = this.targets.find(target => target.id.x === leftCol && target.id.y === bottomRow);
+    target = this.targets.find(target => target.id.x === this.leftCol && target.id.y === this.bottomRow);
     this.startPos = "bl";
     this.movingUp = true;
   } else if (this.startx > width / 2 && this.starty < width / 2) { // Starting near top left
-    target = this.targets.find(target => target.id.x === rightCol && target.id.y === topRow);
+    target = this.targets.find(target => target.id.x === this.rightCol && target.id.y === this.topRow);
     this.startPos = "tr";
     this.movingUp = false;
   } else if (this.startx > width / 2 && this.starty > width / 2) {
-    target = this.targets.find(target => target.id.x === rightCol && target.id.y === bottomRow);
+    target = this.targets.find(target => target.id.x === this.rightCol && target.id.y === this.bottomRow);
     this.startPos = "br";
     this.movingUp = true;
   }
-  targetPos = {
-    position: createVector(target.position.x, target.position.y),
-    id: createVector(target.id.x, target.id.y)
+  if (this.firstRun == true) {
+    targetPos = {
+      position: createVector(target.position.x, target.position.y),
+      id: createVector(target.id.x, target.id.y)
+    }
   }
   return targetPos;
 }
 
-Oracle.prototype.calculateTarget = function () {
-  floored = Math.floor(this.currentTarget.position.y - (this.secHeight/2)); // top
-  floored2 = Math.floor(this.currentTarget.position.y + (this.secHeight/2)); // bottom
-  floored3 = Math.floor(this.currentTarget.position.x - (this.secWidth/2)); // left
+Oracle.prototype.calculateTarget = function (minSec, maxSec) {
+
+  if(this.firstRun == true) {
+    floored = Math.floor(this.currentTarget.position.y - (this.secHeight/2)); // top
+    floored2 = Math.floor(this.currentTarget.position.y + (this.secHeight/2)); // bottom
+    floored3 = Math.floor(this.currentTarget.position.x - (this.secWidth/2)); // left
+  }
+
+  if (this.firstRun == true) {
+    topR = this.topRow;
+    bottomR = this.bottomRow;
+    leftC = this.leftCol;
+    rightC = this.leftCol
+  } else if ( this.firstRun == false) {
+    topR = minSec.id.y;
+    bottomR = maxSec.id.y;
+    rightC = minSec.id.x;
+    leftC = maxSec.id.x;
+  }
+
   if (this.startPos == "br") {
     if (this.movingUp == true && floored > 0) {
       var newTarget = {
@@ -195,17 +214,17 @@ Oracle.prototype.calculateTarget = function () {
       this.movingUp = !this.movingUp;
     }
   } else if (this.startPos == "tr") {
-    if (this.movingUp == false && floored2 < height) {
+    if (this.movingUp == false && this.currentTarget.id.y < bottomR) {
       var newTarget = {
         position: createVector(this.position.x, this.position.y + this.secHeight),
         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
       }
-    } else if (this.movingUp == true && floored > 0) {
+    } else if (this.movingUp == true && this.currentTarget.id.y > topR) {
       var newTarget = {
         position: createVector(this.position.x, this.position.y - this.secHeight),
         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
       }
-    } else if (floored3 > 0){
+    } else if (this.currentTarget.id.x > leftC){
       var newTarget = {
         position: createVector(this.position.x - this.secWidth,this.position.y),
         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
@@ -324,22 +343,70 @@ Oracle.prototype.bunched = function () {
   }
 }
 
-Oracle.prototype.keepSearching = function () {
-  // Find
-  this.bottomRow = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
-  this.topRow = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
-  this.leftCol = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
-  this.rightCol = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
+Oracle.prototype.keepSearching = function (herd) {
 
-  console.log("top: ", this.topRow);
-  console.log("left: ", this.leftCol);
-  console.log("bottom: ", this.bottomRow);
-  console.log("right: ", this.rightCol);
+  if(this.targetNum >= this.numSectors) {
+    this.firstSearch = true;
+  }
+  // Find
+  this.bRow = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
+  this.tRow = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
+  this.lCol = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
+  this.rCol = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
+
+  if (this.lCol >= 2) {
+    this.lCol = this.lCol - 1;
+  }
+  if (this.rCol <= this.rightCol - 1) {
+    this.rCol = this.rCol + 1;
+  }
+  if (this.tRow >= 2) {
+    this.tRow = this.tRow - 1;
+  }
+  if (this.bRow <= this.bottomRow - 1) {
+    this.bRow = this.bRow + 1;
+  }
+
+  min = createVector(this.rCol, this.tRow); // 3 and 1
+  max = createVector(this.lCol, this.bRow); // 1 and 3
+
+  minSec = this.getPositionOfTarget(min);   // Gets top right sector
+  maxSec = this.getPositionOfTarget(max);   // Gets bottom left sector
+
+  if (this.firstSearch == true && this.targetNum >= this.numSectors) {
+    this.movingUp = false;
+    // console.log("Num Sectors: ", this.numSectors)
+    this.currentTarget = minSec;
+    if ((this.position.x - 2 < this.currentTarget.position.x && this.currentTarget.position.x < this.position.x + 2) && (this.position.y - 2 < this.currentTarget.position.y && this.currentTarget.position.y < this.position.y + 2)){
+      this.animals.length = 0;
+      this.firstSearch = false;
+      this.targetNum = 0;
+      this.numSectors = (this.rCol*this.bRow)
+      console.log("Num Sectors: ", this.numSectors)
+      console.log("Hit first search")
+    }
+  } else if (this.moving == false) {
+      this.currentTarget = this.calculateTarget(minSec, maxSec);
+      this.moving = true;
+  } else if (this.moving == true) {
+      this.currentTarget.position = this.oldTarget;
+  }
+  this.oldTarget = this.currentTarget.position;
+  var desired = p5.Vector.sub(this.currentTarget.position, this.position);
+  desired.normalize();
+  desired.mult(this.maxspeed);
+  var steer = p5.Vector.sub(desired, this.velocity);
+  steer.limit(this.maxforce);
+  if ((this.position.x - 2 < this.currentTarget.position.x && this.currentTarget.position.x < this.position.x + 2) && (this.position.y - 2 < this.currentTarget.position.y && this.currentTarget.position.y < this.position.y + 2)){
+    this.moving = false;
+    this.targetNum ++;
+    this.saveAnimalPos(herd);
+  }
+  return steer;
 }
 
+//
 Oracle.prototype.followHerd = function (herd) {
-
-  this.following = true;
 
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
@@ -347,6 +414,7 @@ Oracle.prototype.followHerd = function (herd) {
   var center = createVector(herdX, herdY); // Centre co-ords of herd
 
   if ((this.position.x - 2 < center.x && center.x < this.position.x + 2) && (this.position.y - 2 < center.y && center.y < this.position.y + 2)) {
+    this.animals.length = 0;
     this.saveAnimalPos(herd);
   }
 
@@ -386,3 +454,70 @@ Oracle.prototype.checkSector = function () {
   currentID = createVector(current.id.x, current.id.y);
   return currentID;
 }
+
+Oracle.prototype.getPositionOfTarget = function (secNum) {
+  for (var i = 0; i < this.targets.length; i++) {
+    if(secNum.x == this.targets[i].id.x && secNum.y == this.targets[i].id.y) {
+      current = this.targets[i];
+    }
+  }
+  return current;
+}
+
+// Oracle.prototype.calculateTargetAgain = function (minSec, maxSec) {
+//
+//     hi = minSec.id.y;
+//     bottom = maxSec.id.y;
+//     right = minSec.id.x;
+//     left = maxSec.id.x;
+//
+//   // if (this.startPos == "br") {
+//   //   if (this.movingUp == true && floored > 0) {
+//   //     var newTarget = {
+//   //       position: createVector(this.position.x, this.position.y - this.secHeight),
+//   //       id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
+//   //     }
+//   //   } else if (this.movingUp == false && floored2 <= height + 2) {
+//   //     var newTarget = {
+//   //       position: createVector(this.position.x, this.position.y + this.secHeight),
+//   //       id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
+//   //     }
+//   //   } else {
+//   //       var newTarget = {
+//   //         position: createVector(this.position.x - this.secWidth,this.position.y),
+//   //         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
+//   //       }
+//   //     this.movingUp = !this.movingUp;
+//   //   }
+//
+//   console.log("Current y: ", this.currentTarget.id.y)
+//   console.log("Bottom: ", bottom)
+//   console.log("Top: ", hi)
+//   if (this.startPos == "tr") {
+//     if (this.movingUp == false && this.currentTarget.id.y < bottom) {
+//       console.log("Running 1st if")
+//       var newTarget = {
+//         position: createVector(this.position.x, this.position.y + this.secHeight),
+//         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
+//       }
+//     } else if (this.movingUp == true && this.currentTarget.id.y > hi) {
+//       console.log("Running 2nd if")
+//       var newTarget = {
+//         position: createVector(this.position.x, this.position.y - this.secHeight),
+//         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
+//       }
+//     } else if (this.currentTarget.id.x > left){
+//       console.log("Running 3rd if")
+//       var newTarget = {
+//         position: createVector(this.position.x - this.secWidth,this.position.y),
+//         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
+//       }
+//       this.movingUp = !this.movingUp;
+//       console.log(this.movingUp)
+//     } else {
+//       console.log("Running else")
+//       this.currentTarget.position = this.oldTarget;
+//     }
+//   }
+//   return newTarget;
+// }
