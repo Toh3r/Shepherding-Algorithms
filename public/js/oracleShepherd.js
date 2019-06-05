@@ -24,17 +24,19 @@ function OracleShepherd(x, y, gx, gy) {
 
 // Call methods for each shepherd
 OracleShepherd.prototype.run = function(oracles) {
+  this.update();
+  this.borders();
+  this.render();
   var animals = oracles[0].animals;
-  if (animals.length >= 2) {
-    // console.log(animals);
-    this.update();
-    this.borders();
-    this.render();
+  if (animals.length >= 10) {
+    this.maxspeed = 1;
     this.herdAnimals(animals);
     if(lineCheck.checked() == true) {
       this.displayShepLines();
     }
     this.timestep++;
+  } else {
+    this.maxspeed = 0;
   }
 }
 

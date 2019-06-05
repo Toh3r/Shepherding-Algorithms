@@ -23,6 +23,7 @@ function Oracle (x, y, gx, gy) {
 
   this.targets = [];   // Stores vectors for all targets in an enclosure
   this.animals = [];   // Stores herd information that is passed to shepherd
+  // this.oldAnimals = [];
   this.startx = x;     // Starting x position of oracle
   this.starty = y;     // Starting y position of oracle
   this.targetNum = 0;  // Holds the target number of targets oracle has passed
@@ -188,7 +189,7 @@ Oracle.prototype.calculateTarget = function (minSec, maxSec) {
     bottomR = this.bottomRow;
     leftC = this.leftCol;
     rightC = this.leftCol
-  } else if ( this.firstRun == false) {
+  } else if (this.firstRun == false) {
     topR = minSec.id.y;
     bottomR = maxSec.id.y;
     rightC = minSec.id.x;
@@ -220,6 +221,7 @@ Oracle.prototype.calculateTarget = function (minSec, maxSec) {
         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
       }
     } else if (this.movingUp == true && this.currentTarget.id.y > topR) {
+
       var newTarget = {
         position: createVector(this.position.x, this.position.y - this.secHeight),
         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
@@ -265,7 +267,7 @@ Oracle.prototype.saveAnimalPos = function (herd) {
       this.animals.push(parsedAnimal); // Add to animals array which is used by shepherd
       count++;
     } else if (this.targetNum >= this.numSectors){
-
+      // this.oldAnimals = this.animals;
     }
   }
 }
@@ -336,7 +338,7 @@ Oracle.prototype.bunched = function () {
   this.herdRight = Math.max.apply(Math, this.animals.map(function(o) { return o.position.x; }));
 
   herDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
-  if (herDist < 200) {
+  if (herDist < 200 && this.animals.length == 10) {
     return true;
   } else {
     return false;
@@ -347,46 +349,49 @@ Oracle.prototype.keepSearching = function (herd) {
 
   if(this.targetNum >= this.numSectors) {
     this.firstSearch = true;
-  }
-  // Find
-  this.bRow = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
-  this.tRow = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
-  this.lCol = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
-  this.rCol = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
 
-  if (this.lCol >= 2) {
-    this.lCol = this.lCol - 1;
-  }
-  if (this.rCol <= this.rightCol - 1) {
-    this.rCol = this.rCol + 1;
-  }
-  if (this.tRow >= 2) {
-    this.tRow = this.tRow - 1;
-  }
-  if (this.bRow <= this.bottomRow - 1) {
-    this.bRow = this.bRow + 1;
+    // Find
+    this.bRow = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
+    this.tRow = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
+    this.lCol = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
+    this.rCol = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
+
+    if (this.lCol >= 2) {
+      this.lCol = this.lCol - 1;
+    }
+    if (this.rCol <= this.rightCol - 1) {
+      this.rCol = this.rCol + 1;
+    }
+    if (this.tRow >= 2) {
+      this.tRow = this.tRow - 1;
+    }
+    if (this.bRow <= this.bottomRow - 1) {
+      this.bRow = this.bRow + 1;
+    }
+
+    min = createVector(this.rCol, this.tRow); // 3 and 1
+    max = createVector(this.lCol, this.bRow); // 1 and 3
+
+    this.minSec = this.getPositionOfTarget(min);   // Gets top right sector
+    this.maxSec = this.getPositionOfTarget(max);   // Gets bottom left sector
   }
 
-  min = createVector(this.rCol, this.tRow); // 3 and 1
-  max = createVector(this.lCol, this.bRow); // 1 and 3
-
-  minSec = this.getPositionOfTarget(min);   // Gets top right sector
-  maxSec = this.getPositionOfTarget(max);   // Gets bottom left sector
 
   if (this.firstSearch == true && this.targetNum >= this.numSectors) {
     this.movingUp = false;
     // console.log("Num Sectors: ", this.numSectors)
-    this.currentTarget = minSec;
+    this.currentTarget = this.minSec;
     if ((this.position.x - 2 < this.currentTarget.position.x && this.currentTarget.position.x < this.position.x + 2) && (this.position.y - 2 < this.currentTarget.position.y && this.currentTarget.position.y < this.position.y + 2)){
-      this.animals.length = 0;
       this.firstSearch = false;
       this.targetNum = 0;
       this.numSectors = (this.rCol*this.bRow)
       console.log("Num Sectors: ", this.numSectors)
       console.log("Hit first search")
+      this.animals.length = 0;
+
     }
   } else if (this.moving == false) {
-      this.currentTarget = this.calculateTarget(minSec, maxSec);
+      this.currentTarget = this.calculateTarget(this.minSec, this.maxSec);
       this.moving = true;
   } else if (this.moving == true) {
       this.currentTarget.position = this.oldTarget;
