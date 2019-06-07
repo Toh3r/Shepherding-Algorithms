@@ -45,12 +45,31 @@
 
         <div class="col-lg-2" id="moreControls">
           <div>
-            <h6><strong><u>Sim Info</u></strong></h6>
+            <div>
+              <h6><strong><u>Run It...</u></strong></h6>
+              <br><br>
+              <div id="droneHerd">
+              </div>
+              <br>
+              <div id="oracleBtn">
+              </div>
+              <br>
+              <div id="multiBtn" class="notWorking">
+              </div>
+              <br>
+              <div id="multiOracleBtn" class="notWorking">
+              </div>
+              <br><br>
+              <h6><strong><u>Simulation Controls</u></strong></h6>
+              <br><br>
+              <div id="pauseBtn">
+              </div>
+              <br>
+              <div id="resetBtn">
+              </div>
+            </div>
           </div>
           <br>
-          <div id="simInfoDiv">
-
-          </div>
 
         </div> <!-- Close moreControls col -->
 
@@ -61,45 +80,95 @@
       </div> <!-- Close Simrow -->
 
       <div class="row simHeader">
-          <div class="col-lg-12">
-            <h2>Header</h2>
+          <div class="col-lg-2 borderRight infoHeader" >
+            <h5><b>Env Info</b></h5>
+          </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>Animal Info</b></h5>
+          </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>UAV Info</b></h5>
+          </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>Display</b></h5>
+          </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>Edit Canvas</b></h5>
+          </div>
+          <div class="col-lg-2 infoHeader">
+            <h5><b>Environment</b></h5>
           </div>
       </div>
 
       <!-- Behaviour Sliders -->
       <div class="row" id="controls">
         <div class="col-lg-2 con" id='control1'>
-          <div>
-            <h6><strong><u>Force Radius</u></strong></h6>
-          </div>
-          <div id="sepSizeSli">
-            <label for="sepSizeSlider">Sep: </label>
-          </div>
-          <div id="aliSizeSli">
-            <label for="aliSizeSlider">Ali: </label>
-          </div>
-          <div id="cohSizeSli">
-            <label for="cohSizeSlider">Coh: </label>
-          </div>
-          <div id="dSepSizeSli">
-            <label for="dSepSizeSlider">dSep: </label>
-          </div>
+          <div id="envInfoDiv">
 
-          <br>
-
-          <div>
-            <h6><strong><u>Zone Radius</u></strong></h6>
           </div>
-          <div id="preSizeSli">
-            <label for="preSizeSlider">Pre: </label>
-          </div>
-          <div id="fliSizeSli">
-            <label for="fliSizeSlider">Fli: </label>
-          </div>
+          <p>Total UAV's: </P>
+          <p>Manual UAV: </P>
         </div>
 
         <!-- Add/Delete Buttons -->
         <div class="col-lg-2 con" id="control2" align="center">
+          <div id="animalInfoDiv">
+
+          </div>
+        </div>
+
+        <!-- CheckBox xontorls -->
+        <div class="col-lg-2 con" id="control3">
+          <h6><strong><u>GPS UAV</u></strong></h6>
+          <br><br>
+          <h6><strong><u>Oracle</u></strong></h6>
+          <div id="uavInfoDiv">
+
+          </div>
+          <h6><strong><u>Oracle UAV</u></strong></h6>
+        </div>
+
+        <!-- CheckBox xontorls -->
+        <div class="col-lg-2 con" id="control4">
+          <div id="zoneDiv">
+          </div>
+        </div>
+
+        <!-- CheckBox xontorls -->
+        <div class="col-lg-2 con" id="control5">
+          <div id="addDrop">
+            <label for="sel" style="display:block">Click canvas to ...</label>
+          </div><br>
+          <div id="animalButtons">
+          </div>
+          <div id="shepButtons">
+          </div>
+          <div id="novButtons">
+          </div><br>
+          <div id="delAll">
+          </div>
+        </div>
+
+        <!-- CheckBox xontorls -->
+        <div class="col-lg-2 con" id="control6">
+          <div id="envRadio" class=radio-inline>
+
+          </div>
+        </div>
+      </div> <!-- Close controls row -->
+
+      <div class="row simHeader">
+          <div class="col-lg-8 borderRight infoHeader">
+            <h5><b>Animal Controls</b></h5>
+          </div>
+          <div class="col-lg-4 infoHeader">
+            <h5><b>UAV Controls</b></h5>
+          </div>
+      </div>
+
+      <div class="row" id="controlsRow2">
+
+        <div class="col-lg-2 con2" id="control7">
           <div>
             <h6><strong><u>Max Speeds</u></strong></h6>
           </div>
@@ -129,78 +198,37 @@
           </div>
         </div>
 
-        <!-- CheckBox xontorls -->
-        <div class="col-lg-2 con" id="control3">
-          <div id="midName">
-            <h6><strong><u>Edit Canvas</u></strong></h6>
-          </div>
-          <br>
-          <div id="addDrop">
-            <label for="sel" style="display:block">Click canvas to ...</label>
-          </div><br>
-          <div id="animalButtons">
-          </div>
-          <div id="shepButtons">
-          </div>
-          <div id="novButtons">
-          </div><br>
-          <div id="delAll">
-          </div>
-        </div>
-
-        <!-- CheckBox xontorls -->
-        <div class="col-lg-2 con" id="control4">
-          <div>
-            <h6><strong><u>Canvas Info</u></strong></h6>
-          </div>
-          <br>
-          <div id="zoneDiv">
-          </div>
-        </div>
-
-        <!-- CheckBox xontorls -->
-        <div class="col-lg-2 con" id="control5">
-
-        </div>
-
-        <!-- CheckBox xontorls -->
-        <div class="col-lg-2 con" id="control6">
-          <div>
-            <h6><strong><u>Tester</u></strong></h6>
-            <br><br>
-            <div id="droneHerd">
-            </div>
-            <br>
-            <div id="oracleBtn">
-            </div>
-            <br>
-            <div id="multiBtn">
-            </div>
-            <br>
-            <div id="resetBtn">
-            </div>
-            <br>
-            <div id="pauseBtn">
-            </div>
-          </div>
-        </div>
-      </div> <!-- Close controls row -->
-
-      <div class="row simHeader">
-          <div class="col-lg-12">
-            <h2>Header</h2>
-          </div>
-      </div>
-
-      <div class="row" id="controlsRow2">
-
-        <div class="col-lg-2 con2" id="control7">
-          <h6><strong><u>Environment</u></strong></h6>
-          <div id="envRadio" class=radio-inline>
-
-          </div>
-        </div>
         <div class="col-lg-2 con2" id="control8">
+          <div>
+            <h6><strong><u>Force Radius</u></strong></h6>
+          </div>
+          <div id="sepSizeSli">
+            <label for="sepSizeSlider">Sep: </label>
+          </div>
+          <div id="aliSizeSli">
+            <label for="aliSizeSlider">Ali: </label>
+          </div>
+          <div id="cohSizeSli">
+            <label for="cohSizeSlider">Coh: </label>
+          </div>
+          <div id="dSepSizeSli">
+            <label for="dSepSizeSlider">dSep: </label>
+          </div>
+
+          <br>
+
+          <div>
+            <h6><strong><u>Zone Radius</u></strong></h6>
+          </div>
+          <div id="preSizeSli">
+            <label for="preSizeSlider">Pre: </label>
+          </div>
+          <div id="fliSizeSli">
+            <label for="fliSizeSlider">Fli: </label>
+          </div>
+        </div>
+
+        <div class="col-lg-2 con2" id="control9">
           <div>
             <h6><strong><u>Sep Strength</u></strong></h6>
           </div>
@@ -227,10 +255,9 @@
           <div id="aliFli">
             <label for="aliFliSlider">Fli: </label>
           </div>
-          <br>
         </div>
 
-        <div class="col-lg-2 con2" id="control9">
+        <div class="col-lg-2 con2" id="control10">
           <div>
             <h6><strong><u>Coh Strength</u></strong></h6>
           </div>
@@ -255,17 +282,12 @@
             <label for="dSepFliSlider">Fli: </label>
           </div>
         </div>
-
-        <div class="col-lg-2 con2" id="control10">
-          <h1>hello</h1>
-        </div>
         <div class="col-lg-2 con2" id="control11">
-          <h1>hello</h1>
+
         </div>
         <div class="col-lg-2 con2" id="control12">
-          <h1>hello</h1>
-        </div>
 
+        </div>
       </div>
     </div> <!-- Close container -->
 

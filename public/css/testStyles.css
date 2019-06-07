@@ -38,3 +38,19 @@ p {
 .white {
   color: white;
 }
+
+.notWorking button {
+    background: red;
+}
+
+.borderRight {
+  border-right: 5px solid white;
+}
+
+.infoHeader {
+  padding-top: 5px;
+}
+
+.redLetters {
+  color: red;
+}

@@ -197,18 +197,23 @@ ManageControls.prototype.createControls = function () {
   // shepControl.parent("zoneDiv");
 
   // -------- START AUTO SHEPHERD --------
-  droneHerd = createButton('Magic Button');
+  droneHerd = createButton('GPS UAV');
   droneHerd.parent('droneHerd');
   droneHerd.mouseClicked(herd);
 
   // -------- START ORCALE --------
-  createOracle = createButton('Oracle');
+  createOracle = createButton('Oracle UAV');
   createOracle.parent('oracleBtn');
   createOracle.mouseClicked(oracle);
 
   // -------- START Multi-Drones --------
-  createMulti = createButton('Multi-Drones');
+  createMulti = createButton('Multi-GPS');
   createMulti.parent('multiBtn');
+  createMulti.mouseClicked(multiDrone);
+
+  // -------- START Multi-Drones --------
+  createMulti = createButton('Multi-Oracle');
+  createMulti.parent('multiOracleBtn');
   createMulti.mouseClicked(multiDrone);
 
   // -------- RESET BUTTON --------
@@ -234,7 +239,7 @@ ManageControls.prototype.createControls = function () {
   fill(255, 0, 0);
 
   //  Select starting environment
-  envRadio._getInputChildrenArray()[0].checked = true;
+  envRadio._getInputChildrenArray()[1].checked = true;
 
   // Initialize new environment
   environment = new Environment();
@@ -245,48 +250,36 @@ ManageControls.prototype.createControls = function () {
   // ---------- CREATE PARAGRAPHS TO DISPLAY INFO ----------
   var timeSteps = environment.timeSteps();
   timeDisplay = createP("Timesteps: " + timeSteps);
-  timeDisplay.parent("simInfoDiv");
+  timeDisplay.parent("envInfoDiv");
 
   animalDisplay = createP("Number of Animals: " + environment.herd.length);
-  animalDisplay.parent("simInfoDiv");
+  animalDisplay.parent("envInfoDiv");
 
   vocalDisplay = createP("Vocalizing: false");
-  vocalDisplay.parent("simInfoDiv");
+  vocalDisplay.parent("animalInfoDiv");
 
   var fixedStress = environment.totalStress().toFixed(2);
   stressDisplay = createP("Adverse Conditions: " + fixedStress);
-  stressDisplay.parent("simInfoDiv");
+  stressDisplay.parent("envInfoDiv");
 
   var fixedSpeed = environment.avgSpeed().toFixed(2);
   speedDisplay = createP("Average Speed: " + fixedSpeed);
-  speedDisplay.parent("simInfoDiv");
+  speedDisplay.parent("animalInfoDiv");
 
   headingDisplay = createP("Average Heading: 0");
-  headingDisplay.parent("simInfoDiv");
+  headingDisplay.parent("animalInfoDiv");
 
   bunchedDisplay = createP("Bunched: False");
-  bunchedDisplay.parent("simInfoDiv");
+  bunchedDisplay.parent("animalInfoDiv");
 
   movementDisplay = createP("Good Movement Steps: ");
-  movementDisplay.parent("simInfoDiv");
-
-  shepherdManualDisplay = createP("Number of Manual Shepherds: " + environment.shepherds.length);
-  shepherdManualDisplay.parent("simInfoDiv");
-
-  shepherdGPSDisplay = createP("Number of GPS Shepherds: 0");
-  shepherdGPSDisplay.parent("simInfoDiv");
-
-  shepherdOracleDisplay = createP("NumbeOracle Shepherds: 0");
-  shepherdOracleDisplay.parent("simInfoDiv");
-
-  oracleDisplay = createP("Number of Oracles: 0");
-  oracleDisplay.parent("simInfoDiv");
+  movementDisplay.parent("envInfoDiv");
 
   numSectorDisplay = createP("Number of Sectors: 0");
-  numSectorDisplay.parent("simInfoDiv");
+  numSectorDisplay.parent("uavInfoDiv");
 
   currentSectorDisplay = createP("Current Sector: 0");
-  currentSectorDisplay.parent("simInfoDiv");
+  currentSectorDisplay.parent("uavInfoDiv");
 
 }
 
@@ -374,15 +367,11 @@ ManageControls.prototype.applyControls = function () {
 ManageControls.prototype.updateSimInfo = function () {
   // Destroy all info outputs from previous frame
   animalDisplay.remove();
-  shepherdManualDisplay.remove();
-  shepherdGPSDisplay.remove();
-  shepherdOracleDisplay.remove();
   stressDisplay.remove();
   speedDisplay.remove();
   timeDisplay.remove();
   movementDisplay.remove();
   vocalDisplay.remove();
-  oracleDisplay.remove();
   numSectorDisplay.remove();
   currentSectorDisplay.remove();
   headingDisplay.remove();
@@ -391,48 +380,36 @@ ManageControls.prototype.updateSimInfo = function () {
   // Update with sim info from current frame
   var timeSteps = environment.timeSteps();
   timeDisplay = createP("Timesteps: " + timeSteps);
-  timeDisplay.parent("simInfoDiv");
+  timeDisplay.parent("envInfoDiv");
 
   animalDisplay = createP("Number of Animals: " + environment.herd.length);
-  animalDisplay.parent("simInfoDiv");
+  animalDisplay.parent("envInfoDiv");
 
   vocalDisplay = createP("Vocalizing: false");
-  vocalDisplay.parent("simInfoDiv");
+  vocalDisplay.parent("animalInfoDiv");
 
   var fixedStress = environment.totalStress().toFixed(2);
   stressDisplay = createP("Adverse Conditions: " + fixedStress);
-  stressDisplay.parent("simInfoDiv");
+  stressDisplay.parent("envInfoDiv");
 
   var fixedSpeed = environment.avgSpeed().toFixed(2);
   speedDisplay = createP("Average Speed: " + fixedSpeed);
-  speedDisplay.parent("simInfoDiv");
+  speedDisplay.parent("animalInfoDiv");
 
   headingDisplay = createP("Average Heading: 0");
-  headingDisplay.parent("simInfoDiv");
+  headingDisplay.parent("animalInfoDiv");
 
   bunchedDisplay = createP("Bunched: False");
-  bunchedDisplay.parent("simInfoDiv");
+  bunchedDisplay.parent("animalInfoDiv");
 
   movementDisplay = createP("Good Movement Steps: ");
-  movementDisplay.parent("simInfoDiv");
-
-  shepherdManualDisplay = createP("Num of Manual Shepherds: " + environment.shepherds.length);
-  shepherdManualDisplay.parent("simInfoDiv");
-
-  shepherdGPSDisplay = createP("Number of GPS Shepherds: 0");
-  shepherdGPSDisplay.parent("simInfoDiv");
-
-  shepherdOracleDisplay = createP("Num Oracle Shepherds: 0");
-  shepherdOracleDisplay.parent("simInfoDiv");
-
-  oracleDisplay = createP("Number of Oracles: 0");
-  oracleDisplay.parent("simInfoDiv");
+  movementDisplay.parent("envInfoDiv");
 
   numSectorDisplay = createP("Number of Sectors: 0");
-  numSectorDisplay.parent("simInfoDiv");
+  numSectorDisplay.parent("uavInfoDiv");
 
   currentSectorDisplay = createP("Current Sector: 0");
-  currentSectorDisplay.parent("simInfoDiv");
+  currentSectorDisplay.parent("uavInfoDiv");
 }
 
 // ---------- CALLED ON MOUSE DRAG TO UPDATE ALL SLIDERS ----------

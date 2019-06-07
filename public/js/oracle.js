@@ -197,12 +197,12 @@ Oracle.prototype.calculateTarget = function (minSec, maxSec) {
   }
 
   if (this.startPos == "br") {
-    if (this.movingUp == true && floored > 0) {
+    if (this.movingUp == true && this.currentTarget.id.y > topR) {
       var newTarget = {
         position: createVector(this.position.x, this.position.y - this.secHeight),
         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
       }
-    } else if (this.movingUp == false && floored2 <= height + 2) {
+    } else if (this.movingUp == false && this.currentTarget.id.y < bottomR) {
       var newTarget = {
         position: createVector(this.position.x, this.position.y + this.secHeight),
         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
@@ -355,18 +355,19 @@ Oracle.prototype.keepSearching = function (herd) {
     this.tRow = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
     this.lCol = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
     this.rCol = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
-
-    if (this.lCol >= 2) {
-      this.lCol = this.lCol - 1;
-    }
-    if (this.rCol <= this.rightCol - 1) {
-      this.rCol = this.rCol + 1;
-    }
-    if (this.tRow >= 2) {
-      this.tRow = this.tRow - 1;
-    }
-    if (this.bRow <= this.bottomRow - 1) {
-      this.bRow = this.bRow + 1;
+    if (this.animals.length < 9) {
+      if (this.lCol >= 2) {
+        this.lCol = this.lCol - 1;
+      }
+      if (this.rCol <= this.rightCol - 1) {
+        this.rCol = this.rCol + 1;
+      }
+      if (this.tRow >= 2) {
+        this.tRow = this.tRow - 1;
+      }
+      if (this.bRow <= this.bottomRow - 1) {
+        this.bRow = this.bRow + 1;
+      }
     }
 
     min = createVector(this.rCol, this.tRow); // 3 and 1
@@ -386,7 +387,6 @@ Oracle.prototype.keepSearching = function (herd) {
       this.targetNum = 0;
       this.numSectors = (this.rCol*this.bRow)
       console.log("Num Sectors: ", this.numSectors)
-      console.log("Hit first search")
       this.animals.length = 0;
 
     }
@@ -406,6 +406,7 @@ Oracle.prototype.keepSearching = function (herd) {
     this.moving = false;
     this.targetNum ++;
     this.saveAnimalPos(herd);
+    console.log("Sent co-ords");
   }
   return steer;
 }
@@ -468,61 +469,3 @@ Oracle.prototype.getPositionOfTarget = function (secNum) {
   }
   return current;
 }
-
-// Oracle.prototype.calculateTargetAgain = function (minSec, maxSec) {
-//
-//     hi = minSec.id.y;
-//     bottom = maxSec.id.y;
-//     right = minSec.id.x;
-//     left = maxSec.id.x;
-//
-//   // if (this.startPos == "br") {
-//   //   if (this.movingUp == true && floored > 0) {
-//   //     var newTarget = {
-//   //       position: createVector(this.position.x, this.position.y - this.secHeight),
-//   //       id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
-//   //     }
-//   //   } else if (this.movingUp == false && floored2 <= height + 2) {
-//   //     var newTarget = {
-//   //       position: createVector(this.position.x, this.position.y + this.secHeight),
-//   //       id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
-//   //     }
-//   //   } else {
-//   //       var newTarget = {
-//   //         position: createVector(this.position.x - this.secWidth,this.position.y),
-//   //         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
-//   //       }
-//   //     this.movingUp = !this.movingUp;
-//   //   }
-//
-//   console.log("Current y: ", this.currentTarget.id.y)
-//   console.log("Bottom: ", bottom)
-//   console.log("Top: ", hi)
-//   if (this.startPos == "tr") {
-//     if (this.movingUp == false && this.currentTarget.id.y < bottom) {
-//       console.log("Running 1st if")
-//       var newTarget = {
-//         position: createVector(this.position.x, this.position.y + this.secHeight),
-//         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
-//       }
-//     } else if (this.movingUp == true && this.currentTarget.id.y > hi) {
-//       console.log("Running 2nd if")
-//       var newTarget = {
-//         position: createVector(this.position.x, this.position.y - this.secHeight),
-//         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
-//       }
-//     } else if (this.currentTarget.id.x > left){
-//       console.log("Running 3rd if")
-//       var newTarget = {
-//         position: createVector(this.position.x - this.secWidth,this.position.y),
-//         id: createVector(this.currentTarget.id.x, this.currentTarget.id.y)
-//       }
-//       this.movingUp = !this.movingUp;
-//       console.log(this.movingUp)
-//     } else {
-//       console.log("Running else")
-//       this.currentTarget.position = this.oldTarget;
-//     }
-//   }
-//   return newTarget;
-// }

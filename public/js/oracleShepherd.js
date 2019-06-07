@@ -20,6 +20,7 @@ function OracleShepherd(x, y, gx, gy) {
   this.goalX = gx;
   this.goalY = gy;
   this.i = 0;
+  this.oldAnimals = [];
 }
 
 // Call methods for each shepherd
@@ -27,14 +28,23 @@ OracleShepherd.prototype.run = function(oracles) {
   this.update();
   this.borders();
   this.render();
-  var animals = oracles[0].animals;
-  if (animals.length >= 10) {
+  var currentAnimals = oracles[0].animals;
+  if (oracles[0].targetNum == oracles[0].numSectors) {
+    this.oldAnimals.length = 0;
     this.maxspeed = 1;
-    this.herdAnimals(animals);
+    this.herdAnimals(currentAnimals);
+    this.timestep++;
+    this.saveOldPositions(currentAnimals);
     if(lineCheck.checked() == true) {
       this.displayShepLines();
     }
+  } else if (this.oldAnimals.length > 0) {
+    this.maxspeed = 1;
+    this.herdAnimals(this.oldAnimals);
     this.timestep++;
+    if(lineCheck.checked() == true) {
+      this.displayShepLines();
+    }
   } else {
     this.maxspeed = 0;
   }
@@ -372,4 +382,28 @@ OracleShepherd.prototype.checkHeading = function (animals) {
   }
   averageHeading = totalHeading/ animals.length;
   return averageHeading;
+}
+
+OracleShepherd.prototype.saveOldPositions = function (animals) {
+  var count = 0;
+  for (var i = 0; i < animals.length; i++) {
+      // Javascript passes objects/arrays by reference, have to create new deep array
+      // Parsing position x and y separatly to stop circular structure error
+      var parsedPosX = JSON.parse(JSON.stringify(animals[i].position.x));
+      var parsedPosY = JSON.parse(JSON.stringify(animals[i].position.y));
+      var parsedVel = JSON.parse(JSON.stringify(animals[i].heading));
+      var parsedVoc = JSON.parse(JSON.stringify(animals[i].vocalizing));
+      var parsedSecX = JSON.parse(JSON.stringify(animals[i].inSector.x));
+      var parsedSecY = JSON.parse(JSON.stringify(animals[i].inSector.y));
+
+      // Create new object with static values of animals
+      var parsedAnimal = {
+        position: createVector(parsedPosX, parsedPosY),
+        heading: parsedVel,
+        vocalizing: parsedVoc,
+        inSector: createVector(parsedSecX, parsedSecY)
+      }
+      this.oldAnimals.push(parsedAnimal); // Add to animals array which is used by shepherd
+      count++;
+  }
 }

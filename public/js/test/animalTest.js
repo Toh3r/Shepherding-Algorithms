@@ -72,7 +72,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, o
   var avo = this.avoid(novelObjects); // Avoid Novelty
   var bun = this.bunched(herd);       // Bunched
   var obs = this.avoidObstacle(obstacles);
-  var moveChance = int(random(1,10));
+  var moveChance = int(random(1,20));
 
 
   // WHEN SHEPHERD IN FLIGHT ZONE
