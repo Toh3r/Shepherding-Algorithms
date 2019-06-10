@@ -35,8 +35,8 @@ function Animal(x,y, gx, gy, gzX, gzY) {
 // ----- ANIMAL UPDATE FUNCTIONS
 
 // Call functions for each animal each frame
-Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, obstacles, oracleShepherds) {
-  this.herd(herd, shepherds, novelObjects, autoShepherds, obstacles, oracleShepherds); // Apply forces
+Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds) {
+  this.herd(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds); // Apply forces
   this.update();    // Update position based on forces
   this.borders();   // Keep animal in enclosure
   this.render();    // Render animal
@@ -61,19 +61,23 @@ Animal.prototype.applyForce = function(force) {
 }
 
 // Accumulate a new acceleration each time based on all rules
-Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, obstacles, oracleShepherds) {
+Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds) {
   var sep = this.separate(herd);      // Separation
   var ali = this.align(herd);         // Alignment
   var coh = this.cohesion(herd);      // Cohesion
-  var pre = this.pressure(herd, shepherds, autoShepherds, oracleShepherds);   // shepherds in pressure zone
-  var fli = this.flightZone(herd, shepherds, autoShepherds, oracleShepherds); // shepherds in pressure zone
-  var mov = this.move(shepherds, autoShepherds, oracleShepherds);     // Steer herd
+  var pre = this.pressure(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds);   // shepherds in pressure zone
+  var fli = this.flightZone(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds); // shepherds in pressure zone
+  var mov = this.move(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds);             // Steer herd
   var goa = this.goal();              // Seek (Goal area)
   var avo = this.avoid(novelObjects); // Avoid Novelty
   var bun = this.bunched(herd);       // Bunched
   var obs = this.avoidObstacle(obstacles);
   var moveChance = int(random(1,20));
 
+  // If UAVS in FZ and PZ, disregard UAVS in FZ
+  if (fli > 0 && pre > 0) {
+    pre = 0;
+  }
 
   // WHEN SHEPHERD IN FLIGHT ZONE
   if (fli > 0) {
@@ -231,15 +235,15 @@ Animal.prototype.renderZones = function () {
   fill(0,0,0,0.0)
   stroke(255, 0, 0);
   ellipse(this.position.x,this.position.y, fliSizeSlider.value() * 2, fliSizeSlider.value() * 2);
-  text("Flight", this.position.x + fliSizeSlider.value(), this.position.y);
-  text("Zone", this.position.x + fliSizeSlider.value(), this.position.y + 15);
+  text("FZ", this.position.x + fliSizeSlider.value(), this.position.y);
+  // text("Zone", this.position.x + fliSizeSlider.value(), this.position.y + 15);
 
   // Draw pressure zone
   fill(0,0,0,0.0)
   stroke(0, 0, 0);
   ellipse(this.position.x,this.position.y, preSizeSlider.value() * 2, preSizeSlider.value() * 2);
-  text("Pressure", this.position.x + preSizeSlider.value(), this.position.y);
-  text("Zone", this.position.x + preSizeSlider.value(), this.position.y + 15);
+  text("PZ", this.position.x + preSizeSlider.value(), this.position.y);
+  // text("Zone", this.position.x + preSizeSlider.value(), this.position.y + 15);
 };
 
 Animal.prototype.renderForces = function () {
@@ -376,7 +380,7 @@ Animal.prototype.cohesion = function(herd) {
 // ----- ANIMAL BEHAVIOURAL RULES WITH DRONE
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
-Animal.prototype.pressure = function(herd, shepherds, autoShepherds, oracleShepherds) {
+Animal.prototype.pressure = function(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds) {
   var neighbordistMax = preSizeSlider.value();
   var neighbordistMin = fliSizeSlider.value();
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
@@ -397,6 +401,13 @@ Animal.prototype.pressure = function(herd, shepherds, autoShepherds, oracleSheph
       count++;
     }
   }
+  for (var i = 0; i < multiGPSShepherds.length; i++) {
+    var d = p5.Vector.dist(this.position,multiGPSShepherds[i].position);
+    if ((d > 0) && (d < neighbordistMax) && (d > neighbordistMin)) {
+      sum.add(multiGPSShepherds[i].position); // Add location
+      count++;
+    }
+  }
   for (var i = 0; i < oracleShepherds.length; i++) {
     var d = p5.Vector.dist(this.position,oracleShepherds[i].position);
     if ((d > 0) && (d < neighbordistMax) && (d > neighbordistMin)) {
@@ -408,7 +419,7 @@ Animal.prototype.pressure = function(herd, shepherds, autoShepherds, oracleSheph
 }
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
-Animal.prototype.flightZone = function(herd, shepherds, autoShepherds, oracleShepherds) {
+Animal.prototype.flightZone = function(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds) {
   var neighbordistMax = fliSizeSlider.value();
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
@@ -425,6 +436,13 @@ Animal.prototype.flightZone = function(herd, shepherds, autoShepherds, oracleShe
     var d = p5.Vector.dist(this.position,autoShepherds[i].position);
     if ((d > 0) && (d < neighbordistMax)) {
       sum.add(autoShepherds[i].position); // Add location
+      count++;
+    }
+  }
+  for (var i = 0; i < multiGPSShepherds.length; i++) {
+    var d = p5.Vector.dist(this.position,multiGPSShepherds[i].position);
+    if ((d > 0) && (d < neighbordistMax)) {
+      sum.add(multiGPSShepherds[i].position); // Add location
       count++;
     }
   }
@@ -487,7 +505,7 @@ Animal.prototype.wander = function() {
 }
 
 // When shepherd enters flight zone, move in opposite direction
-Animal.prototype.move = function(shepherds, autoShepherds, oracleShepherds) {
+Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds) {
   var desiredseparation = dSepSizeSlider.value();
   var steer = createVector(0,0);
   var count = 0;
@@ -510,6 +528,18 @@ Animal.prototype.move = function(shepherds, autoShepherds, oracleShepherds) {
     if ((d > 0) && (d < desiredseparation)) {
       // Calculate vector pointing away from neighbor
       var diff = p5.Vector.sub(this.position,autoShepherds[i].position);
+      diff.normalize();
+      diff.div(d);        // Weight by distance
+      steer.add(diff);
+      count++;            // Keep track of how many
+    }
+  }
+  for (var i = 0; i < multiGPSShepherds.length; i++) {
+    var d = p5.Vector.dist(this.position,multiGPSShepherds[i].position);
+    // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
+    if ((d > 0) && (d < desiredseparation)) {
+      // Calculate vector pointing away from neighbor
+      var diff = p5.Vector.sub(this.position,multiGPSShepherds[i].position);
       diff.normalize();
       diff.div(d);        // Weight by distance
       steer.add(diff);

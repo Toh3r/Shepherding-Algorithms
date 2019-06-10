@@ -14,7 +14,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     canvas.parent('myCanvas');
 
     shepX = 970, shepY = 250; // Create shepherd starting co-ords
-    goalX = 990, goalY = 255;         // Create goal co-ords for shepherd and animal agents
+    goalX = 990, goalY = 255; // Create goal co-ords for shepherd and animal agents
     gzX = createVector(850, 1000), gzY = createVector(180, 330); // Create goalzone co-ords
 
     for (var i = 0; i < 10; i++) { //Create starting animals in random positions
@@ -264,4 +264,6 @@ function oracle() {
 
 function multiDrone() {
   console.log("Well");
+  environment.addMultiGPS(new MultiGPSShepherd(shepX, shepY, goalX, goalY, false))
+  environment.addMultiGPS(new MultiGPSShepherd(shepX, shepY, goalX, goalY, true))
 }

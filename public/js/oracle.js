@@ -1,79 +1,71 @@
-// Oracle class, passing through starting co-ords and goal co-ords
-function Oracle (x, y, gx, gy) {
-  // Create drone properties
-  this.acceleration = createVector(0,0);
-  this.velocity = createVector(random(-1,1),random(-1,1));
-  this.position = createVector(x, y);
-  this.r = 3.0;
-  this.maxspeed = 1;
-  this.maxForce = 0.3;
+// Oracle class
+// Create Oracle attributes
+function Oracle (x, y, gx, gy) { // Passing through starting co-ords, goal co-ords, **Num animals**
+  // General Attributes
+  this.acceleration = createVector(0,0); // Starting acceleration of 0
+  this.velocity = createVector(0,0);     // Starting acceleration of 0
+  this.position = createVector(x, y);    // Starting position
+  this.r = 3.0;         // Radius of Oracle
+  this.maxspeed = 1;    // Starting Maxspeed
+  this.maxForce = 0.3;  // Max strength of forces
 
-  // Variables to control searching
-  this.firstSearch = true;
-  this.firstRun= true;
-  this.moving = true;
-  this.movingUp = true;
-
-  this.currentTarget = {
+  // Searching/managing attributes
+  this.firstSearch = true; // True when searching for first target
+  this.firstRun= true;     // True for first search of enclosure
+  this.moving = true;      // Turns flase when target reached and calculates next target
+  this.movingUp = true;    // Controls up/down movement of oracle when moving bewtween targets
+  this.currentTarget = {   // Hold position of Oracles current target when searching sectors
     position: createVector(0,0),
     id: createVector(0,0)
   }
-
-  this.oldTarget = createVector(0,0);
-
-  this.targets = [];   // Stores vectors for all targets in an enclosure
-  this.animals = [];   // Stores herd information that is passed to shepherd
-  // this.oldAnimals = [];
-  this.startx = x;     // Starting x position of oracle
-  this.starty = y;     // Starting y position of oracle
-  this.targetNum = 0;  // Holds the target number of targets oracle has passed
-  this.numSectors = 1; // Holds number of sectors in an environment
-
-  this.following = false;
+  this.oldTarget = createVector(0,0); // Holds position of current target
+  this.targets = [];      // Stores vectors for all targets in an enclosure
+  this.animals = [];      // Stores herd information that is passed to shepherd
+  this.startx = x;        // Starting x position of oracle
+  this.starty = y;        // Starting y position of oracle
+  this.targetNum = 0;     // Holds the target number of targets oracle has passed
+  this.numSectors = 1;    // Holds number of sectors in an environment
+  this.following = false; // True when herd is bunched
 }
 
 // Call methods for each shepherd
-Oracle.prototype.run = function(herd) {
-  this.update();
-  this.borders();
-  this.render();
-  // Create sectors on first call
-  if (this.targets.length == 0) {
+Oracle.prototype.run = function (herd) { // Called when oracle created, passing through herd array
+  this.update();  // Updates position based on action selection
+  this.borders(); // Stops oracle from colliding/moving out of enclosing walls
+  this.render();  // Renders Oracle each frame
+  if (this.targets.length == 0) { // Create sectors on first call
     this.createSectors();
   }
-  this.runTheShow(herd);
-  if (sectorCheck.checked() == true) {
+  if (sectorCheck.checked() == true) { // Display enclosure sectors if checked (auto-checked on)
     this.drawSectors();
   }
+  this.runTheShow(herd); // Manages action selection
 }
 
-Oracle.prototype.runTheShow = function (herd) {
-  var bun = this.bunched();
-  if (this.firstRun == true) {
+Oracle.prototype.runTheShow = function (herd) { // Function which determines action selection based on a whole lotta things
+  var bun = this.bunched();     // Function to determine if animals are bunched
+  if (this.firstRun == true) {  // Runs on initial search for animals
     var search = this.searchForAnimals(herd);
     this.applyForce(search);
-    if (this.targetNum >= this.numSectors) {
-      this.firstRun = false;
-      this.movingUp = false;
+    if (this.targetNum >= this.numSectors) { // Once all targets searched or all all animals located, initial search finishes
+      this.firstRun = false; // Finish initial searxh
+      this.movingUp = false; // Defualt for now
     }
-  } else if (this.firstRun == false && bun == false) {
-    var keep = this.keepSearching(herd);
-    this.applyForce(keep);
-    // var follow = this.followHerd(herd);
-    // this.applyForce(follow);
-  } else if (this.firstRun == false && bun == true) {
-    var follow = this.followHerd(herd);
+  } else if (this.firstRun == false && bun == false) { // Once initial search finishes,if animals are not bunched
+    var keep = this.keepSearching(herd);               // calculate new search based on their positions
+    this.applyForce(keep);                             // and keep searching
+  } else if (this.firstRun == false && bun == true) {  // If animals are bunched, move to centre of herd
+    var follow = this.followHerd(herd);                // and keep passing positions to oracle shepherd
     this.applyForce(follow);
   }
 }
 
-// Apply each behavioural rule to each animal
-Oracle.prototype.applyForce = function(force) {
+
+Oracle.prototype.applyForce = function(force) { // Apply movement force to Oracle
   this.acceleration.add(force);
 }
 
-// Method to update location
-Oracle.prototype.update = function() {
+Oracle.prototype.update = function() { // Method to update location based on forces
   // Update velocity
   this.velocity.add(this.acceleration);
   // Limit speed
@@ -83,11 +75,10 @@ Oracle.prototype.update = function() {
   this.acceleration.mult(0);
 }
 
-// Method to prevent shepherd from leaving enclosure
-Oracle.prototype.borders = function () {
-  if (this.position.x < 15) {
-    this.velocity.x *= -1;
-    this.position.x = 15;
+Oracle.prototype.borders = function () { // Method to prevent Oracle from leaving enclosure
+  if (this.position.x < 15) { // If within 15 pixels of any side
+    this.velocity.x *= -1;    // Create opposite velocity
+    this.position.x = 15;     // Keep oracle position from passing 15
   } else if (this.position.y < 15) {
     this.velocity.y *= -1;
     this.position.y = 15;
@@ -100,16 +91,15 @@ Oracle.prototype.borders = function () {
   }
 }
 
-Oracle.prototype.render = function(herd) {
-  // Draw a triangle rotated in the direction of velocity
-  var theta = this.velocity.heading() + radians(90);
+Oracle.prototype.render = function() { // Render Oracle each frame
+  var theta = this.velocity.heading() + radians(90); // theta = direction of velocity
   fill(0, 79, 249);
   stroke(0);
   push();
-  translate(this.position.x,this.position.y);
-  rotate(theta);
+  translate(this.position.x,this.position.y); // Displace to objects positoin
+  rotate(theta); // Rotate in direction of velocity
   beginShape();
-  vertex(0, -this.r*1.5);
+  vertex(0, -this.r*1.5); // Draw vertex edges
   vertex(-this.r, this.r*1.5);
   vertex(this.r, this.r*1.5);
   endShape(CLOSE);
@@ -143,8 +133,8 @@ Oracle.prototype.searchForAnimals = function (herd) {
   return steer;
 }
 
-Oracle.prototype.locateFirstTarget = function () {
-
+Oracle.prototype.locateFirstTarget = function () { // Function to find first target for initial search of enclosure
+  // Find
   this.bottomRow = Math.max.apply(Math, this.targets.map(function(o) { return o.id.y; }));
   this.topRow = Math.min.apply(Math, this.targets.map(function(o) { return o.id.y; }));
   this.leftCol = Math.min.apply(Math, this.targets.map(function(o) { return o.id.x; }));
@@ -251,7 +241,7 @@ Oracle.prototype.saveAnimalPos = function (herd) {
   for (var i = 0; i < herd.length; i++) {
     if (this.targetNum <= this.numSectors && Math.abs(this.position.x - herd[i].position.x) < viewWidth && Math.abs(this.position.y - herd[i].position.y) < viewHieght) {
       // Javascript passes objects/arrays by reference, have to create new deep array
-      // Parsing position x and y separatly to stop circular structure error
+      // Parsing vectors separatly to stop circular structure error
       var parsedPosX = JSON.parse(JSON.stringify(herd[i].position.x));
       var parsedPosY = JSON.parse(JSON.stringify(herd[i].position.y));
       var parsedVel = JSON.parse(JSON.stringify(herd[i].velocity.heading()));
@@ -272,74 +262,16 @@ Oracle.prototype.saveAnimalPos = function (herd) {
   }
 }
 
-// Function to create target points for UAV Agent when locating animal agents
-Oracle.prototype.createSectors = function () {
-  secWidthNum = Math.ceil(width/250);           // Find number of sectors on x axis
-  secHeightNum = Math.ceil(height/250);         // Find number of sectors on y-axis
-  this.numSectors = secWidthNum*secHeightNum;   // Store number of sectors
-  console.log("Number of sectors: " + this.numSectors)
-  this.secWidth = width/secWidthNum;            // Create sectors with even width
-  this.secHeight = height/secHeightNum;         // Create sectors with even height
-  sectorY = 0; // Initiate y sector as 0
-  var c = 1;
-  for(var sectorX = 0; sectorX < width; sectorX += this.secWidth){
-    var r = 1;
-    this.target = {
-      position: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
-      pos: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
-      id: createVector (c, r)
-    }
-    if(this.targets.length < this.numSectors) {
-      this.targets.push(this.target);
-    }
-    for(sectorY = this.secHeight; sectorY < height; sectorY += this.secHeight) {
-      r ++;
-      this.target = {
-        position: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
-        pos: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
-        id: createVector (c, r)
-      }
-      if(this.targets.length < this.numSectors) {
-        this.targets.push(this.target);
-      }
-    }
-    sectorY = 0;
-    c++;
-  }
-}
-
-Oracle.prototype.drawSectors = function () {
-  for (var i = 0; i < this.targets.length; i++) {
-    text(this.targets[i].id.x + "." + this.targets[i].id.y, this.targets[i].pos.x + 10, this.targets[i].pos.y);
-  }
-  secWidthNum = Math.ceil(width/250);
-  secHeightNum = Math.ceil(height/250);
-  numSectors = secWidthNum*secHeightNum;
-  secWidth = width/secWidthNum;
-  secHeight = height/secHeightNum;
-  fill(20,20,20,20);
-  stroke(255);
-  sectorY = 0;
-  for(var sectorX = 0; sectorX < width; sectorX += secWidth){
-    rect(sectorX, sectorY, secWidth, secHeight);
-    ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 5, 5);
-    for(sectorY = secHeight; sectorY < height; sectorY += secHeight) {
-      rect(sectorX, sectorY, secWidth, secHeight);
-      ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 5, 5);
-    }
-    sectorY = 0;
-  }
-}
-
-Oracle.prototype.bunched = function () {
+Oracle.prototype.bunched = function () { // Function to determine if herd is bunched
+  // Find furthest left, right, top and bottom animals
   this.herdBottom = Math.max.apply(Math, this.animals.map(function(o) { return o.position.y; }));
   this.herdTop = Math.min.apply(Math, this.animals.map(function(o) { return o.position.y; }));
   this.herdLeft = Math.min.apply(Math, this.animals.map(function(o) { return o.position.x; }));
   this.herdRight = Math.max.apply(Math, this.animals.map(function(o) { return o.position.x; }));
-
+  // Find distance between top left and bottom right animals.. will do for now
   herDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
-  if (herDist < 200 && this.animals.length == 10) {
-    return true;
+  if (herDist < 200 && this.animals.length == 10) { // Once dist less than 200, oracle recognises herd as bunched
+    return true;                                    // 200 is arbituary, change ...
   } else {
     return false;
   }
@@ -350,7 +282,6 @@ Oracle.prototype.keepSearching = function (herd) {
   if(this.targetNum >= this.numSectors) {
     this.firstSearch = true;
 
-    // Find
     this.bRow = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
     this.tRow = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
     this.lCol = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
@@ -411,33 +342,31 @@ Oracle.prototype.keepSearching = function (herd) {
   return steer;
 }
 
-//
-Oracle.prototype.followHerd = function (herd) {
-
+Oracle.prototype.followHerd = function (herd) { // When herd is bunched
+  // Find centre position of herd
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
-
-  var center = createVector(herdX, herdY); // Centre co-ords of herd
-
+  var center = createVector(herdX, herdY);          // Centre co-ords of herd
+  // When over the centre of the herd
   if ((this.position.x - 2 < center.x && center.x < this.position.x + 2) && (this.position.y - 2 < center.y && center.y < this.position.y + 2)) {
-    this.animals.length = 0;
-    this.saveAnimalPos(herd);
+    this.animals.length = 0;  // Clear saved animals array
+    this.saveAnimalPos(herd); // Save new positions and pass to Oracle Shepherd
   }
-
-  var target = createVector(herdX,herdY);
-  this.targetInBounds(target);
+  // ***--- Fix speeds for this funciton ---***//
+  var target = createVector(herdX,herdY); // Create target as herd centre
+  this.targetInBounds(target);            // Keep target in bounds
   var desired = p5.Vector.sub(target, this.position);
   desired.normalize();
   desired.mult(this.maxspeed);
   var steer = p5.Vector.sub(desired, this.velocity);
   steer.limit(this.maxforce);
-
   return steer;
 }
 
-Oracle.prototype.targetInBounds = function (target) {
-  if (target.x < 15) {
-    target.x = 15;
+Oracle.prototype.targetInBounds = function (target) { // If target is outside enclosure, move back inside enclosure
+  // ** Probably unnecessary for this function.. **
+  if (target.x < 15) { // If T out of enclosure
+    target.x = 15;     // Move back in enclosure
   } else if (target.y < 15) {
     target.y = 15;
   } else if (target.x > width - 15) {
@@ -448,24 +377,84 @@ Oracle.prototype.targetInBounds = function (target) {
   return target;
 }
 
-Oracle.prototype.checkSector = function () {
-  var currentMin = width;
-  for (var i = 0; i < this.targets.length; i++) {
+Oracle.prototype.checkSector = function () { // Function to determine current sector
+  var currentMin = width; // currentMin will store distance to closest sector centre
+  for (var i = 0; i < this.targets.length; i++) { // Loop through targets array
+    // Find distance from current position to nearest sector centre
     distTo = dist(this.position.x, this.position.y, this.targets[i].position.x, this.targets[i].position.y);
-    if (distTo < currentMin) {
-      currentMin = distTo;
-      current = this.targets[i];
+    if (distTo < currentMin) {   // If shorter than previous
+      currentMin = distTo;       // Save shortest distance
+      current = this.targets[i]; // Save closest target
     }
   }
-  currentID = createVector(current.id.x, current.id.y);
-  return currentID;
+  currentID = createVector(current.id.x, current.id.y); // Find i.d for closest sector
+  return currentID; // and return it to saveAnimalPos
 }
 
-Oracle.prototype.getPositionOfTarget = function (secNum) {
-  for (var i = 0; i < this.targets.length; i++) {
-    if(secNum.x == this.targets[i].id.x && secNum.y == this.targets[i].id.y) {
+Oracle.prototype.getPositionOfTarget = function (secNum) { // Calculates min and max search sectors after initial search
+  for (var i = 0; i < this.targets.length; i++) { // Find sectors with animals located in them
+    if(secNum.x == this.targets[i].id.x && secNum.y == this.targets[i].id.y) { // and matches them to a target
       current = this.targets[i];
     }
   }
-  return current;
+  return current; // And sends back min/max targets to keepSearching()
+}
+
+// --------------- FUNCTIONS TO CALCULATE AND DRAW SECTORS ---------------
+Oracle.prototype.createSectors = function () {  // Creates sectors in enclosure for Oracle, used during search for animals
+  secWidthNum = Math.ceil(width/250);           // Find number of sectors on x axis (Columns)
+  secHeightNum = Math.ceil(height/250);         // Find number of sectors on y-axis (Rows)
+  this.numSectors = secWidthNum*secHeightNum;   // Store number of sectors
+  console.log("Number of sectors: " + this.numSectors)
+  this.secWidth = width/secWidthNum;            // Create sectors with even width
+  this.secHeight = height/secHeightNum;         // Create sectors with even height
+  sectorY = 0; // SectorX/Y used to loop through cols/rows
+  var c = 1;   // Set column i.d to 1
+  for(var sectorX = 0; sectorX < width; sectorX += this.secWidth){ // Loop through columns, while theres space keep creating cols
+    var r = 1; // Set row i.d to 1
+    this.target = { // Create target object with sector position and sector i.d to be used by oracle
+      position: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
+      pos: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)), // I can't remember why I added pos...
+      id: createVector (c, r)
+    }
+    if(this.targets.length < this.numSectors) {
+      this.targets.push(this.target); // Add target to targets array
+    }
+    for(sectorY = this.secHeight; sectorY < height; sectorY += this.secHeight) { // Do same for rows using nested for loop
+      r++; // Increment row i.d each iteration
+      this.target = {
+        position: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
+        pos: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
+        id: createVector (c, r)
+      }
+      if(this.targets.length < this.numSectors) {
+        this.targets.push(this.target);
+      }
+    } // Close nested (row creation) for loop
+    sectorY = 0; // Reset row height to 0 after each iteration of a created column
+    c++;         // Increment column i.d number after each iteration
+  } // End Column for loop
+}
+
+Oracle.prototype.drawSectors = function () { // Draws enclosure sectors and Oracle targets when checked
+  for (var i = 0; i < this.targets.length; i++) { // For loop to write label for each sector
+    text(this.targets[i].id.x + "." + this.targets[i].id.y, this.targets[i].pos.x + 10, this.targets[i].pos.y);
+  }
+  secWidthNum = Math.ceil(width/250);    // Find max number of columns :: width divided by oracle veiw range
+  secHeightNum = Math.ceil(height/250);  // Find max number of rows :: height divided by oracle veiw range
+  numSectors = secWidthNum*secHeightNum; // Find total number of sectors :: cols*rows
+  secWidth = width/secWidthNum;          // Create equal length columns
+  secHeight = height/secHeightNum;       // Create equal length rows
+  fill(20,20,20,20);  // Shade in sectors
+  stroke(255);        // White lines to divide sectors
+  sectorY = 0;        // Set sectorY (rows to 0)
+  for(var sectorX = 0; sectorX < width; sectorX += secWidth){ // Loop through each column to create sectors
+    rect(sectorX, sectorY, secWidth, secHeight); // Create square/rect sectore passing through x,y co-ords and width/height
+    ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 5, 5); // Create circle at centre of each sector (Representing oracle targets when searching)
+    for(sectorY = secHeight; sectorY < height; sectorY += secHeight) { // Same for rows
+      rect(sectorX, sectorY, secWidth, secHeight);
+      ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 5, 5);
+    }
+    sectorY = 0; // Reset rows to 0 after each iteration
+  }
 }

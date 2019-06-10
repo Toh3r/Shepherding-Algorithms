@@ -28,6 +28,7 @@
     <script src="js/test/animalTest.js"></script>
     <script src="js/shepherdManual.js"></script>
     <script src="js/autoShepherd.js"></script>
+    <script src="js/multiGPS.js"></script>
     <script src="js/novelty.js"></script>
     <script src="js/obstacle.js"></script>
     <script src="js/gate.js"></script>
@@ -47,25 +48,30 @@
           <div>
             <div>
               <h6><strong><u>Run It...</u></strong></h6>
-              <br><br>
+              <br>
               <div id="droneHerd">
               </div>
               <br>
-              <div id="oracleBtn">
+              <div id="oracleBtn" class="orange">
               </div>
               <br>
-              <div id="multiBtn" class="notWorking">
+              <div id="multiBtn" class="orange">
               </div>
               <br>
               <div id="multiOracleBtn" class="notWorking">
               </div>
-              <br><br>
+              <br>
               <h6><strong><u>Simulation Controls</u></strong></h6>
-              <br><br>
+              <br>
               <div id="pauseBtn">
               </div>
               <br>
               <div id="resetBtn">
+              </div>
+              <br>
+              <h6><strong><u>Select Env</u></strong></h6>
+              <div id="envRadio">
+
               </div>
             </div>
           </div>
@@ -84,19 +90,19 @@
             <h5><b>Env Info</b></h5>
           </div>
           <div class="col-lg-2 borderRight infoHeader">
-            <h5><b>Animal Info</b></h5>
+            <h5><b>Herd Info</b></h5>
           </div>
           <div class="col-lg-2 borderRight infoHeader">
-            <h5><b>UAV Info</b></h5>
+            <h5><b>GPS UAV</b></h5>
+          </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>Oracle UAV</b></h5>
           </div>
           <div class="col-lg-2 borderRight infoHeader">
             <h5><b>Display</b></h5>
           </div>
-          <div class="col-lg-2 borderRight infoHeader">
-            <h5><b>Edit Canvas</b></h5>
-          </div>
           <div class="col-lg-2 infoHeader">
-            <h5><b>Environment</b></h5>
+            <h5><b>Edit Canvas</b></h5>
           </div>
       </div>
 
@@ -120,22 +126,32 @@
         <!-- CheckBox xontorls -->
         <div class="col-lg-2 con" id="control3">
           <h6><strong><u>GPS UAV</u></strong></h6>
-          <br><br>
-          <h6><strong><u>Oracle</u></strong></h6>
-          <div id="uavInfoDiv">
-
-          </div>
-          <h6><strong><u>Oracle UAV</u></strong></h6>
+          <p>Collecting: True</p>
+          <p>Moving: True</p>
+          <p>Avoiding: True</p>
         </div>
 
         <!-- CheckBox xontorls -->
         <div class="col-lg-2 con" id="control4">
+          <h6><strong><u>Oracle</u></strong></h6>
+          <div id="uavInfoDiv">
+
+          </div>
+          <p>Searching: X -> X</p>
+          <h6><strong><u>Oracle UAV</u></strong></h6>
+          <p>Bunched: False</p>
+          <p>Collecting: False</p>
+          <p>Moving: False</p>
+        </div>
+
+        <!-- CheckBox xontorls -->
+        <div class="col-lg-2 con" id="control5">
           <div id="zoneDiv">
           </div>
         </div>
 
         <!-- CheckBox xontorls -->
-        <div class="col-lg-2 con" id="control5">
+        <div class="col-lg-2 con" id="control6">
           <div id="addDrop">
             <label for="sel" style="display:block">Click canvas to ...</label>
           </div><br>
@@ -146,13 +162,6 @@
           <div id="novButtons">
           </div><br>
           <div id="delAll">
-          </div>
-        </div>
-
-        <!-- CheckBox xontorls -->
-        <div class="col-lg-2 con" id="control6">
-          <div id="envRadio" class=radio-inline>
-
           </div>
         </div>
       </div> <!-- Close controls row -->
@@ -196,6 +205,7 @@
           <div id="fVelSli">
             <label for="fVelSlider">Fli: </label>
           </div>
+          <br>
         </div>
 
         <div class="col-lg-2 con2" id="control8">
@@ -226,6 +236,7 @@
           <div id="fliSizeSli">
             <label for="fliSizeSlider">Fli: </label>
           </div>
+          <br>
         </div>
 
         <div class="col-lg-2 con2" id="control9">
@@ -255,6 +266,7 @@
           <div id="aliFli">
             <label for="aliFliSlider">Fli: </label>
           </div>
+          <br>
         </div>
 
         <div class="col-lg-2 con2" id="control10">
@@ -281,6 +293,7 @@
           <div id="dSepFli">
             <label for="dSepFliSlider">Fli: </label>
           </div>
+          <br>
         </div>
         <div class="col-lg-2 con2" id="control11">
 

@@ -43,6 +43,10 @@ p {
     background: red;
 }
 
+.orange button {
+    background: orange;
+}
+
 .borderRight {
   border-right: 5px solid white;
 }
@@ -54,3 +58,11 @@ p {
 .redLetters {
   color: red;
 }
+
+#envRadio label {
+  min-width: 20px;
+}
+
+/* #control3 p {
+  margin: 2px;
+} */

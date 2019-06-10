@@ -6,7 +6,7 @@ function AutoShepherd(x, y, gx, gy) {
   this.position = createVector(x, y);
   this.r = 3.0;
   this.maxForce = 0.3;
-  this.maxspeed = 1;
+  this.maxspeed = 0.6;
   this.movingUp = false;
   this.target = createVector(0,0);
   this.targetLock = false;

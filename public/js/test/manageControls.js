@@ -16,17 +16,17 @@ ManageControls.prototype.createControls = function () {
   // frameRate(30); // Set Frame Rate
 
   // ---------- SPEED SLIDERS ----------
-  wSpeedSlider = createSlider(0, 2, 0.2, 0.1);
+  wSpeedSlider = createSlider(0, 2, 0.1, 0.1);
   wSpeedSlider.parent('wSpeSli');
   wSpeOut = createElement("h6", wSpeedSlider.value());
   wSpeOut.parent('wSpeSli');
 
-  pSpeedSlider = createSlider(0, 2, 0.6, 0.1);
+  pSpeedSlider = createSlider(0, 2, 0.4, 0.1);
   pSpeedSlider.parent('pSpeSli');
   pSpeOut = createElement("h6", pSpeedSlider.value());
   pSpeOut.parent('pSpeSli');
 
-  fSpeedSlider = createSlider(0, 2, 0.6, 0.1);
+  fSpeedSlider = createSlider(0, 2, 0.4, 0.1);
   fSpeedSlider.parent('fSpeSli');
   fSpeOut = createElement("h6", fSpeedSlider.value());
   fSpeOut.parent('fSpeSli');
@@ -37,12 +37,12 @@ ManageControls.prototype.createControls = function () {
   wVelOut = createElement("h6", wVelSlider.value());
   wVelOut.parent('wVelSli');
 
-  pVelSlider = createSlider(0, 2, 0.6, 0.1);
+  pVelSlider = createSlider(0, 2, 0.4, 0.1);
   pVelSlider.parent('pVelSli');
   pVelOut = createElement("h6", pVelSlider.value());
   pVelOut.parent('pVelSli');
 
-  fVelSlider = createSlider(0, 2, 0.6, 0.1);
+  fVelSlider = createSlider(0, 2, 0.4, 0.1);
   fVelSlider.parent('fVelSli');
   fVelOut = createElement("h6", fVelSlider.value());
   fVelOut.parent('fVelSli');
@@ -193,9 +193,6 @@ ManageControls.prototype.createControls = function () {
   sectorCheck = createCheckbox("Show Sectors", true);
   sectorCheck.parent("zoneDiv");
 
-  // shepControl = createCheckbox("Control Shepherd");
-  // shepControl.parent("zoneDiv");
-
   // -------- START AUTO SHEPHERD --------
   droneHerd = createButton('GPS UAV');
   droneHerd.parent('droneHerd');
@@ -229,17 +226,17 @@ ManageControls.prototype.createControls = function () {
   // -------- SELECT ENVIRONMENT RADIO BUTTONS --------
   envRadio = createRadio();
   envRadio.parent("envRadio");
-  envRadio.option('Environment 1', 1);
-  envRadio.option('Environment 2', 2);
-  envRadio.option('Environment 3', 3);
-  envRadio.option('Environment 4', 4);
-  envRadio.option('Environment 5', 5);
-  envRadio.style('width', '100px');
-  textAlign(CENTER);
-  fill(255, 0, 0);
+  envRadio.option('1', 1);
+  envRadio.option('2', 2);
+  envRadio.option('3', 3);
+  envRadio.option('4', 4);
+  envRadio.option('5', 5);
+  // envRadio.style('width', '100px');
+  // textAlign(CENTER);
+  // fill(255, 0, 0);
 
   //  Select starting environment
-  envRadio._getInputChildrenArray()[1].checked = true;
+  envRadio._getInputChildrenArray()[0].checked = true;
 
   // Initialize new environment
   environment = new Environment();
