@@ -43,6 +43,7 @@ Oracle.prototype.run = function (herd) { // Called when oracle created, passing 
 }
 
 Oracle.prototype.runTheShow = function (herd) { // Function which determines action selection based on a whole lotta things
+  this.maxspeed = oracleSpeedSlider.value();
   var bun = this.bunched();     // Function to determine if animals are bunched
   if (this.firstRun == true) {  // Runs on initial search for animals
     var search = this.searchForAnimals(herd);

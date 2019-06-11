@@ -60,19 +60,21 @@
               <br>
               <div id="multiOracleBtn" class="notWorking">
               </div>
-              <br>
+              <br><br>
               <h6><strong><u>Simulation Controls</u></strong></h6>
               <br>
               <div id="pauseBtn">
               </div>
-              <br>
-              <div id="resetBtn">
-              </div>
-              <br>
+              <br><br>
               <h6><strong><u>Select Env</u></strong></h6>
               <div id="envRadio">
-
               </div>
+              <div id="numAnimalsSli">
+                <label for="numAnimalsSlider">Animals: </label>
+              </div>
+              <div id="resetBtn">
+              </div>
+
             </div>
           </div>
           <br>
@@ -112,8 +114,6 @@
           <div id="envInfoDiv">
 
           </div>
-          <p>Total UAV's: </P>
-          <p>Manual UAV: </P>
         </div>
 
         <!-- Add/Delete Buttons -->
@@ -124,24 +124,30 @@
         </div>
 
         <!-- CheckBox xontorls -->
-        <div class="col-lg-2 con" id="control3">
-          <h6><strong><u>GPS UAV</u></strong></h6>
-          <p>Collecting: True</p>
-          <p>Moving: True</p>
-          <p>Avoiding: True</p>
+        <div class="col-lg-2 con redLetters" id="control3">
+          <h6><strong><u>GPS Shep</u></strong></h6>
+          <br><br>
+          <p>Collecting: X</p>
+          <p>Moving: X</p>
+          <p>Avoiding: X</p>
+          <p>Desired Speed: X</p>
+          <p>Desired Heading: X</p>
         </div>
 
         <!-- CheckBox xontorls -->
-        <div class="col-lg-2 con" id="control4">
+        <div class="col-lg-2 con redLetters" id="control4">
           <h6><strong><u>Oracle</u></strong></h6>
           <div id="uavInfoDiv">
 
           </div>
           <p>Searching: X -> X</p>
-          <h6><strong><u>Oracle UAV</u></strong></h6>
-          <p>Bunched: False</p>
-          <p>Collecting: False</p>
-          <p>Moving: False</p>
+          <br>
+          <h6><strong><u>Oracle Shep</u></strong></h6>
+          <p>Collecting: X</p>
+          <p>Moving: X</p>
+          <p>Avoiding: X</p>
+          <p>Desired Speed: X</p>
+          <p>Desired Heading: X</p>
         </div>
 
         <!-- CheckBox xontorls -->
@@ -296,10 +302,20 @@
           <br>
         </div>
         <div class="col-lg-2 con2" id="control11">
-
+          <div>
+            <h6><strong><u>Shepherd</u></strong></h6>
+          </div>
+          <div id="uavSpeSli">
+            <label for="uavSpeedSlider">Speed: </label>
+          </div>
         </div>
         <div class="col-lg-2 con2" id="control12">
-
+          <div>
+            <h6><strong><u>Oracle</u></strong></h6>
+          </div>
+          <div id="oracleSpeSli">
+            <label for="oracleSpeedSlider">Speed: </label>
+          </div>
         </div>
       </div>
     </div> <!-- Close container -->

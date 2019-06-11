@@ -17,7 +17,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     goalX = 990, goalY = 255; // Create goal co-ords for shepherd and animal agents
     gzX = createVector(850, 1000), gzY = createVector(180, 330); // Create goalzone co-ords
 
-    for (var i = 0; i < 10; i++) { //Create starting animals in random positions
+    for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
       x = random(201);
       y = random(501);
       var a = new Animal(x, y, goalX, goalY, gzX, gzY); // Pass through staring position, position of goal and position of goalZone
@@ -40,7 +40,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     goalX = 970, goalY = 580;
     gzX = createVector(850, 1000), gzY = createVector(450, 600);
 
-    for (var i = 0; i < 10; i++) { //Create starting animals in random positions
+    for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
       x = random(201);
       y = random(501);
       var a = new Animal(x, y, goalX, goalY, gzX, gzY);
@@ -72,7 +72,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     gzX = createVector(1100, 1250), gzY = createVector(155, 305);
 
     //Create starting animals in random positions
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < numAnimalsSlider.value(); i++) {
       x = random(100,251);
       y = random(50,351);
       var a = new Animal(x, y, goalX, goalY, gzX, gzY);
@@ -130,7 +130,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     gzX = createVector(2250, 2400), gzY = createVector(0, 85);
 
     //Create starting animals in random positions
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < numAnimalsSlider.value(); i++) {
       x = random(801);
       y = random(551,751);
       var a = new Animal(x, y, goalX, goalY, gzX, gzY);
@@ -173,7 +173,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     goalX = 1100, goalY = 255;
     gzX = createVector(1100, 1250), gzY = createVector(155, 305);
 
-    for (var i = 0; i < 10; i++) {   //Create starting animals in random positions
+    for (var i = 0; i < numAnimalsSlider.value(); i++) {   //Create starting animals in random positions
       x = random(100,251);
       y = random(50,351);
       var a = new Animal(x, y, goalX, goalY, gzX, gzY);
@@ -220,7 +220,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
 function addStuff() {
   var dropSelect = sel.value();
   if (dropSelect == "Add Animal") {
-    environment.addAnimal(new Animal(mouseX, mouseY));
+    environment.addAnimal(new Animal(mouseX, mouseY, goalX, goalY, gzX, gzY));
   }
   if (dropSelect == "Add Shepherd") {
     environment.addShepherd(new Shepherd(mouseX, mouseY));
@@ -233,7 +233,7 @@ function addStuff() {
   }
 }
 
-// ---------- DELETE FUNCTIONS FOR AGENTS.OBJECTS ----------
+// ---------- DELETE FUNCTIONS FOR AGENTS/OBJECTS ----------
 // Calling functions directly from buttons is throwing errors
 function delAnimal() {
   environment.deleteAnimal();

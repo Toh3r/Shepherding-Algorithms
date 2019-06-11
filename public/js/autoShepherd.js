@@ -6,7 +6,7 @@ function AutoShepherd(x, y, gx, gy) {
   this.position = createVector(x, y);
   this.r = 3.0;
   this.maxForce = 0.3;
-  this.maxspeed = 0.6;
+  this.maxspeed = 0.7;
   this.movingUp = false;
   this.target = createVector(0,0);
   this.targetLock = false;
@@ -43,6 +43,7 @@ AutoShepherd.prototype.applyForce = function(force) {
 }
 
 AutoShepherd.prototype.herdAnimals = function (herd) {
+  this.maxspeed = uavSpeedSlider.value();
   var bun = this.bunched(herd);
   if (bun == true) {
     var mov = this.moveAnimals(herd);
@@ -68,18 +69,18 @@ AutoShepherd.prototype.update = function() {
 
 // Method to prevent shepherd from leaving enclosure
 AutoShepherd.prototype.borders = function () {
-  if (this.position.x < 15) {
+  if (this.position.x < 10) {
     this.velocity.x *= -1;
-    this.position.x = 15;
-  } else if (this.position.y < 15) {
+    this.position.x = 10;
+  } else if (this.position.y < 10) {
     this.velocity.y *= -1;
-    this.position.y = 15;
-  } else if (this.position.x > width - 15) {
+    this.position.y = 10;
+  } else if (this.position.x > width - 10) {
     this.velocity.x *= -1;
     this.position.x = width - 15;
-  } else if (this.position.y > height - 15) {
+  } else if (this.position.y > height - 10) {
     this.velocity.y *= -1;
-    this.position.y = height - 15;
+    this.position.y = height - 10;
   }
 }
 

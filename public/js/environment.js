@@ -20,10 +20,10 @@ function Environment() {
   this.oldTime = 0; // Used for displaying timesteps, timestep variable currently held by shepherd **change to here**
 
   // Hold positoins of herd to draw herd radius on canvas
-  this.herdBottom = 0;
-  this.herdTop = 0;
-  this.herdLeft = 0;
-  this.herdRight = 0;
+  // this.herdBottom = 0;
+  // this.herdTop = 0;
+  // this.herdLeft = 0;
+  // this.herdRight = 0;
 }
 
 // ------------ CREATES AGENTS/OBJECTS WHEN PASSED INFO FROM SKETCH ------------
@@ -117,7 +117,7 @@ Environment.prototype.deleteAnimal = function() {
 }
 
 Environment.prototype.deleteShepherd = function() {
-  this.shepherds.pop();
+  this.shepherds.length = 0;
 }
 
 Environment.prototype.deleteNovelty = function() {
@@ -140,6 +140,15 @@ Environment.prototype.avgSpeed = function() {
   }
   this.averageSpeed = this.averageSpeed / this.herd.length;
   return this.averageSpeed;
+}
+
+Environment.prototype.avgHeading = function() {
+  this.averageHeading = 0;
+  for (var i = 0; i < this.herd.length; i++) {
+    this.averageHeading += this.herd[i].velocity.heading();
+  }
+  this.averageHeading = this.averageHeading / this.herd.length;
+  return this.averageHeading;
 }
 
 Environment.prototype.totalStress = function() {
@@ -171,6 +180,19 @@ Environment.prototype.vocalizing = function () {
     }
   }
   return this.vocal;
+}
+
+Environment.prototype.checkBunched = function () {
+  herdBottom = Math.max.apply(Math, this.herd.map(function(o) { return o.position.y; }));
+  herdTop = Math.min.apply(Math, this.herd.map(function(o) { return o.position.y; }));
+  herdLeft = Math.min.apply(Math, this.herd.map(function(o) { return o.position.x; }));
+  herdRight = Math.max.apply(Math, this.herd.map(function(o) { return o.position.x; }));
+  herDist = dist(herdLeft, herdTop, herdRight, herdBottom);
+  if (herDist < 200) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 // ------------ FUNCTIONS TO REMOVE ANIMAL FROM ENV WHEN THEY REACH GATE ------------
@@ -287,6 +309,8 @@ Environment.prototype.sectors = function () {
   stroke(0);
   ellipse(980, 570, 20);
 }
+
+
 
 // // Method to allow for class extensions
 // function extend (base, constructor) {

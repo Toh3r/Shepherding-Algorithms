@@ -6,7 +6,7 @@ function OracleShepherd(x, y, gx, gy) {  // Passing through starting co-ords and
   this.position = createVector(x, y);
   this.r = 3.0;
   this.maxForce = 0.3;
-  this.maxspeed = 1;
+  this.maxspeed = 0.6;
   this.movingUp = false;
   this.target = createVector(0,0);
   this.targetLock = false;
@@ -81,18 +81,18 @@ OracleShepherd.prototype.update = function() {
 
 // Method to prevent shepherd from leaving enclosure
 OracleShepherd.prototype.borders = function () {
-  if (this.position.x < 15) {
+  if (this.position.x < 10) {
     this.velocity.x *= -1;
-    this.position.x = 15;
-  } else if (this.position.y < 15) {
+    this.position.x = 10;
+  } else if (this.position.y < 10) {
     this.velocity.y *= -1;
-    this.position.y = 15;
-  } else if (this.position.x > width - 15) {
+    this.position.y = 10;
+  } else if (this.position.x > width - 10) {
     this.velocity.x *= -1;
-    this.position.x = width - 15;
-  } else if (this.position.y > height - 15) {
+    this.position.x = width - 10;
+  } else if (this.position.y > height - 10) {
     this.velocity.y *= -1;
-    this.position.y = height - 15;
+    this.position.y = height - 10;
   }
 }
 
