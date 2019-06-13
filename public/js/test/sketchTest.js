@@ -8,8 +8,8 @@ function setup() {
 
 // Call to run simulation -> (p5)
 function draw() {
-  // background(9, 123, 18); // Create Green Background
-  background(img);           // Use image for background
+  background(9, 123, 18); // Create Green Background
+  // background(img);        // Use image for background
   environment.run();         // Call run function in Environment class
   manageFE.updateSimInfo();  // Update
 }
