@@ -20,6 +20,11 @@ function AutoShepherd(x, y, gx, gy) {
   this.goalX = gx;
   this.goalY = gy;
   this.targets = [];    // Holds number of sectors in an environment
+  this.furthestAnimal = 0;
+  this.targetAnimal = {};
+  this.oldTargetAnimal = {
+    position: createVector(2000, 2000)
+  }
 }
 
 // Call methods for each shepherd
@@ -31,12 +36,12 @@ AutoShepherd.prototype.run = function(herd) {
   if(lineCheck.checked() == true) {
     this.displayShepLines();
   }
-  if (this.targets.length == 0) { // Create sectors on first call
-    this.createSectors();
-  }
-  if (sectorCheck.checked() == true) { // Display enclosure sectors if checked (auto-checked on)
-    this.drawSectors();
-  }
+  // if (this.targets.length == 0) { // Create sectors on first call
+  //   this.createSectors();
+  // }
+  // if (sectorCheck.checked() == true) { // Display enclosure sectors if checked (auto-checked on)
+  //   this.drawSectors();
+  // }
   this.timestep++;
   // if (this.timestep % 50 == 0){
   //   console.log("Timestep: " + this.timestep);
@@ -58,8 +63,10 @@ AutoShepherd.prototype.herdAnimals = function (herd) {
   }
 
   if (bun == false) {
-    var col = this.collectAnimals(herd);
-    this.applyForce(col);
+    // var col = this.collectAnimals(herd);
+    // this.applyForce(col);
+    var adCol = this.advanceCollect(herd);
+    this.applyForce(adCol);
   }
 }
 
@@ -182,6 +189,95 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
    return steer;
  }
 }
+
+AutoShepherd.prototype.advanceCollect = function (herd) {
+  var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
+  var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
+
+  var center = createVector(herdX, herdY); // Centre co-ords of herd
+  var goal = createVector(this.goalX,this.goalY); // Location of exit
+
+  if (environment.vocalizing() == true) {
+    goal = this.avoidObstacle(center, goal);
+  }
+
+  var furthestPos = 0;
+  for (var i = 0; i < herd.length; i++) {
+    currentDist = dist(herd[i].position.x, herd[i].position.y, herdX, herdY);
+    if (currentDist > furthestPos) {
+      furthestPos = currentDist;
+      this.targetAnimal = herd[i];
+    }
+  }
+
+  fill(255,0,0, 20);
+  stroke(0);
+  ellipse(this.targetAnimal.position.x, this.targetAnimal.position.y, 20,20);
+
+  var comp1 = dist(this.targetAnimal.position.x, this.targetAnimal.position.y, herdX, herdY);
+  var comp2 = dist(this.oldTargetAnimal.position.x, this.oldTargetAnimal.position.y, herdX, herdY);
+
+  if(Math.abs(comp1 - comp2) < 20) {
+    this.targetAnimal = this.oldTargetAnimal;
+  }
+
+  fill(255,0,0, 20);
+  stroke(0);
+  ellipse(this.targetAnimal.position.x, this.targetAnimal.position.y, 20,20);
+  ellipse(center.x, center.y, 10,10);
+  line(center.x, center.y, this.targetAnimal.position.x, this.targetAnimal.position.y);
+
+  let fz2hc = this.adjustLineLen(this.targetAnimal.position, center, 40);
+  let pz2hc = this.adjustLineLen(this.targetAnimal.position, center, 70);
+  line(pz2hc.x, pz2hc.y, center.x, center.y);
+  fill(0,255,0)
+  stroke(0,255,0);
+  line(fz2hc.x, fz2hc.y, center.x, center.y);
+
+  // Get co-ords for flight zone line points
+  let fzp10 = this.createPCo1(fz2hc.x,fz2hc.y,pz2hc.x,pz2hc.y);
+  let fzp20 = this.createPCo2(fz2hc.x,fz2hc.y,pz2hc.x,pz2hc.y);
+  //Get co-ords for pressure zone line points
+  let pzp10 = this.createPCo1(pz2hc.x,pz2hc.y,fz2hc.x, fz2hc.y);
+  let pzp20 = this.createPCo2(pz2hc.x,pz2hc.y,fz2hc.x, fz2hc.y);
+
+  ellipse(fzp10.x, fzp10.y, 10,10);
+  ellipse(fzp20.x, fzp20.y, 10,10);
+  ellipse(pzp10.x, pzp10.y, 10,10);
+  ellipse(pzp20.x, pzp20.y, 10,10);
+
+  line(fzp10.x, fzp10.y,fzp20.x, fzp20.y)
+  line(pzp10.x, pzp10.y,pzp20.x, pzp20.y)
+
+  this.oldTargetAnimal = this.targetAnimal;
+
+ if (this.movingUp == false) {
+   var target = createVector(fzp10.x,fzp10.y);
+   this.targetInBounds(target);
+   var desired = p5.Vector.sub(target, this.position);
+   desired.normalize();
+   desired.mult(this.maxspeed);
+   var steer = p5.Vector.sub(desired, this.velocity);
+   steer.limit(this.maxforce);
+   if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
+     this.movingUp = true;
+   }
+   return steer;
+ } else if (this.movingUp == true) {
+   var target = createVector(fzp20.x,fzp20.y);
+   this.targetInBounds(target);
+   var desired = p5.Vector.sub(target, this.position);
+   desired.normalize();
+   desired.mult(this.maxspeed);
+   var steer = p5.Vector.sub(desired, this.velocity);
+   steer.limit(this.maxforce);
+   if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
+     this.movingUp = false;
+   }
+   return steer;
+ }
+}
+
 
 AutoShepherd.prototype.moveAnimals = function (herd) {
 
@@ -413,6 +509,8 @@ AutoShepherd.prototype.createSectors = function () {  // Creates sectors in encl
 }
 
 AutoShepherd.prototype.drawSectors = function () { // Draws enclosure sectors and Oracle targets when checked
+  fill(0, 79, 249);
+  stroke(0, 79, 249);
   for (var i = 0; i < this.targets.length; i++) { // For loop to write label for each sector
     text(this.targets[i].id.x + "." + this.targets[i].id.y, this.targets[i].pos.x + 10, this.targets[i].pos.y);
   }
