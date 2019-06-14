@@ -19,16 +19,3 @@ function createNewEnv () {
   manageEnv = new ManageEnvironment();
   manageEnv.createNewEnv();
 }
-
-// Pause function for simulation -> when pause button clicked, boolean switches stopping canvas update
-function togglePlay() {
-  if (isPlaying == true) {
-     loop();  // Lets canvas update
-     pauseBtn.html('Pause'); // Change wording on button
-     isPlaying = false;
-  } else if (isPlaying == false) {
-     noLoop(); // Stops canvas from updating
-     pauseBtn.html('Play');
-     isPlaying = true;
-  }
-}

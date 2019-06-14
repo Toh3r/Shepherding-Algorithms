@@ -33,7 +33,7 @@ AutoShepherd.prototype.run = function(herd) {
   this.borders();
   this.render();
   this.herdAnimals(herd);
-  if(lineCheck.checked() == true) {
+  if(lineCheck.checked() == true && herd.length > 0) {
     this.displayShepLines();
   }
   // if (this.targets.length == 0) { // Create sectors on first call
@@ -55,7 +55,12 @@ AutoShepherd.prototype.applyForce = function(force) {
 }
 
 AutoShepherd.prototype.herdAnimals = function (herd) {
-  this.maxspeed = uavSpeedSlider.value();
+  if (herd.length == 0) {
+    this.maxspeed = 0;
+  } else {
+    this.maxspeed = uavSpeedSlider.value();
+  }
+
   var bun = this.bunched(herd);
   if (bun == true) {
     var mov = this.moveAnimals(herd);
@@ -68,6 +73,7 @@ AutoShepherd.prototype.herdAnimals = function (herd) {
     var adCol = this.advanceCollect(herd);
     this.applyForce(adCol);
   }
+
 }
 
 // Method to update location
@@ -210,9 +216,11 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
     }
   }
 
-  fill(255,0,0, 20);
-  stroke(0);
-  ellipse(this.targetAnimal.position.x, this.targetAnimal.position.y, 20,20);
+  if (herd.length > 0) {
+    fill(255,0,0, 20);
+    stroke(0);
+    ellipse(this.targetAnimal.position.x, this.targetAnimal.position.y, 20,20);
+  }
 
   var comp1 = dist(this.targetAnimal.position.x, this.targetAnimal.position.y, herdX, herdY);
   var comp2 = dist(this.oldTargetAnimal.position.x, this.oldTargetAnimal.position.y, herdX, herdY);
@@ -221,18 +229,22 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
     this.targetAnimal = this.oldTargetAnimal;
   }
 
-  fill(255,0,0, 20);
-  stroke(0);
-  ellipse(this.targetAnimal.position.x, this.targetAnimal.position.y, 20,20);
-  ellipse(center.x, center.y, 10,10);
-  line(center.x, center.y, this.targetAnimal.position.x, this.targetAnimal.position.y);
+  if (herd.length > 0) {
+    fill(255,0,0, 20);
+    stroke(0);
+    ellipse(this.targetAnimal.position.x, this.targetAnimal.position.y, 20,20);
+    ellipse(center.x, center.y, 10,10);
+    line(center.x, center.y, this.targetAnimal.position.x, this.targetAnimal.position.y);
+  }
 
   let fz2hc = this.adjustLineLen(this.targetAnimal.position, center, 40);
   let pz2hc = this.adjustLineLen(this.targetAnimal.position, center, 70);
-  line(pz2hc.x, pz2hc.y, center.x, center.y);
-  fill(0,255,0)
-  stroke(0,255,0);
-  line(fz2hc.x, fz2hc.y, center.x, center.y);
+  if (herd.length > 0) {
+    line(pz2hc.x, pz2hc.y, center.x, center.y);
+    fill(0,255,0)
+    stroke(0,255,0);
+    line(fz2hc.x, fz2hc.y, center.x, center.y);
+  }
 
   // Get co-ords for flight zone line points
   let fzp10 = this.createPCo1(fz2hc.x,fz2hc.y,pz2hc.x,pz2hc.y);
@@ -241,13 +253,15 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
   let pzp10 = this.createPCo1(pz2hc.x,pz2hc.y,fz2hc.x, fz2hc.y);
   let pzp20 = this.createPCo2(pz2hc.x,pz2hc.y,fz2hc.x, fz2hc.y);
 
-  ellipse(fzp10.x, fzp10.y, 10,10);
-  ellipse(fzp20.x, fzp20.y, 10,10);
-  ellipse(pzp10.x, pzp10.y, 10,10);
-  ellipse(pzp20.x, pzp20.y, 10,10);
+  if (herd.length > 0) {
+    ellipse(fzp10.x, fzp10.y, 10,10);
+    ellipse(fzp20.x, fzp20.y, 10,10);
+    ellipse(pzp10.x, pzp10.y, 10,10);
+    ellipse(pzp20.x, pzp20.y, 10,10);
 
-  line(fzp10.x, fzp10.y,fzp20.x, fzp20.y)
-  line(pzp10.x, pzp10.y,pzp20.x, pzp20.y)
+    line(fzp10.x, fzp10.y,fzp20.x, fzp20.y)
+    line(pzp10.x, pzp10.y,pzp20.x, pzp20.y)
+  }
 
   this.oldTargetAnimal = this.targetAnimal;
 
@@ -472,63 +486,63 @@ AutoShepherd.prototype.checkHeading = function (herd) {
   return averageHeading;
 }
 
-// --------------- FUNCTIONS TO CALCULATE AND DRAW SECTORS ---------------
-AutoShepherd.prototype.createSectors = function () {  // Creates sectors in enclosure for Oracle, used during search for animals
-  secWidthNum = Math.ceil(width/250);           // Find number of sectors on x axis (Columns)
-  secHeightNum = Math.ceil(height/250);         // Find number of sectors on y-axis (Rows)
-  this.numSectors = secWidthNum*secHeightNum;   // Store number of sectors
-  console.log("Number of sectors: " + this.numSectors)
-  this.secWidth = width/secWidthNum;            // Create sectors with even width
-  this.secHeight = height/secHeightNum;         // Create sectors with even height
-  sectorY = 0; // SectorX/Y used to loop through cols/rows
-  var c = 1;   // Set column i.d to 1
-  for(var sectorX = 0; sectorX < width; sectorX += this.secWidth){ // Loop through columns, while theres space keep creating cols
-    var r = 1; // Set row i.d to 1
-    this.target = { // Create target object with sector position and sector i.d to be used by oracle
-      position: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
-      pos: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)), // I can't remember why I added pos...
-      id: createVector (c, r)
-    }
-    if(this.targets.length < this.numSectors) {
-      this.targets.push(this.target); // Add target to targets array
-    }
-    for(sectorY = this.secHeight; sectorY < height; sectorY += this.secHeight) { // Do same for rows using nested for loop
-      r++; // Increment row i.d each iteration
-      this.target = {
-        position: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
-        pos: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
-        id: createVector (c, r)
-      }
-      if(this.targets.length < this.numSectors) {
-        this.targets.push(this.target);
-      }
-    } // Close nested (row creation) for loop
-    sectorY = 0; // Reset row height to 0 after each iteration of a created column
-    c++;         // Increment column i.d number after each iteration
-  } // End Column for loop
-}
-
-AutoShepherd.prototype.drawSectors = function () { // Draws enclosure sectors and Oracle targets when checked
-  fill(0, 79, 249);
-  stroke(0, 79, 249);
-  for (var i = 0; i < this.targets.length; i++) { // For loop to write label for each sector
-    text(this.targets[i].id.x + "." + this.targets[i].id.y, this.targets[i].pos.x + 10, this.targets[i].pos.y);
-  }
-  secWidthNum = Math.ceil(width/250);    // Find max number of columns :: width divided by oracle veiw range
-  secHeightNum = Math.ceil(height/250);  // Find max number of rows :: height divided by oracle veiw range
-  numSectors = secWidthNum*secHeightNum; // Find total number of sectors :: cols*rows
-  secWidth = width/secWidthNum;          // Create equal length columns
-  secHeight = height/secHeightNum;       // Create equal length rows
-  fill(20,20,20,20);  // Shade in sectors
-  stroke(255);        // White lines to divide sectors
-  sectorY = 0;        // Set sectorY (rows to 0)
-  for(var sectorX = 0; sectorX < width; sectorX += secWidth){ // Loop through each column to create sectors
-    rect(sectorX, sectorY, secWidth, secHeight); // Create square/rect sectore passing through x,y co-ords and width/height
-    ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 5, 5); // Create circle at centre of each sector (Representing oracle targets when searching)
-    for(sectorY = secHeight; sectorY < height; sectorY += secHeight) { // Same for rows
-      rect(sectorX, sectorY, secWidth, secHeight);
-      ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 5, 5);
-    }
-    sectorY = 0; // Reset rows to 0 after each iteration
-  }
-}
+// // --------------- FUNCTIONS TO CALCULATE AND DRAW SECTORS ---------------
+// AutoShepherd.prototype.createSectors = function () {  // Creates sectors in enclosure for Oracle, used during search for animals
+//   secWidthNum = Math.ceil(width/250);           // Find number of sectors on x axis (Columns)
+//   secHeightNum = Math.ceil(height/250);         // Find number of sectors on y-axis (Rows)
+//   this.numSectors = secWidthNum*secHeightNum;   // Store number of sectors
+//   console.log("Number of sectors: " + this.numSectors)
+//   this.secWidth = width/secWidthNum;            // Create sectors with even width
+//   this.secHeight = height/secHeightNum;         // Create sectors with even height
+//   sectorY = 0; // SectorX/Y used to loop through cols/rows
+//   var c = 1;   // Set column i.d to 1
+//   for(var sectorX = 0; sectorX < width; sectorX += this.secWidth){ // Loop through columns, while theres space keep creating cols
+//     var r = 1; // Set row i.d to 1
+//     this.target = { // Create target object with sector position and sector i.d to be used by oracle
+//       position: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
+//       pos: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)), // I can't remember why I added pos...
+//       id: createVector (c, r)
+//     }
+//     if(this.targets.length < this.numSectors) {
+//       this.targets.push(this.target); // Add target to targets array
+//     }
+//     for(sectorY = this.secHeight; sectorY < height; sectorY += this.secHeight) { // Do same for rows using nested for loop
+//       r++; // Increment row i.d each iteration
+//       this.target = {
+//         position: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
+//         pos: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
+//         id: createVector (c, r)
+//       }
+//       if(this.targets.length < this.numSectors) {
+//         this.targets.push(this.target);
+//       }
+//     } // Close nested (row creation) for loop
+//     sectorY = 0; // Reset row height to 0 after each iteration of a created column
+//     c++;         // Increment column i.d number after each iteration
+//   } // End Column for loop
+// }
+//
+// AutoShepherd.prototype.drawSectors = function () { // Draws enclosure sectors and Oracle targets when checked
+//   fill(0, 79, 249);
+//   stroke(0, 79, 249);
+//   for (var i = 0; i < this.targets.length; i++) { // For loop to write label for each sector
+//     text(this.targets[i].id.x + "." + this.targets[i].id.y, this.targets[i].pos.x + 10, this.targets[i].pos.y);
+//   }
+//   secWidthNum = Math.ceil(width/250);    // Find max number of columns :: width divided by oracle veiw range
+//   secHeightNum = Math.ceil(height/250);  // Find max number of rows :: height divided by oracle veiw range
+//   numSectors = secWidthNum*secHeightNum; // Find total number of sectors :: cols*rows
+//   secWidth = width/secWidthNum;          // Create equal length columns
+//   secHeight = height/secHeightNum;       // Create equal length rows
+//   fill(20,20,20,20);  // Shade in sectors
+//   stroke(255);        // White lines to divide sectors
+//   sectorY = 0;        // Set sectorY (rows to 0)
+//   for(var sectorX = 0; sectorX < width; sectorX += secWidth){ // Loop through each column to create sectors
+//     rect(sectorX, sectorY, secWidth, secHeight); // Create square/rect sectore passing through x,y co-ords and width/height
+//     ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 5, 5); // Create circle at centre of each sector (Representing oracle targets when searching)
+//     for(sectorY = secHeight; sectorY < height; sectorY += secHeight) { // Same for rows
+//       rect(sectorX, sectorY, secWidth, secHeight);
+//       ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 5, 5);
+//     }
+//     sectorY = 0; // Reset rows to 0 after each iteration
+//   }
+// }
