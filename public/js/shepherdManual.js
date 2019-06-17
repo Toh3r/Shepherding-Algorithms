@@ -12,6 +12,7 @@ Shepherd.prototype.run = function(herd) {
   this.borders();
   this.render();
   this.recHerd(herd);
+  this.outOfHerd();
 }
 
 // Method to prevent shepherd from leaving enclosure
@@ -54,10 +55,27 @@ Shepherd.prototype.render = function() {
 }
 
 Shepherd.prototype.recHerd = function (herd) {
-  var bottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
-  var top = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
-  var left = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
-  var right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
+  this.herdBottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
+  this.herdTop = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
+  this.herdLeft = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
+  this.herdRight = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
 
   // console.log("Dist: " + dist(left, top, right, bottom));
+}
+
+Shepherd.prototype.outOfHerd = function () {
+
+  if (this.position.x > this.herdLeft && this.position.x < this.herdRight && this.position.y < this.herdTop + 50 && this.position.y > this.herdTop) {
+    // this.position.y = this.position.y - 1;
+    console.log("Running outOfHerd");
+  } else if (this.position.x > this.herdLeft && this.position.x < this.herdRight && this.position.y < this.herdBottom + 50 && this.position.y > this.herdTop) {
+    // this.position.y = this.position.y + 1;
+    console.log("Running outOfHerd");
+  } else if (this.position.y > this.herdTop && this.position.y < this.herdBottom && this.position.x < this.herdRight + 50 && this.position.x > this.herdLeft) {
+    // this.position.x = this.position.x + 1;
+    console.log("Running outOfHerd");
+  } else if (this.position.y > this.herdTop && this.position.y < this.herdBottom && this.position.x > this.herdLeft - 50 && this.position.x < this.herdLeft) {
+    // this.position.x = this.position.x - 1;
+    console.log("Running outOfHerd");
+  }
 }

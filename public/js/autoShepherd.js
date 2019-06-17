@@ -25,6 +25,7 @@ function AutoShepherd(x, y, gx, gy) {
   this.oldTargetAnimal = {
     position: createVector(2000, 2000)
   }
+  this.switchingActions = false;
 }
 
 // Call methods for each shepherd
@@ -126,6 +127,13 @@ AutoShepherd.prototype.bunched = function (herd) {
   this.herdTop = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
   this.herdLeft = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
   this.herdRight = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
+
+  this.herdBoundary = [
+    createVector(this.herdLeft - 50, this.herdTop - 50),
+    createVector(this.herdRight + 50, this.herdTop - 50),
+    createVector(this.herdLeft - 50, this.herdBottom + 50),
+    createVector(this.herdRight + 50, this.herdBottom + 50)
+  ]
 
   herDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
   if (herDist < 200) {
@@ -267,6 +275,7 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
 
  if (this.movingUp == false) {
    var target = createVector(fzp10.x,fzp10.y);
+   // this.outOfHerd(target);
    this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
@@ -279,6 +288,7 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
    return steer;
  } else if (this.movingUp == true) {
    var target = createVector(fzp20.x,fzp20.y);
+   // this.outOfHerd(target);
    this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
@@ -336,6 +346,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     } else {
       var target = createVector(pzp1.x,pzp1.y);
     }
+    // this.outOfHerd(target);
     this.targetInBounds(target);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
@@ -352,6 +363,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     } else {
       var target = createVector(pzp2.x,pzp2.y);
     }
+    // this.outOfHerd(target);
     this.targetInBounds(target);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
@@ -376,6 +388,85 @@ AutoShepherd.prototype.targetInBounds = function (target) {
     target.y = height - 15;
   }
   return target;
+}
+
+AutoShepherd.prototype.outOfHerd = function (target) {
+
+  stroke(255);
+  fill(255);
+  ellipse(this.herdBoundary[0].x, this.herdBoundary[0].y, 10 ,10) // top left
+  // text("Top Left", this.herdBoundary[0].x, this.herdBoundary[0].y);
+  ellipse(this.herdBoundary[1].x, this.herdBoundary[1].y, 10 ,10) // top right
+  // text("Top Right", this.herdBoundary[1].x, this.herdBoundary[1].y);
+  ellipse(this.herdBoundary[2].x, this.herdBoundary[2].y, 10 ,10) // bottom left
+  // text("Bottom Left", this.herdBoundary[2].x, this.herdBoundary[2].y);
+  ellipse(this.herdBoundary[3].x, this.herdBoundary[3].y, 10 ,10) // bottom right
+  // text("Bottom Right", this.herdBoundary[3].x, this.herdBoundary[3].y);
+
+  if (this.position.x > this.herdBoundary[0].x && this.position.x < this.herdBoundary[1].x && this.position.y < this.herdBoundary[0].y + 50 && this.position.y > this.herdBoundary[0].y) {
+    this.findFastestRoute(target, this.herdBoundary[1], this.herdBoundary[0], this.herdBoundary[3], this.herdBoundary[2]);
+    console.log("Running outOfHerd");
+    fill(244, 66, 209);
+    ellipse(target.x, target.y, 20 ,20);
+    return target;
+  } else if (this.position.x > this.herdBoundary[0].x && this.position.x < this.herdBoundary[1].x && this.position.y < this.herdBoundary[2].y + 50 && this.position.y > this.herdBoundary[0].y) {
+    this.findFastestRoute(target, this.herdBoundary[2], this.herdBoundary[3], this.herdBoundary[0], this.herdBoundary[1]);
+    console.log("Running outOfHerd");
+    fill(244, 66, 209);
+    ellipse(target.x, target.y, 20 ,20);
+    return target;
+  } else if (this.position.y > this.herdBoundary[0].y && this.position.y < this.herdBoundary[2].y && this.position.x < this.herdBoundary[1].x + 50 && this.position.x > this.herdBoundary[0].x) {
+    this.findFastestRoute(target, this.herdBoundary[3], this.herdBoundary[1], this.herdBoundary[2], this.herdBoundary[0]);
+    console.log("Running outOfHerd");
+    fill(244, 66, 209);
+    ellipse(target.x, target.y, 20 ,20);
+    return target;
+  } else if (this.position.y > this.herdBoundary[0].y && this.position.y < this.herdBoundary[2].y && this.position.x > this.herdBoundary[0].x - 50 && this.position.x < this.herdBoundary[0].x) {
+    this.findFastestRoute(target, this.herdBoundary[0], this.herdBoundary[2], this.herdBoundary[1], this.herdBoundary[3]);
+    console.log("Running outOfHerd");
+    fill(244, 66, 209);
+    ellipse(target.x, target.y, 20 ,20);
+    return target;
+  }
+}
+
+
+AutoShepherd.prototype.findFastestRoute = function (target, p1, p2, p3, p4) {
+  // if distance is greater than herd length, then need to travel around 2 herd points
+  strokeWeight(5);
+  stroke(244, 92, 66);
+  line(this.position.x, this.position.y, target.x, target.y);
+  line(p1.x, p1.y, p3.x, p3.y);
+  strokeWeight(1);
+  if(dist(this.position.x, this.position.y, target.x, target.y) > dist(p1.x, p1.y, p3.x, p3.y)) {
+    t1 = dist(this.position.x, this.position.y, p1.x, p1.y) + dist(p1.x, p1.y, p3.x, p3.y) + dist(p3.x, p3.y, target.x, target.y);
+    console.log("T1: ", t1);
+    t2 = dist(this.position.x, this.position.y, p2.x, p2.y) + dist(p2.x, p2.y, p4.x, p4.y) + dist(p4.x, p4.y, target.x, target.y);
+    console.log("T2: ", t2);
+    if(Math.min(t1, t2) == t1) {
+      target.x = p1.x, target.y = p1.y;
+      console.log("Shortest path is t1, need 2 points");
+      return target;
+    } else if (Math.min(t1, t2) == t2) {
+      target.x = p2.x, target.y = p2.y;
+      console.log("Shortest path is t2, need 2 points");
+      return target;
+    }
+  } else if (dist(this.position.x, this.position.y, target.x, target.y) < dist(p1.x, p1.y, p3.x, p3.y)) {
+    t1 = dist(this.position.x, this.position.y, p3.x, p3.y) + dist(p3.x, p3.y, target.x, target.y);
+    console.log("T1: ", t1);
+    t2 = dist(this.position.x, this.position.y, p4.x, p4.y) + dist(p4.x, p4.y, target.x, target.y);
+    console.log("T2: ", t2);
+    if(Math.min(t1, t2) == t1) {
+      target.x = p3.x, target.y = p3.y;
+      console.log("Shortest path is t1, need 1 point");
+      return target;
+    } else if (Math.min(t1, t2) == t2) {
+      target.x = p4.x, target.y = p4.y;
+      console.log("Shortest path is t2, need 1 point");
+      return target;
+    }
+  }
 }
 
 AutoShepherd.prototype.displayShepLines = function () {
@@ -485,64 +576,3 @@ AutoShepherd.prototype.checkHeading = function (herd) {
   averageHeading = totalHeading/ herd.length;
   return averageHeading;
 }
-
-// // --------------- FUNCTIONS TO CALCULATE AND DRAW SECTORS ---------------
-// AutoShepherd.prototype.createSectors = function () {  // Creates sectors in enclosure for Oracle, used during search for animals
-//   secWidthNum = Math.ceil(width/250);           // Find number of sectors on x axis (Columns)
-//   secHeightNum = Math.ceil(height/250);         // Find number of sectors on y-axis (Rows)
-//   this.numSectors = secWidthNum*secHeightNum;   // Store number of sectors
-//   console.log("Number of sectors: " + this.numSectors)
-//   this.secWidth = width/secWidthNum;            // Create sectors with even width
-//   this.secHeight = height/secHeightNum;         // Create sectors with even height
-//   sectorY = 0; // SectorX/Y used to loop through cols/rows
-//   var c = 1;   // Set column i.d to 1
-//   for(var sectorX = 0; sectorX < width; sectorX += this.secWidth){ // Loop through columns, while theres space keep creating cols
-//     var r = 1; // Set row i.d to 1
-//     this.target = { // Create target object with sector position and sector i.d to be used by oracle
-//       position: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
-//       pos: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)), // I can't remember why I added pos...
-//       id: createVector (c, r)
-//     }
-//     if(this.targets.length < this.numSectors) {
-//       this.targets.push(this.target); // Add target to targets array
-//     }
-//     for(sectorY = this.secHeight; sectorY < height; sectorY += this.secHeight) { // Do same for rows using nested for loop
-//       r++; // Increment row i.d each iteration
-//       this.target = {
-//         position: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
-//         pos: createVector(sectorX + (this.secWidth/2),sectorY + (this.secHeight/2)),
-//         id: createVector (c, r)
-//       }
-//       if(this.targets.length < this.numSectors) {
-//         this.targets.push(this.target);
-//       }
-//     } // Close nested (row creation) for loop
-//     sectorY = 0; // Reset row height to 0 after each iteration of a created column
-//     c++;         // Increment column i.d number after each iteration
-//   } // End Column for loop
-// }
-//
-// AutoShepherd.prototype.drawSectors = function () { // Draws enclosure sectors and Oracle targets when checked
-//   fill(0, 79, 249);
-//   stroke(0, 79, 249);
-//   for (var i = 0; i < this.targets.length; i++) { // For loop to write label for each sector
-//     text(this.targets[i].id.x + "." + this.targets[i].id.y, this.targets[i].pos.x + 10, this.targets[i].pos.y);
-//   }
-//   secWidthNum = Math.ceil(width/250);    // Find max number of columns :: width divided by oracle veiw range
-//   secHeightNum = Math.ceil(height/250);  // Find max number of rows :: height divided by oracle veiw range
-//   numSectors = secWidthNum*secHeightNum; // Find total number of sectors :: cols*rows
-//   secWidth = width/secWidthNum;          // Create equal length columns
-//   secHeight = height/secHeightNum;       // Create equal length rows
-//   fill(20,20,20,20);  // Shade in sectors
-//   stroke(255);        // White lines to divide sectors
-//   sectorY = 0;        // Set sectorY (rows to 0)
-//   for(var sectorX = 0; sectorX < width; sectorX += secWidth){ // Loop through each column to create sectors
-//     rect(sectorX, sectorY, secWidth, secHeight); // Create square/rect sectore passing through x,y co-ords and width/height
-//     ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 5, 5); // Create circle at centre of each sector (Representing oracle targets when searching)
-//     for(sectorY = secHeight; sectorY < height; sectorY += secHeight) { // Same for rows
-//       rect(sectorX, sectorY, secWidth, secHeight);
-//       ellipse(sectorX + (secWidth/2),sectorY + (secHeight/2), 5, 5);
-//     }
-//     sectorY = 0; // Reset rows to 0 after each iteration
-//   }
-// }
