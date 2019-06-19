@@ -128,12 +128,33 @@ AutoShepherd.prototype.bunched = function (herd) {
   this.herdLeft = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
   this.herdRight = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
 
-  this.herdBoundary = [
-    createVector(this.herdLeft - 50, this.herdTop - 50),
-    createVector(this.herdRight + 50, this.herdTop - 50),
-    createVector(this.herdLeft - 50, this.herdBottom + 50),
-    createVector(this.herdRight + 50, this.herdBottom + 50)
-  ]
+  this.topLeft = createVector(this.herdLeft, this.herdTop);
+  this.topRight =  createVector(this.herdRight, this.herdTop);
+  this.bottomLeft =  createVector(this.herdLeft, this.herdBottom);
+  this.bottomRight =  createVector(this.herdRight, this.herdBottom);
+
+  // stroke(66, 66, 244);
+  // fill(255,30,30,100); // Around herd
+  // quad(this.topLeft.x, this.topLeft.y, this.topRight.x, this.topRight.y, this.bottomRight.x, this.bottomRight.y, this.bottomLeft.x, this.bottomLeft.y);
+  // fill(241, 244, 66, 100);
+  // stroke(241, 244, 66); // Top
+  // quad(this.topLeft.x, this.topLeft.y - 100, this.topRight.x, this.topRight.y - 100, this.topRight.x, this.topRight.y , this.topLeft.x, this.topLeft.y)
+  // Right
+  // quad(this.topRight.x, this.topRight.y, this.topRight.x + 100, this.topRight.y, this.bottomRight.x + 100, this.bottomRight.y , this.bottomRight.x, this.bottomRight.y)
+  // Bottom
+  // quad(this.bottomLeft.x, this.bottomLeft.y, this.bottomRight.x, this.bottomRight.y, this.bottomRight.x, this.bottomRight.y + 100, this.bottomLeft.x, this.bottomLeft.y + 100)
+  // Left
+  // quad(this.topLeft.x - 100, this.topLeft.y, this.topLeft.x, this.topLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x - 100, this.bottomLeft.y)
+  // fill(66, 134, 244, 100);
+  // stroke(66, 134, 244);
+  // Top-Left Corner
+  // quad(this.topLeft.x - 100, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y, this.topLeft.x - 100, this.topLeft.y)
+  // Top-Right Corner
+  // quad(this.topRight.x, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y, this.topRight.x, this.topRight.y)
+  // Bottom-Right Corner
+  // quad(this.bottomRight.x, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y + 100, this.bottomRight.x, this.bottomRight.y + 100)
+  // Bottom-Left Corner
+  // quad(this.bottomLeft.x - 100, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y + 100, this.bottomLeft.x - 100, this.bottomLeft.y + 100)
 
   herDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
   if (herDist < 200) {
@@ -275,7 +296,7 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
 
  if (this.movingUp == false) {
    var target = createVector(fzp10.x,fzp10.y);
-   // this.outOfHerd(target);
+   this.outOfHerd(target);
    this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
@@ -284,11 +305,12 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
    steer.limit(this.maxforce);
    if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
      this.movingUp = true;
+     console.log("Hit it");
    }
    return steer;
  } else if (this.movingUp == true) {
    var target = createVector(fzp20.x,fzp20.y);
-   // this.outOfHerd(target);
+   this.outOfHerd(target);
    this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
@@ -297,6 +319,7 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
    steer.limit(this.maxforce);
    if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
      this.movingUp = false;
+     console.log("Hit it");
    }
    return steer;
  }
@@ -390,83 +413,130 @@ AutoShepherd.prototype.targetInBounds = function (target) {
   return target;
 }
 
-AutoShepherd.prototype.outOfHerd = function (target) {
-
-  stroke(255);
-  fill(255);
-  ellipse(this.herdBoundary[0].x, this.herdBoundary[0].y, 10 ,10) // top left
-  // text("Top Left", this.herdBoundary[0].x, this.herdBoundary[0].y);
-  ellipse(this.herdBoundary[1].x, this.herdBoundary[1].y, 10 ,10) // top right
-  // text("Top Right", this.herdBoundary[1].x, this.herdBoundary[1].y);
-  ellipse(this.herdBoundary[2].x, this.herdBoundary[2].y, 10 ,10) // bottom left
-  // text("Bottom Left", this.herdBoundary[2].x, this.herdBoundary[2].y);
-  ellipse(this.herdBoundary[3].x, this.herdBoundary[3].y, 10 ,10) // bottom right
-  // text("Bottom Right", this.herdBoundary[3].x, this.herdBoundary[3].y);
-
-  if (this.position.x > this.herdBoundary[0].x && this.position.x < this.herdBoundary[1].x && this.position.y < this.herdBoundary[0].y + 50 && this.position.y > this.herdBoundary[0].y) {
-    this.findFastestRoute(target, this.herdBoundary[1], this.herdBoundary[0], this.herdBoundary[3], this.herdBoundary[2]);
-    console.log("Running outOfHerd");
-    fill(244, 66, 209);
-    ellipse(target.x, target.y, 20 ,20);
-    return target;
-  } else if (this.position.x > this.herdBoundary[0].x && this.position.x < this.herdBoundary[1].x && this.position.y < this.herdBoundary[2].y + 50 && this.position.y > this.herdBoundary[0].y) {
-    this.findFastestRoute(target, this.herdBoundary[2], this.herdBoundary[3], this.herdBoundary[0], this.herdBoundary[1]);
-    console.log("Running outOfHerd");
-    fill(244, 66, 209);
-    ellipse(target.x, target.y, 20 ,20);
-    return target;
-  } else if (this.position.y > this.herdBoundary[0].y && this.position.y < this.herdBoundary[2].y && this.position.x < this.herdBoundary[1].x + 50 && this.position.x > this.herdBoundary[0].x) {
-    this.findFastestRoute(target, this.herdBoundary[3], this.herdBoundary[1], this.herdBoundary[2], this.herdBoundary[0]);
-    console.log("Running outOfHerd");
-    fill(244, 66, 209);
-    ellipse(target.x, target.y, 20 ,20);
-    return target;
-  } else if (this.position.y > this.herdBoundary[0].y && this.position.y < this.herdBoundary[2].y && this.position.x > this.herdBoundary[0].x - 50 && this.position.x < this.herdBoundary[0].x) {
-    this.findFastestRoute(target, this.herdBoundary[0], this.herdBoundary[2], this.herdBoundary[1], this.herdBoundary[3]);
-    console.log("Running outOfHerd");
-    fill(244, 66, 209);
-    ellipse(target.x, target.y, 20 ,20);
-    return target;
+AutoShepherd.prototype.outOfHerd = function (target) { //In herd
+  fill(241, 244, 66, 100);
+  stroke(66, 66, 244);
+  if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y && this.position.y < this.bottomLeft.y) {
+    stroke(66, 66, 244); // Around herd
+    fill(255,30,30,100);
+    quad(this.topLeft.x, this.topLeft.y, this.topRight.x, this.topRight.y, this.bottomRight.x, this.bottomRight.y, this.bottomLeft.x, this.bottomLeft.y);
+  } else if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y - 100 && this.position.y < this.topLeft.y) { // top
+    // Top
+    quad(this.topLeft.x, this.topLeft.y - 100, this.topRight.x, this.topRight.y - 100, this.topRight.x, this.topRight.y , this.topLeft.x, this.topLeft.y)
+  } else if (this.position.x > this.topRight.x && this.position.x < this.topRight.x + 100 && this.position.y > this.topRight.y && this.position.y < this.bottomRight.y) { //Right
+    // Right
+    quad(this.topRight.x, this.topRight.y, this.topRight.x + 100, this.topRight.y, this.bottomRight.x + 100, this.bottomRight.y , this.bottomRight.x, this.bottomRight.y)
+  } else if (this.position.x > this.bottomLeft.x && this.position.x < this.topRight.x && this.position.y > this.bottomLeft.y && this.position.y < this.bottomLeft.y + 100) { // bottom
+    // Bottom
+    quad(this.bottomLeft.x, this.bottomLeft.y, this.bottomRight.x, this.bottomRight.y, this.bottomRight.x, this.bottomRight.y + 100, this.bottomLeft.x, this.bottomLeft.y + 100)
+  } else if (this.position.x > this.topLeft.x - 100 && this.position.x < this.topLeft.x && this.position.y > this.topLeft.y && this.position.y < this.bottomLeft.y) { // Left
+   // Left
+    quad(this.topLeft.x - 100, this.topLeft.y, this.topLeft.x, this.topLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x - 100, this.bottomLeft.y);
+  } else if (this.position.x > this.topLeft.x - 100 && this.position.x < this.topLeft.x && this.position.y > this.topLeft.y - 100 && this.position.y < this.topLeft.y) {
+    // Top-left Corner
+    quad(this.topLeft.x - 100, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y, this.topLeft.x - 100, this.topLeft.y)
+  } else if (this.position.x > this.topRight.x && this.position.x < this.topRight.x + 100 && this.position.y > this.topRight.y - 100 && this.position.y < this.topRight.y) {
+    // Top right corner
+    quad(this.topRight.x, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y, this.topRight.x, this.topRight.y)
+  } else if (this.position.x > this.bottomRight.x && this.position.x < this.bottomRight.x + 100 && this.position.y > this.bottomRight.y && this.position.y < this.bottomRight.y + 100) {
+    // Bottom Right corner
+    quad(this.bottomRight.x, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y + 100, this.bottomRight.x, this.bottomRight.y + 100)
+  } else if (this.position.x > this.bottomLeft.x - 100 && this.position.x < this.bottomLeft.x && this.position.y > this.bottomLeft.y && this.position.y < this.bottomLeft.y + 100) {
+    // Bottom left
+    quad(this.bottomLeft.x - 100, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y + 100, this.bottomLeft.x - 100, this.bottomLeft.y + 100)
   }
+
+  // stroke(255);
+  // fill(255);
+  // ellipse(this.herdBoundary[0].x - 50, this.herdBoundary[0].y - 50, 10 ,10) // top left
+  // ellipse(this.herdBoundary[0].x + 50, this.herdBoundary[0].y + 50, 10 ,10) // top left
+  // // text("Top Left", this.herdBoundary[0].x, this.herdBoundary[0].y);
+  // ellipse(this.herdBoundary[1].x + 50, this.herdBoundary[1].y - 50, 10 ,10) // top right
+  // ellipse(this.herdBoundary[1].x - 50, this.herdBoundary[1].y + 50, 10 ,10) // top right
+  // // text("Top Right", this.herdBoundary[1].x, this.herdBoundary[1].y);
+  // ellipse(this.herdBoundary[2].x + 50, this.herdBoundary[2].y - 50, 10 ,10) // bottom left
+  // ellipse(this.herdBoundary[2].x - 50, this.herdBoundary[2].y + 50, 10 ,10) // bottom left
+  // // text("Bottom Left", this.herdBoundary[2].x, this.herdBoundary[2].y);
+  // ellipse(this.herdBoundary[3].x - 50, this.herdBoundary[3].y - 50, 10 ,10) // bottom right
+  // ellipse(this.herdBoundary[3].x + 50, this.herdBoundary[3].y + 50, 10 ,10) // bottom right
+  // // text("Bottom Right", this.herdBoundary[3].x, this.herdBoundary[3].y);
+  //
+  // fill(255,0,0);
+  // ellipse(this.herdBoundary[0].x, this.herdBoundary[0].y, 10 ,10) // top left
+  // ellipse(this.herdBoundary[1].x, this.herdBoundary[1].y, 10 ,10) // top right
+  // ellipse(this.herdBoundary[2].x, this.herdBoundary[2].y, 10 ,10) // bottom left
+  // ellipse(this.herdBoundary[3].x, this.herdBoundary[3].y, 10 ,10) // bottom right
+
+
+  // if (this.position.x > this.herdBoundary[0].x && this.position.x < this.herdBoundary[1].x && this.position.y < this.herdBoundary[0].y - 100 && this.position.y > this.herdBoundary[0].y) { // Top
+  //   this.findFastestRoute(target, this.herdBoundary[0], this.herdBoundary[1], this.herdBoundary[2], this.herdBoundary[3]);
+  //   console.log("Running outOfHerd");
+  //   fill(244, 66, 209);
+  //   ellipse(target.x, target.y, 20 ,20);
+  //   // quad(this.herdBoundary[0].x, this.herdBoundary[0].y - 50, this.herdBoundary[1].x, this.herdBoundary[1].y - 50, this.herdBoundary[1].x, this.herdBoundary[1].y + 50, this.herdBoundary[0].x, this.herdBoundary[0].y + 50)
+  //   return target;
+  // } else if (this.position.x > this.herdBoundary[0].x && this.position.x < this.herdBoundary[1].x && this.position.y < this.herdBoundary[2].y + 100 && this.position.y > this.herdBoundary[0].y) {
+  //   this.findFastestRoute(target, this.herdBoundary[2], this.herdBoundary[3], this.herdBoundary[0], this.herdBoundary[1]);
+  //   console.log("Running outOfHerd");
+  //   fill(244, 66, 209);
+  //   ellipse(target.x, target.y, 20 ,20);
+  //   return target;
+  // } else if (this.position.y > this.herdBoundary[0].y && this.position.y < this.herdBoundary[2].y && this.position.x < this.herdBoundary[1].x + 50 && this.position.x > this.herdBoundary[1].x - 50) {
+  //   this.findFastestRoute(target, this.herdBoundary[3], this.herdBoundary[1], this.herdBoundary[2], this.herdBoundary[0]);
+  //   console.log("Running outOfHerd");
+  //   fill(244, 66, 209);
+  //   ellipse(target.x, target.y, 20 ,20);
+  //   quad(this.herdBoundary[0].x + 50, this.herdBoundary[0].y - 50, this.herdBoundary[1].x - 50, this.herdBoundary[1].y - 50, this.herdBoundary[1].x - 50, this.herdBoundary[1].y + 50, this.herdBoundary[0].x + 50, this.herdBoundary[0].y + 50)
+  //   return target;
+  // } else if (this.position.y > this.herdBoundary[0].y && this.position.y < this.herdBoundary[2].y && this.position.x > this.herdBoundary[0].x - 100 && this.position.x < this.herdBoundary[0].x) {
+  //   this.findFastestRoute(target, this.herdBoundary[0], this.herdBoundary[2], this.herdBoundary[1], this.herdBoundary[3]);
+  //   console.log("Running outOfHerd");
+  //   fill(244, 66, 209);
+  //   ellipse(target.x, target.y, 20 ,20);
+  //   return target;
+  // }
 }
 
 
 AutoShepherd.prototype.findFastestRoute = function (target, p1, p2, p3, p4) {
-  // if distance is greater than herd length, then need to travel around 2 herd points
-  strokeWeight(5);
-  stroke(244, 92, 66);
-  line(this.position.x, this.position.y, target.x, target.y);
-  line(p1.x, p1.y, p3.x, p3.y);
-  strokeWeight(1);
-  if(dist(this.position.x, this.position.y, target.x, target.y) > dist(p1.x, p1.y, p3.x, p3.y)) {
-    t1 = dist(this.position.x, this.position.y, p1.x, p1.y) + dist(p1.x, p1.y, p3.x, p3.y) + dist(p3.x, p3.y, target.x, target.y);
-    console.log("T1: ", t1);
-    t2 = dist(this.position.x, this.position.y, p2.x, p2.y) + dist(p2.x, p2.y, p4.x, p4.y) + dist(p4.x, p4.y, target.x, target.y);
-    console.log("T2: ", t2);
-    if(Math.min(t1, t2) == t1) {
-      target.x = p1.x, target.y = p1.y;
-      console.log("Shortest path is t1, need 2 points");
-      return target;
-    } else if (Math.min(t1, t2) == t2) {
-      target.x = p2.x, target.y = p2.y;
-      console.log("Shortest path is t2, need 2 points");
-      return target;
-    }
-  } else if (dist(this.position.x, this.position.y, target.x, target.y) < dist(p1.x, p1.y, p3.x, p3.y)) {
-    t1 = dist(this.position.x, this.position.y, p3.x, p3.y) + dist(p3.x, p3.y, target.x, target.y);
-    console.log("T1: ", t1);
-    t2 = dist(this.position.x, this.position.y, p4.x, p4.y) + dist(p4.x, p4.y, target.x, target.y);
-    console.log("T2: ", t2);
-    if(Math.min(t1, t2) == t1) {
-      target.x = p3.x, target.y = p3.y;
-      console.log("Shortest path is t1, need 1 point");
-      return target;
-    } else if (Math.min(t1, t2) == t2) {
-      target.x = p4.x, target.y = p4.y;
-      console.log("Shortest path is t2, need 1 point");
-      return target;
-    }
-  }
+
+
+
+  // // if distance is greater than herd length, then need to travel around 2 herd points
+  // strokeWeight(5);
+  // stroke(244, 92, 66);
+  // line(this.position.x, this.position.y, target.x, target.y);
+  // line(p1.x, p1.y, p3.x, p3.y);
+  // strokeWeight(1);
+  // if(dist(this.position.x, this.position.y, target.x, target.y) > dist(p1.x, p1.y, p3.x, p3.y)) {
+  //   t1 = dist(this.position.x, this.position.y, p1.x, p1.y) + dist(p1.x, p1.y, p3.x, p3.y) + dist(p3.x, p3.y, target.x, target.y);
+  //   console.log("T1: ", t1);
+  //   t2 = dist(this.position.x, this.position.y, p2.x, p2.y) + dist(p2.x, p2.y, p4.x, p4.y) + dist(p4.x, p4.y, target.x, target.y);
+  //   console.log("T2: ", t2);
+  //   if(Math.min(t1, t2) == t1) {
+  //     target.x = p1.x, target.y = p1.y;
+  //     console.log("Shortest path is t1, need 2 points");
+  //     return target;
+  //   } else if (Math.min(t1, t2) == t2) {
+  //     target.x = p2.x, target.y = p2.y;
+  //     console.log("Shortest path is t2, need 2 points");
+  //     return target;
+  //   }
+  // } else if (dist(this.position.x, this.position.y, target.x, target.y) < dist(p1.x, p1.y, p3.x, p3.y)) {
+  //   t1 = dist(this.position.x, this.position.y, p3.x, p3.y) + dist(p3.x, p3.y, target.x, target.y);
+  //   console.log("T1: ", t1);
+  //   t2 = dist(this.position.x, this.position.y, p4.x, p4.y) + dist(p4.x, p4.y, target.x, target.y);
+  //   console.log("T2: ", t2);
+  //   if(Math.min(t1, t2) == t1) {
+  //     target.x = p3.x, target.y = p3.y;
+  //     console.log("Shortest path is t1, need 1 point");
+  //     return target;
+  //   } else if (Math.min(t1, t2) == t2) {
+  //     target.x = p4.x, target.y = p4.y;
+  //     console.log("Shortest path is t2, need 1 point");
+  //     return target;
+  //   }
+  // }
 }
 
 AutoShepherd.prototype.displayShepLines = function () {

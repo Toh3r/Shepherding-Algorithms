@@ -60,22 +60,44 @@ Shepherd.prototype.recHerd = function (herd) {
   this.herdLeft = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
   this.herdRight = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
 
+  this.topLeft = createVector(this.herdLeft, this.herdTop);
+  this.topRight =  createVector(this.herdRight, this.herdTop);
+  this.bottomLeft =  createVector(this.herdLeft, this.herdBottom);
+  this.bottomRight =  createVector(this.herdRight, this.herdBottom);
+
   // console.log("Dist: " + dist(left, top, right, bottom));
 }
 
-Shepherd.prototype.outOfHerd = function () {
-
-  if (this.position.x > this.herdLeft && this.position.x < this.herdRight && this.position.y < this.herdTop + 50 && this.position.y > this.herdTop) {
-    // this.position.y = this.position.y - 1;
-    console.log("Running outOfHerd");
-  } else if (this.position.x > this.herdLeft && this.position.x < this.herdRight && this.position.y < this.herdBottom + 50 && this.position.y > this.herdTop) {
-    // this.position.y = this.position.y + 1;
-    console.log("Running outOfHerd");
-  } else if (this.position.y > this.herdTop && this.position.y < this.herdBottom && this.position.x < this.herdRight + 50 && this.position.x > this.herdLeft) {
-    // this.position.x = this.position.x + 1;
-    console.log("Running outOfHerd");
-  } else if (this.position.y > this.herdTop && this.position.y < this.herdBottom && this.position.x > this.herdLeft - 50 && this.position.x < this.herdLeft) {
-    // this.position.x = this.position.x - 1;
-    console.log("Running outOfHerd");
+Shepherd.prototype.outOfHerd = function () { //In herd
+  fill(241, 244, 66, 100);
+  stroke(66, 66, 244);
+  if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y && this.position.y < this.bottomLeft.y) {
+    // Around herd
+    stroke(66, 66, 244);
+    fill(255,30,30,100);
+    quad(this.topLeft.x, this.topLeft.y, this.topRight.x, this.topRight.y, this.bottomRight.x, this.bottomRight.y, this.bottomLeft.x, this.bottomLeft.y);
+  } else if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y - 100 && this.position.y < this.topLeft.y) { // top
+    // Top
+    quad(this.topLeft.x, this.topLeft.y - 100, this.topRight.x, this.topRight.y - 100, this.topRight.x, this.topRight.y , this.topLeft.x, this.topLeft.y)
+  } else if (this.position.x > this.topRight.x && this.position.x < this.topRight.x + 100 && this.position.y > this.topRight.y && this.position.y < this.bottomRight.y) { //Right
+    // Right
+    quad(this.topRight.x, this.topRight.y, this.topRight.x + 100, this.topRight.y, this.bottomRight.x + 100, this.bottomRight.y , this.bottomRight.x, this.bottomRight.y)
+  } else if (this.position.x > this.bottomLeft.x && this.position.x < this.topRight.x && this.position.y > this.bottomLeft.y && this.position.y < this.bottomLeft.y + 100) { // bottom
+    // Bottom
+    quad(this.bottomLeft.x, this.bottomLeft.y, this.bottomRight.x, this.bottomRight.y, this.bottomRight.x, this.bottomRight.y + 100, this.bottomLeft.x, this.bottomLeft.y + 100)
+  } else if (this.position.x > this.topLeft.x - 100 && this.position.x < this.topLeft.x && this.position.y > this.topLeft.y && this.position.y < this.bottomLeft.y) { // Left
+    // Left
+    quad(this.topLeft.x - 100, this.topLeft.y, this.topLeft.x, this.topLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x - 100, this.bottomLeft.y);
+  } else if (this.position.x > this.topLeft.x - 100 && this.position.x < this.topLeft.x && this.position.y > this.topLeft.y - 100 && this.position.y < this.topLeft.y) {
+    quad(this.topLeft.x - 100, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y, this.topLeft.x - 100, this.topLeft.y)
+  } else if (this.position.x > this.topRight.x && this.position.x < this.topRight.x + 100 && this.position.y > this.topRight.y - 100 && this.position.y < this.topRight.y) {
+    // Top right corner
+    quad(this.topRight.x, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y, this.topRight.x, this.topRight.y)
+  } else if (this.position.x > this.bottomRight.x && this.position.x < this.bottomRight.x + 100 && this.position.y > this.bottomRight.y && this.position.y < this.bottomRight.y + 100) {
+    // Bottom Right corner
+    quad(this.bottomRight.x, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y + 100, this.bottomRight.x, this.bottomRight.y + 100)
+  } else if (this.position.x > this.bottomLeft.x - 100 && this.position.x < this.bottomLeft.x && this.position.y > this.bottomLeft.y && this.position.y < this.bottomLeft.y + 100) {
+    // Bottom left
+    quad(this.bottomLeft.x - 100, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y + 100, this.bottomLeft.x - 100, this.bottomLeft.y + 100)
   }
 }
