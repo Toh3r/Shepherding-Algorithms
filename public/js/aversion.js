@@ -1,3 +1,38 @@
+function setup() {
+  var canvas = createCanvas(1200, 600);
+  canvas.parent('myCanvas');
+
+  what = new What ();
+
+    //Create starting animals in random positions
+    for (var i = 0; i < 1; i++) {
+      x = mouseX;
+      y = mouseY;
+      var s = new Shepherd(x, y);
+      what.addShepherd(s);
+    }
+
+}
+
+function draw() {
+  background(255);
+  what.run();
+}
+
+function What() {
+  this.shepherds = [];
+}
+
+What.prototype.run = function() {
+  for (let i = 0; i < this.shepherds.length; i++) {
+    this.shepherds[i].run();  // Passing the entire list of boids to each boid individually
+  }
+}
+
+What.prototype.addShepherd = function (s) {
+  this.shepherds.push(s);
+}
+
 let angle;
 // Shepherd Class
 // Create shepherd attributes
@@ -11,7 +46,7 @@ Shepherd.prototype.run = function(herd) {
   this.update();
   this.borders();
   this.render();
-  this.recHerd(herd);
+  this.recHerd();
   this.outOfHerd();
 }
 
@@ -54,16 +89,12 @@ Shepherd.prototype.render = function() {
   pop();
 }
 
-Shepherd.prototype.recHerd = function (herd) {
-  this.herdBottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
-  this.herdTop = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
-  this.herdLeft = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
-  this.herdRight = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
+Shepherd.prototype.recHerd = function () {
 
-  this.topLeft = createVector(this.herdLeft, this.herdTop);
-  this.topRight =  createVector(this.herdRight, this.herdTop);
-  this.bottomLeft =  createVector(this.herdLeft, this.herdBottom);
-  this.bottomRight =  createVector(this.herdRight, this.herdBottom);
+  this.topLeft = createVector(150, 150);
+  this.topRight =  createVector(400, 150);
+  this.bottomLeft =  createVector(150, 400);
+  this.bottomRight =  createVector(400, 400);
 
   this.sec5 = { // Top Left Corner
     tl: createVector(this.topLeft.x - 100, this.topLeft.y - 100),
@@ -90,11 +121,6 @@ Shepherd.prototype.recHerd = function (herd) {
     bl: createVector(this.bottomLeft.x - 100, this.bottomLeft.y + 100)
   }
 
-  stroke(45, 68, 222);
-  fill(238, 52, 19);
-  ellipse(this.herdRight + 20, this.herdBottom - 20, 10, 10)
-
-  // console.log("Dist: " + dist(left, top, right, bottom));
 }
 
 Shepherd.prototype.outOfHerd = function () { //In herd
@@ -107,20 +133,17 @@ Shepherd.prototype.outOfHerd = function () { //In herd
     quad(this.topLeft.x, this.topLeft.y, this.topRight.x, this.topRight.y, this.bottomRight.x, this.bottomRight.y, this.bottomLeft.x, this.bottomLeft.y);
   } else if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y - 100 && this.position.y < this.topLeft.y) { // top
     // Top
-    quad(this.topLeft.x, this.topLeft.y - 100, this.topRight.x, this.topRight.y - 100, this.topRight.x, this.topRight.y , this.topLeft.x, this.topLeft.y)
     this.avoidHerd(this.sec5, this.sec6, this.sec7, this.sec8);
+    quad(this.topLeft.x, this.topLeft.y - 100, this.topRight.x, this.topRight.y - 100, this.topRight.x, this.topRight.y , this.topLeft.x, this.topLeft.y)
   } else if (this.position.x > this.topRight.x && this.position.x < this.topRight.x + 100 && this.position.y > this.topRight.y && this.position.y < this.bottomRight.y) { //Right
     // Right
     quad(this.topRight.x, this.topRight.y, this.topRight.x + 100, this.topRight.y, this.bottomRight.x + 100, this.bottomRight.y , this.bottomRight.x, this.bottomRight.y)
-    this.avoidHerd(this.sec6, this.sec7, this.sec8, this.sec5);
   } else if (this.position.x > this.bottomLeft.x && this.position.x < this.topRight.x && this.position.y > this.bottomLeft.y && this.position.y < this.bottomLeft.y + 100) { // bottom
     // Bottom
     quad(this.bottomLeft.x, this.bottomLeft.y, this.bottomRight.x, this.bottomRight.y, this.bottomRight.x, this.bottomRight.y + 100, this.bottomLeft.x, this.bottomLeft.y + 100)
-    this.avoidHerd(this.sec7, this.sec8, this.sec5, this.sec6);
   } else if (this.position.x > this.topLeft.x - 100 && this.position.x < this.topLeft.x && this.position.y > this.topLeft.y && this.position.y < this.bottomLeft.y) { // Left
     // Left
     quad(this.topLeft.x - 100, this.topLeft.y, this.topLeft.x, this.topLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x - 100, this.bottomLeft.y);
-    this.avoidHerd(this.sec8, this.sec5, this.sec6, this.sec7);
   } else if (this.position.x > this.topLeft.x - 100 && this.position.x < this.topLeft.x && this.position.y > this.topLeft.y - 100 && this.position.y < this.topLeft.y) {
     quad(this.topLeft.x - 100, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y, this.topLeft.x - 100, this.topLeft.y)
   } else if (this.position.x > this.topRight.x && this.position.x < this.topRight.x + 100 && this.position.y > this.topRight.y - 100 && this.position.y < this.topRight.y) {
@@ -136,15 +159,9 @@ Shepherd.prototype.outOfHerd = function () { //In herd
 }
 
 Shepherd.prototype.avoidHerd = function (c1, c2, c3, c4) {
-  target = createVector(this.herdRight + 20, this.herdBottom - 20);
-  if (target.x > c1.tl.x && target.x < c2.tr.x && target.y > c1.tl.y && target.y < c2.bl.y) {
-    console.log("target = target");
-  } else if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c3.bl.y) {
-    console.log("T side section");
-  } else if (target.x > c2.tl.x && target.x < c2.tr.x && target.y > c2.bl.y && target.y < c4.bl.y) {
-    console.log("T side section");
-  } else {
-    console.log("Target in opposite section")
+  target = createVector(this.position.x, this.position.y);
+  if (target.x > c1.tl.x && target.x < c2.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
+    console.log("lolololol")
   }
 
 }
