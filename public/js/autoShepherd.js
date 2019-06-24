@@ -26,6 +26,9 @@ function AutoShepherd(x, y, gx, gy) {
     position: createVector(2000, 2000)
   }
   this.switchingActions = false;
+  this.collectBool = true;
+  this.moveBool = false;
+  this.avoidHerdBool = false;
 }
 
 // Call methods for each shepherd
@@ -66,6 +69,8 @@ AutoShepherd.prototype.herdAnimals = function (herd) {
   if (bun == true) {
     var mov = this.moveAnimals(herd);
     this.applyForce(mov);
+    this.collectBool = false;
+    this.moveBool = true;
   }
 
   if (bun == false) {
@@ -73,6 +78,8 @@ AutoShepherd.prototype.herdAnimals = function (herd) {
     // this.applyForce(col);
     var adCol = this.advanceCollect(herd);
     this.applyForce(adCol);
+    this.collectBool = true;
+    this.moveBool = false;
   }
 
 }
@@ -231,6 +238,7 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
 }
 
 AutoShepherd.prototype.advanceCollect = function (herd) {
+  this.avoidHerdBool = false;
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
@@ -330,9 +338,8 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
  }
 }
 
-
 AutoShepherd.prototype.moveAnimals = function (herd) {
-
+  this.avoidHerdBool = false;
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
@@ -376,6 +383,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     }
     // this.outOfHerd(target);
     this.targetInBounds(target);
+    this.outOfHerd(target);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -393,6 +401,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     }
     // this.outOfHerd(target);
     this.targetInBounds(target);
+    this.outOfHerd(target);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -426,50 +435,215 @@ AutoShepherd.prototype.outOfHerd = function (target) { //In herd
     fill(255,30,30,100);
     quad(this.topLeft.x, this.topLeft.y, this.topRight.x, this.topRight.y, this.bottomRight.x, this.bottomRight.y, this.bottomLeft.x, this.bottomLeft.y);
   } else if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y - 100 && this.position.y < this.topLeft.y) { // top
-    this.herdSection = 1; // Top
+    // Top
     quad(this.topLeft.x, this.topLeft.y - 100, this.topRight.x, this.topRight.y - 100, this.topRight.x, this.topRight.y , this.topLeft.x, this.topLeft.y)
-    this.avoidHerd(target, this.sec5, this.sec6, this.sec7, this.sec8);
+    this.avoidHerdTop(target, this.sec5, this.sec6, this.sec7, this.sec8);
   } else if (this.position.x > this.topRight.x && this.position.x < this.topRight.x + 100 && this.position.y > this.topRight.y && this.position.y < this.bottomRight.y) { //Right
-    this.herdSection = 2; // Right
+    // Right
     quad(this.topRight.x, this.topRight.y, this.topRight.x + 100, this.topRight.y, this.bottomRight.x + 100, this.bottomRight.y , this.bottomRight.x, this.bottomRight.y)
-    this.avoidHerd(target, this.sec6, this.sec7, this.sec8, this.sec5);
+    this.avoidHerdRight(target, this.sec6, this.sec7, this.sec8, this.sec5);
   } else if (this.position.x > this.bottomLeft.x && this.position.x < this.topRight.x && this.position.y > this.bottomLeft.y && this.position.y < this.bottomLeft.y + 100) { // bottom
-    this.herdSection = 3; // Bottom
+    // Bottom
     quad(this.bottomLeft.x, this.bottomLeft.y, this.bottomRight.x, this.bottomRight.y, this.bottomRight.x, this.bottomRight.y + 100, this.bottomLeft.x, this.bottomLeft.y + 100)
-    this.avoidHerd(this.sec7, this.sec8, this.sec5, this.sec6);
+    this.avoidHerdBottom(target, this.sec7, this.sec8, this.sec5, this.sec6);
   } else if (this.position.x > this.topLeft.x - 100 && this.position.x < this.topLeft.x && this.position.y > this.topLeft.y && this.position.y < this.bottomLeft.y) { // Left
-    this.herdSection = 4; // Left
+    // Left
     quad(this.topLeft.x - 100, this.topLeft.y, this.topLeft.x, this.topLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x - 100, this.bottomLeft.y);
-    this.avoidHerd(this.sec8, this.sec5, this.sec6, this.sec7);
+    this.avoidHerdLeft(target, this.sec8, this.sec5, this.sec6, this.sec7);
   } else if (this.position.x > this.topLeft.x - 100 && this.position.x < this.topLeft.x && this.position.y > this.topLeft.y - 100 && this.position.y < this.topLeft.y) {
     // Top-left Corner
     quad(this.topLeft.x - 100, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y, this.topLeft.x - 100, this.topLeft.y)
+    this.avoidHerdTopLeft(target, this.sec5, this.sec6, this.sec8);
   } else if (this.position.x > this.topRight.x && this.position.x < this.topRight.x + 100 && this.position.y > this.topRight.y - 100 && this.position.y < this.topRight.y) {
     // Top right corner
     quad(this.topRight.x, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y, this.topRight.x, this.topRight.y)
+    this.avoidHerdTopRight(target, this.sec6, this.sec7, this.sec5);
   } else if (this.position.x > this.bottomRight.x && this.position.x < this.bottomRight.x + 100 && this.position.y > this.bottomRight.y && this.position.y < this.bottomRight.y + 100) {
     // Bottom Right corner
     quad(this.bottomRight.x, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y + 100, this.bottomRight.x, this.bottomRight.y + 100)
+    this.avoidHerdBottomRight(target, this.sec7, this.sec6, this.sec8);
   } else if (this.position.x > this.bottomLeft.x - 100 && this.position.x < this.bottomLeft.x && this.position.y > this.bottomLeft.y && this.position.y < this.bottomLeft.y + 100) {
     // Bottom left
     quad(this.bottomLeft.x - 100, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y + 100, this.bottomLeft.x - 100, this.bottomLeft.y + 100)
+    this.avoidHerdBottomRight(target, this.sec8, this.sec5, this.sec7);
   }
 }
 
 
-AutoShepherd.prototype.avoidHerd = function (target, c1, c2, c3, c4) {
-  if (target.x > c1.tl.x && target.x < c2.tr.x && target.y > c1.tl.y && target.y < c2.bl.y) {
+AutoShepherd.prototype.avoidHerdTop = function (target, c1, c2, c3, c4) {
+  if (target.x > c1.tl.x && target.x < c2.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
     target = target;
-    console.log("Target = target")
-    return target;
-  } else if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c3.bl.y) {
-    console.log("In side section");
-  } else if (target.x > c2.tl.x && target.x < c2.tr.x && target.y > c2.tl.y && target.y < c4.bl.y) {
-    console.log("In side section");
+  } else if (target.x > c4.tl.x && target.x < c4.tr.x && target.y > c1.bl.y && target.y < c4.bl.y) {
+    this.avoidHerdBool = true;
+    target.x = this.herdLeft - 20, target.y = this.herdTop - 20;
+  } else if (target.x > c3.tl.x && target.x < c3.tr.x && target.y > c2.bl.y && target.y < c3.bl.y) {
+    this.avoidHerdBool = true;
+    target.x = this.herdRight + 20, target.y = this.herdTop - 20;
   } else {
-    console.log("Target in opposite section")
+    this.avoidHerdBool = true;
+    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.herdTop) + dist(this.herdLeft, this.herdTop, this.herdLeft, this.herdBottom) + dist(this.herdLeft, this.herdBottom, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.herdRight, this.herdTop) + dist(this.herdRight, this.herdTop, this.herdRight, this.herdBottom) + dist(this.herdRight, this.herdBottom, target.x, target.y);
+    if(swingLeft < swingRight) {
+      target.x = this.herdLeft - 20, target.y = this.herdTop - 20;
+    } else if (swingRight < swingLeft) {
+      target.x = this.herdRight + 20, target.y = this.herdTop - 20;
+    }
   }
+  fill(255)
+  ellipse(target.x, target.y, 10,10);
+  return target;
+}
 
+AutoShepherd.prototype.avoidHerdRight = function (target, c1, c2, c3, c4) {
+  if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c2.bl.y) {
+    target = target;
+  } else if (target.x > c4.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
+    this.avoidHerdBool = true;
+    target.x = this.herdRight + 20, target.y = this.herdTop - 20;
+  } else if (target.x > c3.tl.x && target.x < c2.tl.x && target.y > c2.tl.y && target.y < c2.bl.y) {
+    this.avoidHerdBool = true;
+    target.x = this.herdRight + 20, target.y = this.herdBottom + 20;
+  } else {
+    this.avoidHerdBool = true;
+    var swingLeft = dist(this.position.x, this.position.y, this.herdRight, this.herdBottom) + dist(this.herdRight, this.herdBottom, this.herdLeft, this.herdBottom) + dist(this.herdLeft, this.herdBottom, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.herdRight, this.herdTop) + dist(this.herdRight, this.herdTop, this.herdLeft, this.herdTop) + dist(this.herdLeft, this.herdTop, target.x, target.y);
+    if(swingLeft < swingRight) {
+      target.x = this.herdRight + 20, target.y = this.herdBottom + 20;
+    } else if (swingRight < swingLeft) {
+      target.x = this.herdRight + 20, target.y = this.herdTop - 20;
+    }
+  }
+  fill(255)
+  ellipse(target.x, target.y, 10,10);
+  return target;
+}
+
+AutoShepherd.prototype.avoidHerdBottom = function (target, c1, c2, c3, c4) {
+  if (target.x > c2.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
+    target = target;
+  } else if (target.x > c2.tl.x && target.x < c2.tr.x && target.y > c3.tl.y && target.y < c2.tl.y) {
+    this.avoidHerdBool = true;
+    target.x = this.herdLeft - 20, target.y = this.herdBottom + 20;
+  } else if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c4.tl.y && target.y < c1.tl.y) {
+    this.avoidHerdBool = true;
+    target.x = this.herdRight + 20, target.y = this.herdBottom + 20;
+  } else {
+    this.avoidHerdBool = true;
+    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.herdBottom) + dist(this.herdLeft, this.herdBottom, this.herdLeft, this.herdTop) + dist(this.herdLeft, this.herdTop, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.herdRight, this.herdBottom) + dist(this.herdRight, this.herdBottom, this.herdRight, this.herdTop) + dist(this.herdRight, this.herdTop, target.x, target.y);
+    if(swingLeft < swingRight) {
+      target.x = this.herdLeft - 20, target.y = this.herdBottom + 20;
+    } else if (swingRight < swingLeft) {
+      target.x = this.herdRight + 20, target.y = this.herdBottom + 20;
+    }
+  }
+  fill(255)
+  ellipse(target.x, target.y, 10,10);
+  return target;
+}
+
+AutoShepherd.prototype.avoidHerdLeft = function (target, c1, c2, c3, c4) {
+  if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c2.tl.y && target.y < c1.bl.y) {
+    target = target;
+  } else if (target.x > c2.tr.x && target.x < c3.tr.x && target.y > c2.tl.y && target.y < c2.bl.y) {
+    this.avoidHerdBool = true;
+    target.x = this.herdLeft - 20, target.y = this.herdTop - 20;
+  } else if (target.x > c1.tr.x && target.x < c4.tr.x && target.y > c4.tl.y && target.y < c4.bl.y) {
+    this.avoidHerdBool = true;
+    target.x = this.herdLeft - 20, target.y = this.herdBottom + 20;
+  } else {
+    this.avoidHerdBool = true;
+    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.herdTop) + dist(this.herdLeft, this.herdTop, this.herdRight, this.herdTop) + dist(this.herdRight, this.herdTop, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.herdLeft, this.herdBottom) + dist(this.herdLeft, this.herdBottom, this.herdRight, this.herdBottom) + dist(this.herdRight, this.herdBottom, target.x, target.y);
+    if(swingLeft < swingRight) {
+      target.x = this.herdLeft - 20, target.y = this.herdTop - 20;
+    } else if (swingRight < swingLeft) {
+      target.x = this.herdLeft - 20, target.y = this.herdBottom + 20;
+    }
+  }
+  fill(255)
+  ellipse(target.x, target.y, 10,10);
+  return target;
+}
+
+AutoShepherd.prototype.avoidHerdTopLeft = function (target, c1, c2, c3) {
+  if (target.x > c1.tl.x && target.x < c2.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
+    target = target;
+  } else if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c1.bl.y && target.y < c3.bl.y) {
+    target = target;
+  } else {
+    this.avoidHerdBool = true;
+    var swingLeft = dist(this.position.x, this.position.y, this.herdRight, this.herdTop) + dist(this.herdRight, this.herdTop, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.herdLeft, this.herdBottom) + dist(this.herdLeft, this.herdBottom, target.x, target.y);
+    if(swingLeft < swingRight) {
+      target.x = this.herdRight + 20, target.y = this.herdTop - 20;
+    } else if (swingRight < swingLeft) {
+      target.x = this.herdLeft - 20, target.y = this.herdBottom + 20;
+    }
+  }
+  fill(255)
+  ellipse(target.x, target.y, 10,10);
+  return target;
+}
+
+AutoShepherd.prototype.avoidHerdTopRight = function (target, c1, c2, c3) {
+  if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c2.bl.y) {
+    target = target;
+  } else if (target.x > c3.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
+    target = target;
+  } else {
+    this.avoidHerdBool = true;
+    var swingLeft = dist(this.position.x, this.position.y, this.herdRight, this.herdBottom) + dist(this.herdRight, this.herdBottom, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.herdLeft, this.herdTop) + dist(this.herdLeft, this.herdTop, target.x, target.y);
+    if(swingLeft < swingRight) {
+      target.x = this.herdRight + 20, target.y = this.herdBottom + 20;
+    } else if (swingRight < swingLeft) {
+      target.x = this.herdLeft - 20, target.y = this.herdTop - 20;
+    }
+  }
+  fill(255)
+  ellipse(target.x, target.y, 10,10);
+  return target;
+}
+
+AutoShepherd.prototype.avoidHerdBottomRight = function (target, c1, c2, c3) {
+  if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c2.tl.y && target.y < c1.bl.y) {
+    target = target;
+  } else if (target.x > c3.tl.x && target.x < c1.tl.x && target.y > c1.tl.y && target.y < c1.bl.y) {
+    target = target;
+  } else {
+    this.avoidHerdBool = true;
+    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.herdBottom) + dist(this.herdLeft, this.herdBottom, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.herdRight, this.herdTop) + dist(this.herdRight, this.herdTop, target.x, target.y);
+    if(swingLeft < swingRight) {
+      target.x = this.herdLeft - 20, target.y = this.herdBottom + 20;
+    } else if (swingRight < swingLeft) {
+      target.x = this.herdRight + 20, target.y = this.herdTop - 20;
+    }
+  }
+  fill(255)
+  ellipse(target.x, target.y, 10,10);
+  return target;
+}
+
+AutoShepherd.prototype.avoidHerdBottomLeft = function (target, c1, c2, c3) {
+  if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c2.tl.y && target.y < c1.bl.y) {
+    target = target;
+  } else if (target.x > c1.tl.x && target.x < c3.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
+    target = target;
+  } else {
+    this.avoidHerdBool = true;
+    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.herdTop) + dist(this.herdLeft, this.herdTop, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.herdRight, this.herdBottom) + dist(this.herdRight, this.herdBottom, target.x, target.y);
+    if(swingLeft < swingRight) {
+      target.x = this.herdLeft - 20, target.y = this.herdTop - 20;
+    } else if (swingRight < swingLeft) {
+      target.x = this.herdRight + 20, target.y = this.herdBottom + 20;
+    }
+  }
+  fill(255)
+  ellipse(target.x, target.y, 10,10);
+  return target;
 }
 
 AutoShepherd.prototype.displayShepLines = function () {

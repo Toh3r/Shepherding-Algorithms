@@ -172,6 +172,30 @@ Environment.prototype.timeSteps = function() {
   }
 }
 
+Environment.prototype.shepCollect = function () {
+  if(this.autoShepherds.length > 0) {
+    return this.autoShepherds[0].collectBool;
+  } else {
+    return false;
+  }
+}
+
+Environment.prototype.shepMove = function () {
+  if(this.autoShepherds.length > 0) {
+    return this.autoShepherds[0].moveBool;
+  } else {
+    return false;
+  }
+}
+
+Environment.prototype.shepAvoidHerd = function () {
+  if(this.autoShepherds.length > 0) {
+    return this.autoShepherds[0].avoidHerdBool;
+  } else {
+    return false;
+  }
+}
+
 Environment.prototype.vocalizing = function () {
   this.vocal = false;
   for (var i = 0; i < this.herd.length; i++) {

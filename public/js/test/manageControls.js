@@ -296,11 +296,111 @@ ManageControls.prototype.createControls = function () {
   bunchedDisplay.parent("animalInfoDiv");
 
   numSectorDisplay = createP("Number of Sectors: 0");
-  numSectorDisplay.parent("uavInfoDiv");
+  numSectorDisplay.parent("oracleInfoDiv");
 
   currentSectorDisplay = createP("Current Sector: 0");
-  currentSectorDisplay.parent("uavInfoDiv");
+  currentSectorDisplay.parent("oracleInfoDiv");
 
+  var isCollecting = environment.shepCollect();
+  collectingDisplay = createP("Collecting: " + isCollecting);
+  collectingDisplay.parent("gpsInfoDiv");
+
+  var isMoving = environment.shepMove();
+  moveDisplay = createP("Moving: " + isMoving);
+  moveDisplay.parent("gpsInfoDiv");
+
+  var isAvoidingOBS = environment.shepAvoidHerd();
+  avoOBSDisplay = createP("Avoid Obstacle: " + isAvoidingOBS);
+  avoOBSDisplay.parent("gpsInfoDiv");
+
+  var isAvoidingHerd = environment.shepAvoidHerd();
+  avoherdDisplay = createP("Avoid herd: " + isAvoidingHerd);
+  avoherdDisplay.parent("gpsInfoDiv");
+
+}
+
+// Function to update simulation info each frame
+ManageControls.prototype.updateSimInfo = function () {
+  manShep = ((environment.shepherds.length > 0) ? 'True' : 'False');
+  totalUAVs = environment.shepherds.length + environment.autoShepherds.length + environment.oracles.length +
+  environment.oracleShepherds.length + environment.multiGPSShepherds.length;
+
+  // Destroy all info outputs from previous frame
+  animalDisplay.remove();
+  stressDisplay.remove();
+  speedDisplay.remove();
+  headingDisplay.remove();
+  timeDisplay.remove();
+  manualUAVDisplay.remove();
+  totalUAVDisplay.remove();
+  movementDisplay.remove();
+  vocalDisplay.remove();
+  numSectorDisplay.remove();
+  currentSectorDisplay.remove();
+  headingDisplay.remove();
+  bunchedDisplay.remove();
+  collectingDisplay.remove();
+  moveDisplay.remove();
+  avoOBSDisplay.remove();
+  avoherdDisplay.remove();
+
+  // Update with sim info from current frame
+  var timeSteps = environment.timeSteps();
+  timeDisplay = createP("Timesteps: " + timeSteps);
+  timeDisplay.parent("envInfoDiv");
+
+  animalDisplay = createP("Number of Animals: " + environment.herd.length);
+  animalDisplay.parent("envInfoDiv");
+
+  vocalDisplay = createP("Vocalizing: false");
+  vocalDisplay.parent("animalInfoDiv");
+
+  var fixedStress = environment.totalStress().toFixed(2);
+  stressDisplay = createP("Adverse Conditions: " + fixedStress);
+  stressDisplay.parent("envInfoDiv");
+
+  movementDisplay = createP("Good Movement Steps: 0.00");
+  movementDisplay.parent("envInfoDiv");
+
+  manualUAVDisplay = createP("Manual UAV: " + manShep);
+  manualUAVDisplay.parent("envInfoDiv");
+
+  totalUAVDisplay = createP("Total UAV's: " + totalUAVs);
+  totalUAVDisplay.parent("envInfoDiv");
+
+  var fixedSpeed = environment.avgSpeed().toFixed(2);
+  speedDisplay = createP("Average Speed: " + fixedSpeed);
+  speedDisplay.parent("animalInfoDiv");
+
+  var avgHeading = environment.avgHeading().toFixed(2);
+  headingDisplay = createP("Average Heading: " + avgHeading);
+  headingDisplay.parent("animalInfoDiv");
+
+  var isBunched = environment.checkBunched();
+  bunchedDisplay = createP("Bunched: " + isBunched);
+  bunchedDisplay.parent("animalInfoDiv");
+
+  numSectorDisplay = createP("Number of Sectors: 0");
+  numSectorDisplay.parent("oracleInfoDiv");
+
+  currentSectorDisplay = createP("Current Sector: 0");
+  currentSectorDisplay.parent("oracleInfoDiv");
+
+  var isCollecting = environment.shepCollect();
+  collectingDisplay = createP("Collecting: " + isCollecting);
+  collectingDisplay.parent("gpsInfoDiv");
+
+  var isMoving = environment.shepMove();
+  moveDisplay = createP("Moving: " + isMoving);
+  moveDisplay.parent("gpsInfoDiv");
+
+  var isAvoidingOBS = environment.vocalizing();
+  avoOBSDisplay = createP("Avoid Obstacle: " + isAvoidingOBS);
+  avoOBSDisplay.parent("gpsInfoDiv");
+
+  var isAvoidingHerd = environment.shepAvoidHerd();
+  avoherdDisplay = createP("Avoid herd: " + isAvoidingHerd);
+  avoherdDisplay.parent("gpsInfoDiv");
 }
 
 // Function to update controls values on mouse drag
@@ -388,70 +488,6 @@ ManageControls.prototype.applyControls = function () {
 
   numAnimalsVal = numAnimalsSlider.value();
   numAnimalsOut.html(numAnimalsVal);
-}
-
-// Function to update simulation info each frame
-ManageControls.prototype.updateSimInfo = function () {
-  manShep = ((environment.shepherds.length > 0) ? 'True' : 'False');
-  totalUAVs = environment.shepherds.length + environment.autoShepherds.length + environment.oracles.length +
-  environment.oracleShepherds.length + environment.multiGPSShepherds.length;
-
-  // Destroy all info outputs from previous frame
-  animalDisplay.remove();
-  stressDisplay.remove();
-  speedDisplay.remove();
-  headingDisplay.remove();
-  timeDisplay.remove();
-  manualUAVDisplay.remove();
-  totalUAVDisplay.remove();
-  movementDisplay.remove();
-  vocalDisplay.remove();
-  numSectorDisplay.remove();
-  currentSectorDisplay.remove();
-  headingDisplay.remove();
-  bunchedDisplay.remove();
-
-  // Update with sim info from current frame
-  var timeSteps = environment.timeSteps();
-  timeDisplay = createP("Timesteps: " + timeSteps);
-  timeDisplay.parent("envInfoDiv");
-
-  animalDisplay = createP("Number of Animals: " + environment.herd.length);
-  animalDisplay.parent("envInfoDiv");
-
-  vocalDisplay = createP("Vocalizing: false");
-  vocalDisplay.parent("animalInfoDiv");
-
-  var fixedStress = environment.totalStress().toFixed(2);
-  stressDisplay = createP("Adverse Conditions: " + fixedStress);
-  stressDisplay.parent("envInfoDiv");
-
-  movementDisplay = createP("Good Movement Steps: 0.00");
-  movementDisplay.parent("envInfoDiv");
-
-  manualUAVDisplay = createP("Manual UAV: " + manShep);
-  manualUAVDisplay.parent("envInfoDiv");
-
-  totalUAVDisplay = createP("Total UAV's: " + totalUAVs);
-  totalUAVDisplay.parent("envInfoDiv");
-
-  var fixedSpeed = environment.avgSpeed().toFixed(2);
-  speedDisplay = createP("Average Speed: " + fixedSpeed);
-  speedDisplay.parent("animalInfoDiv");
-
-  var avgHeading = environment.avgHeading().toFixed(2);
-  headingDisplay = createP("Average Heading: " + avgHeading);
-  headingDisplay.parent("animalInfoDiv");
-
-  var isBunched = environment.checkBunched();
-  bunchedDisplay = createP("Bunched: " + isBunched);
-  bunchedDisplay.parent("animalInfoDiv");
-
-  numSectorDisplay = createP("Number of Sectors: 0");
-  numSectorDisplay.parent("uavInfoDiv");
-
-  currentSectorDisplay = createP("Current Sector: 0");
-  currentSectorDisplay.parent("uavInfoDiv");
 }
 
 // ---------- CALLED ON MOUSE DRAG TO UPDATE ALL SLIDERS ----------
