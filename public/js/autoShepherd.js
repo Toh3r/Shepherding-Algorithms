@@ -267,7 +267,7 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
   var comp1 = dist(this.targetAnimal.position.x, this.targetAnimal.position.y, herdX, herdY);
   var comp2 = dist(this.oldTargetAnimal.position.x, this.oldTargetAnimal.position.y, herdX, herdY);
 
-  if(Math.abs(comp1 - comp2) < 20) {
+  if(Math.abs(comp1 - comp2) < 30) {
     this.targetAnimal = this.oldTargetAnimal;
   }
 

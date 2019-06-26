@@ -144,7 +144,7 @@ ManageControls.prototype.createControls = function () {
   uavSpeOut = createElement("h6", uavSpeedSlider.value());
   uavSpeOut.parent('uavSpeSli');
 
-  oracleSpeedSlider = createSlider(0, 2, 1, 0.1);
+  oracleSpeedSlider = createSlider(0, 2, 1.5, 0.1);
   oracleSpeedSlider.parent('oracleSpeSli');
   oracleSpeOut = createElement("h6", oracleSpeedSlider.value());
   oracleSpeOut.parent('oracleSpeSli');
@@ -485,6 +485,11 @@ ManageControls.prototype.applyControls = function () {
   // ---------- UPDATE UAV ----------
   uavSpeedVal = uavSpeedSlider.value();
   uavSpeOut.html(uavSpeedVal);
+
+  oracleSpeedVal = oracleSpeedSlider.value();
+  oracleSpeOut.html(oracleSpeedVal);
+
+  oracleSpeedSlider
 
   numAnimalsVal = numAnimalsSlider.value();
   numAnimalsOut.html(numAnimalsVal);
