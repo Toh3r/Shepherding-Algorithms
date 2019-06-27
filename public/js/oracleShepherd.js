@@ -63,7 +63,7 @@ OracleShepherd.prototype.herdAnimals = function (animals) {
   var bun = this.bunched(animals);
   if (bun == true) {
     // console.log(animals);
-    this.maxspeed = 0.7;
+    this.maxspeed = uavSpeedSlider.value();
     var mov = this.moveAnimals(animals);
     this.applyForce(mov);
   }
@@ -71,7 +71,7 @@ OracleShepherd.prototype.herdAnimals = function (animals) {
   if (bun == false) {
     // var col = this.collectAnimals(animals);
     // this.applyForce(col);
-    this.maxspeed = 1;
+    this.maxspeed = uavSpeedSlider.value();
     var adCol = this.advanceCollect(animals);
     this.applyForce(adCol);
   }
