@@ -17,10 +17,13 @@ ManageEnvironment.prototype.createNewEnv = function () {
     goalX = 990, goalY = 255; // Create goal co-ords for shepherd and animal agents
     gzX = createVector(850, 1000), gzY = createVector(180, 330); // Create goalzone co-ords
 
+    goal1 = createVector(990, 255);
+    shepGoals = [goal1];
+
     for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
       x = random(201);
       y = random(501);
-      var a = new Animal(x, y, goalX, goalY, gzX, gzY); // Pass through staring position, position of goal and position of goalZone
+      var a = new Animal(x, y, goalX, goalY, gzX, gzY, shepGoals); // Pass through staring position, position of goal and position of goalZone
       environment.addAnimal(a); // Positions of goal and goalZone used for removalfunction and goal function in animal class
     }
 
@@ -40,10 +43,13 @@ ManageEnvironment.prototype.createNewEnv = function () {
     goalX = 970, goalY = 580;
     gzX = createVector(850, 1000), gzY = createVector(450, 600);
 
+    goal1 = createVector(970, 580);
+    shepGoals = [goal1];
+
     for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
       x = random(201);
       y = random(501);
-      var a = new Animal(x, y, goalX, goalY, gzX, gzY);
+      var a = new Animal(x, y, goalX, goalY, gzX, gzY, shepGoals);
       environment.addAnimal(a);
     }
 
@@ -129,11 +135,17 @@ ManageEnvironment.prototype.createNewEnv = function () {
     goalX = 2370, goalY = 35;
     gzX = createVector(2250, 2400), gzY = createVector(0, 85);
 
+    goal1 = createVector(470, 500), goal2 = createVector(470, 400);
+    goal3 = createVector(1000, 70), goal4 = createVector(1150, 70);
+    goal5 = createVector(1650, 50), goal6 = createVector(1800, 50);
+    goal7 = createVector(2370, 35);
+    shepGoals = [goal1, goal2, goal3, goal4, goal5, goal6, goal7];
+
     //Create starting animals in random positions
     for (var i = 0; i < numAnimalsSlider.value(); i++) {
       x = random(801);
       y = random(551,751);
-      var a = new Animal(x, y, goalX, goalY, gzX, gzY);
+      var a = new Animal(x, y, goalX, goalY, gzX, gzY, shepGoals);
       environment.addAnimal(a);
     }
 
@@ -173,10 +185,13 @@ ManageEnvironment.prototype.createNewEnv = function () {
     goalX = 1100, goalY = 255;
     gzX = createVector(1100, 1250), gzY = createVector(155, 305);
 
+    goal1 = createVector(1050, 170), goal2 = createVector(1140, 170), goal3 = createVector(1100, 255);
+    shepGoals = [goal1, goal2, goal3];
+
     for (var i = 0; i < numAnimalsSlider.value(); i++) {   //Create starting animals in random positions
       x = random(100,251);
       y = random(50,351);
-      var a = new Animal(x, y, goalX, goalY, gzX, gzY);
+      var a = new Animal(x, y, goalX, goalY, gzX, gzY, shepGoals);
       environment.addAnimal(a);
     }
 
@@ -254,7 +269,7 @@ function deleteAll() {
 // ---------- FUNCTIONS TO CREATE SHEPHERDS ON BUTTON CLICKS ----------
 function herd() {
   console.log("Goin' Herding");
-  environment.addAutoShepherd(new AutoShepherd(shepX, shepY, goalX, goalY));
+  environment.addAutoShepherd(new AutoShepherd(shepX, shepY, goalX, goalY, shepGoals));
 }
 
 function oracle() {

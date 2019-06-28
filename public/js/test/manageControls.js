@@ -201,7 +201,7 @@ ManageControls.prototype.createControls = function () {
   nameCheck.parent("zoneDiv");
 
   // Create checkbox to display flight/Pressure zones
-  lineCheck = createCheckbox("Show Shep Lines");
+  lineCheck = createCheckbox("Show Shep Lines", true);
   lineCheck.parent("zoneDiv");
 
   // Create checkbox to display flight/Pressure zones
@@ -251,7 +251,7 @@ ManageControls.prototype.createControls = function () {
   // fill(255, 0, 0);
 
   //  Select starting environment
-  envRadio._getInputChildrenArray()[0].checked = true;
+  envRadio._getInputChildrenArray()[3].checked = true;
 
   // Initialize new environment
   environment = new Environment();

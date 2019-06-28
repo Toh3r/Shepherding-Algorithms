@@ -1,6 +1,6 @@
 // Shepherd Class
 // Create shepherd attributes
-function AutoShepherd(x, y, gx, gy) {
+function AutoShepherd(x, y, gx, gy, shepGoals) {
   this.acceleration = createVector(0,0);
   this.velocity = createVector(random(-1,1),random(-1,1));
   this.position = createVector(x, y);
@@ -29,6 +29,8 @@ function AutoShepherd(x, y, gx, gy) {
   this.collectBool = true;
   this.moveBool = false;
   this.avoidHerdBool = false;
+  this.shepGoals = shepGoals;
+  this.goalCounter = 0;
 }
 
 // Call methods for each shepherd
@@ -39,6 +41,7 @@ AutoShepherd.prototype.run = function(herd) {
   this.herdAnimals(herd);
   if(lineCheck.checked() == true && herd.length > 0) {
     this.displayShepLines();
+    this.drawShepGoals();
   }
   // if (this.targets.length == 0) { // Create sectors on first call
   //   this.createSectors();
@@ -168,6 +171,11 @@ AutoShepherd.prototype.bunched = function (herd) {
     bl: createVector(this.bottomLeft.x - 100, this.bottomLeft.y + 100)
   }
 
+  var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
+  var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
+
+  // line(this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y, herdX, herdY);
+
   herDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
   if (herDist < 200) {
     return true;
@@ -181,7 +189,8 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
-  var goal = createVector(this.goalX,this.goalY); // Location of exit
+  // var goal = createVector(this.goalX,this.goalY); // Location of exit
+  var goal = this.shepGoals[this.goalCounter];
 
   if (environment.vocalizing() == true) {
     goal = this.avoidObstacle(center, goal);
@@ -243,11 +252,12 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
-  var goal = createVector(this.goalX,this.goalY); // Location of exit
+  // var goal = createVector(this.goalX,this.goalY); // Location of exit
+  var goal = this.shepGoals[this.goalCounter];
 
-  if (environment.vocalizing() == true) {
-    goal = this.avoidObstacle(center, goal);
-  }
+  // if (environment.vocalizing() == true) {
+  //   goal = this.avoidObstacle(center, goal);
+  // }
 
   var furthestPos = 0;
   for (var i = 0; i < herd.length; i++) {
@@ -344,11 +354,13 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
-  var goal = createVector(this.goalX,this.goalY); // Location of exit
+  // var goal = createVector(this.goalX,this.goalY); // Location of exit
+  var goal = this.shepGoals[this.goalCounter];
+  this.checkGoal(center, goal);
 
-  if (environment.vocalizing() == true) {
-    goal = this.avoidObstacle(center, goal);
-  }
+  // if (environment.vocalizing() == true) {
+  //   goal = this.avoidObstacle(center, goal);
+  // }
 
   animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
   animalFR = Math.abs(herdX - this.herdRight);  // Cords of animal furthest right
@@ -383,7 +395,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     }
     // this.outOfHerd(target);
     this.targetInBounds(target);
-    this.outOfHerd(target);
+    // this.outOfHerd(target);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -401,7 +413,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     }
     // this.outOfHerd(target);
     this.targetInBounds(target);
-    this.outOfHerd(target);
+    // this.outOfHerd(target);
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -651,11 +663,12 @@ AutoShepherd.prototype.displayShepLines = function () {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
-  var goal = createVector(this.goalX,this.goalY); // Location of exit
+  // var goal = createVector(this.goalX,this.goalY); // Location of exit
+  var goal = this.shepGoals[this.goalCounter];
 
-  if (environment.vocalizing() == true) {
-    goal = this.avoidObstacle(center, goal);
-  }
+  // if (environment.vocalizing() == true) {
+  //   goal = this.avoidObstacle(center, goal);
+  // }
 
   animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
   animalFR = Math.abs(herdX - this.herdRight);  // Cords of animal furthest right
@@ -752,4 +765,18 @@ AutoShepherd.prototype.checkHeading = function (herd) {
   }
   averageHeading = totalHeading/ herd.length;
   return averageHeading;
+}
+
+AutoShepherd.prototype.drawShepGoals = function () {
+  fill(255,30,30)
+  stroke(0);
+  for(var i = 0; i < this.shepGoals.length; i++) {
+    ellipse(this.shepGoals[i].x, this.shepGoals[i].y, 10 ,10)
+  }
+}
+
+AutoShepherd.prototype.checkGoal = function (hc, g) {
+  if (dist(hc.x, hc.y, g.x, g.y) < 30) {
+    this.goalCounter++;
+  }
 }

@@ -1,6 +1,6 @@
 // Animal class
 // Set Animal attributes
-function Animal(x,y, gx, gy, gzX, gzY) {
+function Animal(x,y, gx, gy, gzX, gzY, goals) {
   this.acceleration = createVector(0,0); // Starting accelertion
   this.velocity = createVector(random(-1,1),random(-1,1)); // Create starting velocity direction
   this.position = createVector(x,y); // Starting position
@@ -30,6 +30,8 @@ function Animal(x,y, gx, gy, gzX, gzY) {
   this.gateY = gy;
   this.gzX = gzX;
   this.gzY = gzY;
+  this.goals = goals;
+  this.goalCounter = 0;
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS
@@ -48,6 +50,12 @@ Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, mu
   }
   if(forceCheck.checked() == true) {
     this.renderForces();
+  }
+
+  fill(255,30,30)
+  stroke(0);
+  for(var i = 0; i < this.goals.length; i++) {
+    ellipse(this.goals[i].x, this.goals[i].y, 10 ,10)
   }
 
   // var avo = this.avoid(novelObjects);
@@ -577,11 +585,28 @@ Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, or
 
 // ----- ANIMAL BEHAVIOURAL RULES WITH ENVIRONMENT
 
+// // setting behaviour when animal comes within certain area of a gate
+// Animal.prototype.goal = function () {
+//   if (this.position.x > this.gzX.x && this.position.x < this.gzX.y && this.position.y > this.gzY.x && this.position.y < this.gzY.y) {
+//     var gate = createVector(this.gateX, this.gateY);
+//     if (this.position.x > this.gateX - 20 && this.position.x < this.gateX + 20 && this.position.y > this.gateY - 20 && this.position.y < this.gateY + 20) {
+//       console.log("Name of animal leaving: " + this.name);
+//       environment.hitTheGap(this);
+//     }
+//     var desired = p5.Vector.sub(gate, this.position);
+//     desired.normalize();
+//     desired.mult(this.maxspeed);
+//     var steer = p5.Vector.sub(desired, this.velocity);
+//     steer.limit(this.maxforce);
+//     return steer;
+//   }
+// }
 // setting behaviour when animal comes within certain area of a gate
 Animal.prototype.goal = function () {
-  if (this.position.x > this.gzX.x && this.position.x < this.gzX.y && this.position.y > this.gzY.x && this.position.y < this.gzY.y) {
-    var gate = createVector(this.gateX, this.gateY);
-    if (this.position.x > this.gateX - 20 && this.position.x < this.gateX + 20 && this.position.y > this.gateY - 20 && this.position.y < this.gateY + 20) {
+  if (dist(this.position.x, this.position.y, this.goals[this.goalCounter]) < 200) {
+    var gate = createVector(this.goals[i].x, this.goals[i].y);
+    this.checkGoal(gate);
+    if (this.goalCounter == this.goals.length -1 && this.position.x > this.goals[i].x - 20 && this.position.x < this.goals[i].x + 20 && this.position.y > this.goals[i].y - 20 && this.position.y < this.goals[i].y) {
       console.log("Name of animal leaving: " + this.name);
       environment.hitTheGap(this);
     }
@@ -590,6 +615,7 @@ Animal.prototype.goal = function () {
     desired.mult(this.maxspeed);
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
+    this.maxspeed = 3;
     return steer;
   }
 }
@@ -728,6 +754,11 @@ Animal.prototype.avoidObstacle = function (obstacles) {
   }
 }
 
+Animal.prototype.checkGoal = function (g) {
+  if (dist(this.position.x, this.position.y, g.x, g.y) < 20) {
+    this.goalCounter++;
+  }
+}
 
 // Animal.prototype.getDistance = function () {
 //
