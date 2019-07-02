@@ -180,6 +180,22 @@ Environment.prototype.shepCollect = function () {
   }
 }
 
+Environment.prototype.getSectors = function () {
+  if(this.oracles.length > 0) {
+    return this.oracles[0].numSectors;
+  } else {
+    return "0";
+  }
+}
+Environment.prototype.getOracleTarget = function () {
+  if(this.oracles.length > 0) {
+    var t = this.oracles[0].lol.x + ", " + this.oracles[0].lol.y;
+    return t;
+  } else {
+    return "No Target";
+  }
+}
+
 Environment.prototype.shepMove = function () {
   if(this.autoShepherds.length > 0) {
     return this.autoShepherds[0].moveBool;

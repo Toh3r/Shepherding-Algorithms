@@ -20,6 +20,10 @@ ManageEnvironment.prototype.createNewEnv = function () {
     goal1 = createVector(990, 255);
     shepGoals = [goal1];
 
+    oracleSearch = {
+      dir: "start"
+    }
+
     for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
       x = random(201);
       y = random(501);
@@ -45,6 +49,10 @@ ManageEnvironment.prototype.createNewEnv = function () {
 
     goal1 = createVector(970, 580);
     shepGoals = [goal1];
+
+    oracleSearch = {
+      dir: "start"
+    }
 
     for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
       x = random(201);
@@ -141,6 +149,13 @@ ManageEnvironment.prototype.createNewEnv = function () {
     goal7 = createVector(2370, 35);
     shepGoals = [goal1, goal2, goal3, goal4, goal5, goal6, goal7];
 
+    oracleSearch = {
+      dir: "tl",
+      diffStart: true,
+      startSec: createVector(1,3),
+      endSec: createVector(5,4)
+    }
+
     //Create starting animals in random positions
     for (var i = 0; i < numAnimalsSlider.value(); i++) {
       x = random(801);
@@ -187,6 +202,13 @@ ManageEnvironment.prototype.createNewEnv = function () {
 
     goal1 = createVector(1050, 170), goal2 = createVector(1140, 170), goal3 = createVector(1100, 255);
     shepGoals = [goal1, goal2, goal3];
+
+    oracleSearch = {
+      dir: "tr",
+      diffStart: true,
+      startSec: createVector(1,1),
+      endSec: createVector(5,3)
+    }
 
     for (var i = 0; i < numAnimalsSlider.value(); i++) {   //Create starting animals in random positions
       x = random(100,251);
@@ -273,7 +295,7 @@ function herd() {
 }
 
 function oracle() {
-  environment.addOracle(new Oracle(shepX, shepY, goalX, goalY));
+  environment.addOracle(new Oracle(shepX, shepY, goalX, goalY, oracleSearch));
   environment.addOracleShepherd(new OracleShepherd(shepX, shepY, goalX, goalY));
 }
 

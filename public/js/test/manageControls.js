@@ -251,7 +251,7 @@ ManageControls.prototype.createControls = function () {
   // fill(255, 0, 0);
 
   //  Select starting environment
-  envRadio._getInputChildrenArray()[3].checked = true;
+  envRadio._getInputChildrenArray()[0].checked = true;
 
   // Initialize new environment
   environment = new Environment();
@@ -295,11 +295,13 @@ ManageControls.prototype.createControls = function () {
   bunchedDisplay = createP("Bunched: " + isBunched);
   bunchedDisplay.parent("animalInfoDiv");
 
-  numSectorDisplay = createP("Number of Sectors: 0");
+  var numSectors = environment.getSectors();
+  numSectorDisplay = createP("Number of Sectors: " + numSectors);
   numSectorDisplay.parent("oracleInfoDiv");
 
-  currentSectorDisplay = createP("Current Sector: 0");
-  currentSectorDisplay.parent("oracleInfoDiv");
+  var currentTarget = environment.getOracleTarget();
+  currentTargetDisplay = createP("Current Target: " + currentTarget);
+  currentTargetDisplay.parent("oracleInfoDiv");
 
   var isCollecting = environment.shepCollect();
   collectingDisplay = createP("Collecting: " + isCollecting);
@@ -336,7 +338,7 @@ ManageControls.prototype.updateSimInfo = function () {
   movementDisplay.remove();
   vocalDisplay.remove();
   numSectorDisplay.remove();
-  currentSectorDisplay.remove();
+  currentTargetDisplay.remove();
   headingDisplay.remove();
   bunchedDisplay.remove();
   collectingDisplay.remove();
@@ -380,11 +382,13 @@ ManageControls.prototype.updateSimInfo = function () {
   bunchedDisplay = createP("Bunched: " + isBunched);
   bunchedDisplay.parent("animalInfoDiv");
 
-  numSectorDisplay = createP("Number of Sectors: 0");
+  var numSectors = environment.getSectors();
+  numSectorDisplay = createP("Number of Sectors: " + numSectors);
   numSectorDisplay.parent("oracleInfoDiv");
 
-  currentSectorDisplay = createP("Current Sector: 0");
-  currentSectorDisplay.parent("oracleInfoDiv");
+  var currentTarget = environment.getOracleTarget();
+  currentTargetDisplay = createP("Current Target: " + currentTarget);
+  currentTargetDisplay.parent("oracleInfoDiv");
 
   var isCollecting = environment.shepCollect();
   collectingDisplay = createP("Collecting: " + isCollecting);
