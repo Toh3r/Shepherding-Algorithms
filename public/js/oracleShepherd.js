@@ -25,6 +25,8 @@ function OracleShepherd(x, y, gx, gy) {  // Passing through starting co-ords and
   this.oldTargetAnimal = {
     position: createVector(2000, 2000)
   }
+  this.isCollecting = true;
+  this.isFollowing = false;
 }
 
 // Call methods for each shepherd
@@ -62,6 +64,8 @@ OracleShepherd.prototype.applyForce = function(force) {
 OracleShepherd.prototype.herdAnimals = function (animals) {
   var bun = this.bunched(animals);
   if (bun == true) {
+    this.isCollecting = false;
+    this.isFollowing = true;
     // console.log(animals);
     this.maxspeed = uavSpeedSlider.value();
     var mov = this.moveAnimals(animals);
@@ -71,6 +75,8 @@ OracleShepherd.prototype.herdAnimals = function (animals) {
   if (bun == false) {
     // var col = this.collectAnimals(animals);
     // this.applyForce(col);
+    this.isCollecting = true;
+    this.isFollowing = false;
     this.maxspeed = uavSpeedSlider.value();
     var adCol = this.advanceCollect(animals);
     this.applyForce(adCol);

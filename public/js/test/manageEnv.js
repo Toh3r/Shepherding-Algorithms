@@ -301,6 +301,6 @@ function oracle() {
 
 function multiDrone() {
   console.log("Well");
-  environment.addMultiGPS(new MultiGPSShepherd(shepX, shepY, goalX, goalY, false))
-  environment.addMultiGPS(new MultiGPSShepherd(shepX, shepY, goalX, goalY, true))
+  environment.addMultiGPS(new MultiGPSShepherd(shepX, shepY, goalX, goalY, false, 1))
+  environment.addMultiGPS(new MultiGPSShepherd(shepX, shepY, goalX, goalY, true, 2))
 }

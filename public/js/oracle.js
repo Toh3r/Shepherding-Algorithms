@@ -46,14 +46,19 @@ Oracle.prototype.run = function (herd) { // Called when oracle created, passing 
 }
 
 Oracle.prototype.runTheShow = function (herd) { // Function which determines action selection based on a whole lotta things
-  var bun = this.bunched();     // Function to determine if animals are bunched
+  var bun = this.bunched(herd);     // Function to determine if animals are bunched
   this.maxspeed = oracleSpeedSlider.value();
 
   if( this.start.dir != 'start') {
     this.firstRun = false;
   }
 
-  if (this.firstRun == true && this.start.dir == 'start') {  // Runs on initial search for animals when searching entire enclosure
+  if (this.firstRun == false && bun == true) {
+    console.log("I.. I.. I.. Follow")  // If animals are bunched, move to centre of herd
+    this.following = true;
+    var follow = this.followHerd(herd);                // and keep passing positions to oracle shepherd
+    this.applyForce(follow);
+  } else if (this.firstRun == true && this.start.dir == 'start') {  // Runs on initial search for animals when searching entire enclosure
     // this.maxspeed = oracleSpeedSlider.value();
     this.following = false;
     var search = this.searchForAnimals(herd);
@@ -67,10 +72,6 @@ Oracle.prototype.runTheShow = function (herd) { // Function which determines act
     // this.maxspeed = oracleSpeedSlider.value();
     var keep = this.keepSearching(herd);               // calculate new search based on their positions
     this.applyForce(keep);                          // and keep searching
-  } else if (this.firstRun == false && bun == true) {  // If animals are bunched, move to centre of herd
-    this.following = true;
-    var follow = this.followHerd(herd);                // and keep passing positions to oracle shepherd
-    this.applyForce(follow);
   }
 }
 
@@ -157,18 +158,22 @@ Oracle.prototype.locateFirstTarget = function () { // Function to find first tar
     target = this.targets.find(target => target.id.x === this.leftCol && target.id.y === this.topRow);
     this.startPos = "tl";
     this.movingUp = false;
+    this.isForDisplayStart = this.leftCol + ", " + this.topRow; 
   } else if (this.startx < width / 2 && this.starty > width / 2) {
     target = this.targets.find(target => target.id.x === this.leftCol && target.id.y === this.bottomRow);
     this.startPos = "bl";
     this.movingUp = true;
+    this.isForDisplayStart = this.leftCol + ", " + this.bottomRow;
   } else if (this.startx > width / 2 && this.starty < width / 2) { // Starting near top left
     target = this.targets.find(target => target.id.x === this.rightCol && target.id.y === this.topRow);
     this.startPos = "tr";
     this.movingUp = false;
+    this.isForDisplayStart = this.rightCol + ", " + this.topRow;
   } else if (this.startx > width / 2 && this.starty > width / 2) {
     target = this.targets.find(target => target.id.x === this.rightCol && target.id.y === this.bottomRow);
     this.startPos = "br";
     this.movingUp = true;
+    this.isForDisplayStart = this.rightCol + ", " + this.bottomRow;
   }
   if (this.firstRun == true) {
     targetPos = {
@@ -272,13 +277,14 @@ Oracle.prototype.calculateTarget = function (minSec, maxSec) {
     }
   }
   this.lol = newTarget.id;
-  console.log("lol: ", this.lol)
   return newTarget;
 }
 
 Oracle.prototype.saveAnimalPos = function (herd) {
   if(this.following == true) {
     this.animals.length = 0;
+    // fill(255, 0, 0, 100)
+    // rect(this.position.x - this.secWidth/2, this.position.y - this.secHeight/2, this.secWidth, this.secHeight)
   }
   var viewWidth = this.secWidth/2;
   var viewHieght = this.secHeight/2;
@@ -309,7 +315,7 @@ Oracle.prototype.saveAnimalPos = function (herd) {
   }
 }
 
-Oracle.prototype.bunched = function () { // Function to determine if herd is bunched
+Oracle.prototype.bunched = function (herd) { // Function to determine if herd is bunched
   // Find furthest left, right, top and bottom animals
   this.herdBottom = Math.max.apply(Math, this.animals.map(function(o) { return o.position.y; }));
   this.herdTop = Math.min.apply(Math, this.animals.map(function(o) { return o.position.y; }));
@@ -317,7 +323,7 @@ Oracle.prototype.bunched = function () { // Function to determine if herd is bun
   this.herdRight = Math.max.apply(Math, this.animals.map(function(o) { return o.position.x; }));
   // Find distance between top left and bottom right animals.. will do for now
   herDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
-  if (herDist < 200 && this.animals.length == 10) { // Once dist less than 200, oracle recognises herd as bunched
+  if (herDist < 200 && this.animals.length == herd.length) { // Once dist less than 200, oracle recognises herd as bunched
     return true;                                    // 200 is arbituary, change ...
   } else {
     return false;
@@ -345,20 +351,20 @@ Oracle.prototype.keepSearching = function (herd) {
       this.rCol = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
     }
 
-    // if (this.animals.length < 9) {
-    //   if (this.lCol >= 2) {
-    //     this.lCol = this.lCol - 1;
-    //   }
-    //   if (this.rCol <= this.rightCol - 1) {
-    //     this.rCol = this.rCol + 1;
-    //   }
-    //   if (this.tRow >= 2) {
-    //     this.tRow = this.tRow - 1;
-    //   }
-    //   if (this.bRow <= this.bottomRow - 1) {
-    //     this.bRow = this.bRow + 1;
-    //   }
-    // }
+    if (this.animals.length < herd.length-1 && this.start.diffstart == false) {
+      if (this.lCol >= 2) {
+        this.lCol = this.lCol - 1;
+      }
+      if (this.rCol <= this.rightCol - 1) {
+        this.rCol = this.rCol + 1;
+      }
+      if (this.tRow >= 2) {
+        this.tRow = this.tRow - 1;
+      }
+      if (this.bRow <= this.bottomRow - 1) {
+        this.bRow = this.bRow + 1;
+      }
+    }
 
     topRight = createVector(this.rCol, this.tRow);   // Top right
     bottomLeft = createVector(this.lCol, this.bRow); // bottom left
@@ -371,16 +377,13 @@ Oracle.prototype.keepSearching = function (herd) {
     this.bLeft = this.getPositionOfTarget(bottomLeft);   // Gets bottom left sector
 
     if (this.start.diffStart == false) {
-      console.log("This bad...")
       this.usingSec = this.findClosest();
     }
-
   }
 
   if (this.firstSearch == true && this.targetNum >= this.numSectors) {
 
     if (this.start.diffStart == false) {
-      console.log("This bad...")
       this.usingSec = this.findClosest();
     }
 
@@ -388,18 +391,22 @@ Oracle.prototype.keepSearching = function (herd) {
       this.movingUp = false;
       this.startPos = 'tr';
       this.currentTarget = this.tRight;
+      this.isForDisplayStart = topRight.x + ", " + topRight.y;
     } else if (this.usingSec == "bl") {
       this.movingUp = true;
       this.startPos = 'bl';
       this.currentTarget = this.bLeft;
+      this.isForDisplayStart = bottomLeft.x + ", " + bottomLeft.y;
     } else if (this.usingSec == "tl") {
       this.movingUp = false;
       this.startPos = 'tl';
       this.currentTarget = this.tLeft;
+      this.isForDisplayStart = topLeft.x + ", " + topLeft.y;
     } else if (this.usingSec == "br") {
       this.movingUp = true;
       this.startPos = 'br';
       this.currentTarget = this.bRight;
+      this.isForDisplayStart = bottomRight.x + ", " + bottomRight.y;
     }
 
     if ((this.position.x - 5 < this.currentTarget.position.x && this.currentTarget.position.x < this.position.x + 5) && (this.position.y - 5 < this.currentTarget.position.y && this.currentTarget.position.y < this.position.y + 5)){
@@ -560,24 +567,15 @@ Oracle.prototype.findClosest = function () {
   distBR = dist(this.position.x, this.position.y, this.bRight.position.x, this.bRight.position.y)
   distBL = dist(this.position.x, this.position.y, this.bLeft.position.x, this.bLeft.position.y)
 
-  console.log("Shortest thing runs")
-  console.log(this.tRight)
-
   shortest = Math.min(distTR, distTL, distBR, distBL);
 
-  console.log("Shortest: ", shortest)
-
   if (shortest == distTR){
-    console.log("returning tr")
     return "tr";
   } else if (shortest == distTL) {
-    console.log("returning tl")
     return "tl"
   } else if (shortest == distBR) {
-    console.log("returning br")
     return "br"
   } else if (shortest == distBL) {
-    console.log("returning bl")
     return "bl"
   }
 

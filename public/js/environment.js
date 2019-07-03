@@ -187,6 +187,7 @@ Environment.prototype.getSectors = function () {
     return "0";
   }
 }
+
 Environment.prototype.getOracleTarget = function () {
   if(this.oracles.length > 0) {
     var t = this.oracles[0].lol.x + ", " + this.oracles[0].lol.y;
@@ -196,9 +197,34 @@ Environment.prototype.getOracleTarget = function () {
   }
 }
 
+Environment.prototype.getOracleSearchArea = function () {
+  if(this.oracles.length > 0) {
+    var t = this.oracles[0].isForDisplayStart;
+    return t;
+  } else {
+    return "No Target";
+  }
+}
+
 Environment.prototype.shepMove = function () {
   if(this.autoShepherds.length > 0) {
     return this.autoShepherds[0].moveBool;
+  } else {
+    return false;
+  }
+}
+
+Environment.prototype.oShepMove = function () {
+  if(this.oracleShepherds.length > 0) {
+    return this.oracleShepherds[0].isFollowing;
+  } else {
+    return false;
+  }
+}
+
+Environment.prototype.oShepCol = function () {
+  if(this.oracleShepherds.length > 0) {
+    return this.oracleShepherds[0].isCollecting;
   } else {
     return false;
   }

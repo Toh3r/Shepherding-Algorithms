@@ -26,7 +26,7 @@ ManageControls.prototype.createControls = function () {
   pSpeOut = createElement("h6", pSpeedSlider.value());
   pSpeOut.parent('pSpeSli');
 
-  fSpeedSlider = createSlider(0, 2, 0.4, 0.1);
+  fSpeedSlider = createSlider(0, 2, 0.6, 0.1);
   fSpeedSlider.parent('fSpeSli');
   fSpeOut = createElement("h6", fSpeedSlider.value());
   fSpeOut.parent('fSpeSli');
@@ -42,7 +42,7 @@ ManageControls.prototype.createControls = function () {
   pVelOut = createElement("h6", pVelSlider.value());
   pVelOut.parent('pVelSli');
 
-  fVelSlider = createSlider(0, 2, 0.4, 0.1);
+  fVelSlider = createSlider(0, 2, 0.6, 0.1);
   fVelSlider.parent('fVelSli');
   fVelOut = createElement("h6", fVelSlider.value());
   fVelOut.parent('fVelSli');
@@ -96,7 +96,7 @@ ManageControls.prototype.createControls = function () {
   cohFliOut.parent('cohFli');
 
   // ---------- dSEP SLIDERS ----------
-  dSepPreSlider = createSlider(0, 5, 0, 0.1);
+  dSepPreSlider = createSlider(0, 5, 0.1, 0.1);
   dSepPreSlider.parent('dSepPre');
   dSepPreOut = createElement("h6", dSepPreSlider.value());
   dSepPreOut.parent('dSepPre');
@@ -144,12 +144,12 @@ ManageControls.prototype.createControls = function () {
   uavSpeOut = createElement("h6", uavSpeedSlider.value());
   uavSpeOut.parent('uavSpeSli');
 
-  oracleSpeedSlider = createSlider(0, 2, 1.5, 0.1);
+  oracleSpeedSlider = createSlider(0, 4, 1.5, 0.1);
   oracleSpeedSlider.parent('oracleSpeSli');
   oracleSpeOut = createElement("h6", oracleSpeedSlider.value());
   oracleSpeOut.parent('oracleSpeSli');
 
-  numAnimalsSlider = createSlider(0, 30, 10, 1);
+  numAnimalsSlider = createSlider(0, 50, 10, 1);
   numAnimalsSlider.parent('numAnimalsSli');
   numAnimalsOut = createElement("h6", numAnimalsSlider.value());
   numAnimalsOut.parent('numAnimalsSli');
@@ -229,7 +229,7 @@ ManageControls.prototype.createControls = function () {
   createMulti.mouseClicked(multiDrone);
 
   // -------- RESET BUTTON --------
-  resetBtn = createButton('Resest');
+  resetBtn = createButton('Reset');
   resetBtn.parent('resetBtn');
   resetBtn.mouseClicked(createNewEnv);
 
@@ -303,6 +303,10 @@ ManageControls.prototype.createControls = function () {
   currentTargetDisplay = createP("Current Target: " + currentTarget);
   currentTargetDisplay.parent("oracleInfoDiv");
 
+  var currentSearchArea = environment.getOracleSearchArea();
+  currentSearchAreaDisplay = createP("Searching: " + currentSearchArea + " -> X");
+  currentSearchAreaDisplay.parent("oracleInfoDiv");
+
   var isCollecting = environment.shepCollect();
   collectingDisplay = createP("Collecting: " + isCollecting);
   collectingDisplay.parent("gpsInfoDiv");
@@ -345,6 +349,7 @@ ManageControls.prototype.updateSimInfo = function () {
   moveDisplay.remove();
   avoOBSDisplay.remove();
   avoherdDisplay.remove();
+  currentSearchAreaDisplay.remove();
 
   // Update with sim info from current frame
   var timeSteps = environment.timeSteps();
@@ -389,6 +394,10 @@ ManageControls.prototype.updateSimInfo = function () {
   var currentTarget = environment.getOracleTarget();
   currentTargetDisplay = createP("Current Target: " + currentTarget);
   currentTargetDisplay.parent("oracleInfoDiv");
+
+  var currentSearchArea = environment.getOracleSearchArea();
+  currentSearchAreaDisplay = createP("Searching: " + currentSearchArea + " -> X");
+  currentSearchAreaDisplay.parent("oracleInfoDiv");
 
   var isCollecting = environment.shepCollect();
   collectingDisplay = createP("Collecting: " + isCollecting);

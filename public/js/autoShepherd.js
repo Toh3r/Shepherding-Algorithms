@@ -477,7 +477,7 @@ AutoShepherd.prototype.outOfHerd = function (target) { //In herd
   } else if (this.position.x > this.bottomLeft.x - 100 && this.position.x < this.bottomLeft.x && this.position.y > this.bottomLeft.y && this.position.y < this.bottomLeft.y + 100) {
     // Bottom left
     quad(this.bottomLeft.x - 100, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y + 100, this.bottomLeft.x - 100, this.bottomLeft.y + 100)
-    this.avoidHerdBottomRight(target, this.sec8, this.sec5, this.sec7);
+    this.avoidHerdBottomLeft(target, this.sec8, this.sec5, this.sec7);
   }
 }
 

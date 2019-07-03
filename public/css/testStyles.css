@@ -58,6 +58,9 @@ p {
 .redLetters {
   color: red;
 }
+.orangeLetters {
+  color: orange;
+}
 
 #envRadio label {
   min-width: 20px;
