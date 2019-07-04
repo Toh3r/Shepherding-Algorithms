@@ -154,6 +154,26 @@ ManageControls.prototype.createControls = function () {
   numAnimalsOut = createElement("h6", numAnimalsSlider.value());
   numAnimalsOut.parent('numAnimalsSli');
 
+  xMinAnimalsSlider = createSlider(0, 500, 0, 10);
+  xMinAnimalsSlider.parent('xMinAnimalsSli');
+  xMinAnimalsOut = createElement("h6", xMinAnimalsSlider.value());
+  xMinAnimalsOut.parent('xMinAnimalsSli');
+
+  xMaxAnimalsSlider = createSlider(0, 500, 200, 10);
+  xMaxAnimalsSlider.parent('xMaxAnimalsSli');
+  xMaxAnimalsOut = createElement("h6", xMaxAnimalsSlider.value());
+  xMaxAnimalsOut.parent('xMaxAnimalsSli');
+
+  yMinAnimalsSlider = createSlider(0, 500, 0, 10);
+  yMinAnimalsSlider.parent('yMinAnimalsSli');
+  yMinAnimalsOut = createElement("h6", yMinAnimalsSlider.value());
+  yMinAnimalsOut.parent('yMinAnimalsSli');
+
+  yMaxAnimalsSlider = createSlider(0, 500, 500, 10);
+  yMaxAnimalsSlider.parent('yMaxAnimalsSli');
+  yMaxAnimalsOut = createElement("h6", yMaxAnimalsSlider.value());
+  yMaxAnimalsOut.parent('yMaxAnimalsSli');
+
   // ---------- DROPDOWN TO ADD AGENTS/OBJETCS ----------
   sel = createSelect();
   sel.parent('addDrop');
@@ -502,10 +522,20 @@ ManageControls.prototype.applyControls = function () {
   oracleSpeedVal = oracleSpeedSlider.value();
   oracleSpeOut.html(oracleSpeedVal);
 
-  oracleSpeedSlider
-
   numAnimalsVal = numAnimalsSlider.value();
   numAnimalsOut.html(numAnimalsVal);
+
+  xMinAnimalsVal = xMinAnimalsSlider.value();
+  xMinAnimalsOut.html(xMinAnimalsVal);
+
+  xMaxAnimalsVal = xMaxAnimalsSlider.value();
+  xMaxAnimalsOut.html(xMaxAnimalsVal);
+
+  yMinAnimalsVal = yMinAnimalsSlider.value();
+  yMinAnimalsOut.html(yMinAnimalsVal);
+
+  yMaxAnimalsVal = yMaxAnimalsSlider.value();
+  yMaxAnimalsOut.html(yMaxAnimalsVal);
 }
 
 // ---------- CALLED ON MOUSE DRAG TO UPDATE ALL SLIDERS ----------

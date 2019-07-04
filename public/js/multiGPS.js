@@ -1,6 +1,6 @@
 // Shepherd Class
 // Create shepherd attributes
-function MultiGPSShepherd(x, y, gx, gy, moving, uavNum) {
+function MultiGPSShepherd(x, y, gx, gy, moving, uavNum, shepGoals) {
   this.acceleration = createVector(0,0);
   this.velocity = createVector(random(-1,1),random(-1,1));
   this.position = createVector(x, y);
@@ -19,6 +19,10 @@ function MultiGPSShepherd(x, y, gx, gy, moving, uavNum) {
     position: createVector(2000, 2000)
   }
   this.uavNum = uavNum;
+  this.switchingTarget = false;
+  this.oldMovement = "starting up";
+  this.shepGoals = shepGoals;
+  this.goalCounter = 0;
 }
 
 // Call methods for each shepherd
@@ -161,11 +165,13 @@ MultiGPSShepherd.prototype.bunched = function (herd) {
 }
 
 MultiGPSShepherd.prototype.collectAnimals = function (herd) {
+  this.oldMovement = "Collecting";
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
-  var goal = createVector(this.goalX,this.goalY); // Location of exit
+  // var goal = createVector(this.goalX,this.goalY); // Location of exit
+  var goal = this.shepGoals[this.goalCounter];
 
   if (environment.vocalizing() == true) {
     goal = this.avoidObstacle(center, goal);
@@ -232,7 +238,9 @@ MultiGPSShepherd.prototype.moveAnimals = function (herd) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
-  var goal = createVector(this.goalX,this.goalY); // Location of exit
+  // var goal = createVector(this.goalX,this.goalY); // Location of exit
+  var goal = this.shepGoals[this.goalCounter];
+  this.checkGoal(center, goal);
 
   if (environment.vocalizing() == true) {
     goal = this.avoidObstacle(center, goal);
@@ -289,6 +297,9 @@ MultiGPSShepherd.prototype.moveAnimals = function (herd) {
     }
     // console.log("target: ", target)
     this.targetInBounds(target);
+    if (this.oldMovement != "moving") {
+      this.outOfHerd(target);
+    }
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -296,6 +307,7 @@ MultiGPSShepherd.prototype.moveAnimals = function (herd) {
     steer.limit(this.maxforce);
     if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
       this.movingUp = true;
+      this.oldMovement = "moving";
     }
     return steer;
   } else if (this.movingUp == true) {
@@ -314,6 +326,9 @@ MultiGPSShepherd.prototype.moveAnimals = function (herd) {
     }
     // console.log("target: ", target)
     this.targetInBounds(target);
+    if (this.oldMovement != "moving") {
+      this.outOfHerd(target);
+    }
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -321,19 +336,21 @@ MultiGPSShepherd.prototype.moveAnimals = function (herd) {
     steer.limit(this.maxforce);
     if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
       this.movingUp = false;
+      this.oldMovement = "moving";
     }
     return steer;
   }
 }
 
 MultiGPSShepherd.prototype.advanceCollect = function (herd, uavNum) {
+  this.oldMovement = "Collecting";
   this.avoidHerdBool = false;
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
-  var goal = createVector(this.goalX,this.goalY); // Location of exit
-  // var goal = this.shepGoals[this.goalCounter];
+  // var goal = createVector(this.goalX,this.goalY); // Location of exit
+  var goal = this.shepGoals[this.goalCounter];
 
   // if (environment.vocalizing() == true) {
   //   goal = this.avoidObstacle(center, goal);
@@ -457,7 +474,8 @@ MultiGPSShepherd.prototype.displayShepLines = function () {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
-  var goal = createVector(this.goalX,this.goalY); // Location of exit
+  // var goal = createVector(this.goalX,this.goalY); // Location of exit
+  var goal = this.shepGoals[this.goalCounter];
 
   if (environment.vocalizing() == true) {
     goal = this.avoidObstacle(center, goal);
@@ -513,6 +531,7 @@ MultiGPSShepherd.prototype.displayShepLines = function () {
 }
 
 MultiGPSShepherd.prototype.avoidObstacle = function (center, goal) {
+  this.oldMovement = "avoid";
   if (center.y < height/2) {
     var avoidPointCentre = this.createPCo2(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
     this.targetInBounds(avoidPointCentre);
@@ -789,3 +808,22 @@ MultiGPSShepherd.prototype.findClosestAnimal = function (herd, c) {
   }
   return closestDist;
 }
+
+MultiGPSShepherd.prototype.checkGoal = function (hc, g) {
+  if (dist(hc.x, hc.y, g.x, g.y) < 60 && this.goalCounter < this.shepGoals.length -1) {
+    this.goalCounter++;
+  }
+}
+
+// MultiGPSShepherd.prototype.goToNearest(t1, t2) = function {
+//   var distTo1 = dist(this.position.x, this.position.y, t1.x, t1.y);
+//   var distTo2 = dist(this.position.x, this.position.y, t2.x, t2.y);
+//
+//   shortestDist= Math.min(distTo1, distTo2);
+//
+//   if(distTo1 < distTo2) {
+//     return t1;
+//   } else {
+//     return t2;
+//   }
+// }

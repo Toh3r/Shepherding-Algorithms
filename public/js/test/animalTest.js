@@ -52,11 +52,12 @@ Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, mu
     this.renderForces();
   }
 
-  fill(255,30,30)
-  stroke(0);
-  for(var i = 0; i < this.goals.length; i++) {
-    ellipse(this.goals[i].x, this.goals[i].y, 10 ,10)
-  }
+  // fill(255,30,30)
+  // stroke(0);
+  // ellipse(this.goals[this.goalCounter].x, this.goals[this.goalCounter].y, 10 ,10)
+  // for(var i = 0; i < this.goals.length; i++) {
+  //   ellipse(this.goals[i].x, this.goals[i].y, 10 ,10)
+  // }
 
   // var avo = this.avoid(novelObjects);
   // avo.mult(5);
@@ -76,7 +77,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, m
   var pre = this.pressure(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds);   // shepherds in pressure zone
   var fli = this.flightZone(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds); // shepherds in pressure zone
   var mov = this.move(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds);             // Steer herd
-  var goa = this.goal();              // Seek (Goal area)
+  var goa = this.goal(herd);              // Seek (Goal area)
   var avo = this.avoid(novelObjects); // Avoid Novelty
   var bun = this.bunched(herd);       // Bunched
   var obs = this.avoidObstacle(obstacles);
@@ -603,10 +604,11 @@ Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, or
 // }
 // setting behaviour when animal comes within certain area of a gate
 Animal.prototype.goal = function () {
-  if (dist(this.position.x, this.position.y, this.goals[this.goalCounter]) < 200) {
-    var gate = createVector(this.goals[i].x, this.goals[i].y);
+  if (dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 200 && environment.checkBunched() == true) {
+    console.log("animal goal is runnung yo")
+    var gate = createVector(this.goals[this.goalCounter].x, this.goals[this.goalCounter].y);
     this.checkGoal(gate);
-    if (this.goalCounter == this.goals.length -1 && this.position.x > this.goals[i].x - 20 && this.position.x < this.goals[i].x + 20 && this.position.y > this.goals[i].y - 20 && this.position.y < this.goals[i].y) {
+    if (this.goalCounter == this.goals.length -1 && this.position.x > this.goals[this.goalCounter].x - 20 && this.position.x < this.goals[this.goalCounter].x + 20 && this.position.y > this.goals[this.goalCounter].y - 20 && this.position.y < this.goals[this.goalCounter].y) {
       console.log("Name of animal leaving: " + this.name);
       environment.hitTheGap(this);
     }
@@ -629,7 +631,7 @@ Animal.prototype.avoid = function (novelObjects) {
   // For every animal in the system, check if it's too close
   for (var i = 0; i < novelObjects.length; i++) {
 
-    var ex = novelObjects[i].w + 50, ey = novelObjects[i].h + 50;
+    var ex = novelObjects[i].w + 10, ey = novelObjects[i].h + 10; // Adding "+ whatever for size of flight zone"
     var xx = this.position.x - novelObjects[i].position.x
     var yy = this.position.y - novelObjects[i].position.y;
     var eyy = ey * sqrt(abs(ex * ex - xx * xx)) / ex;
@@ -755,7 +757,7 @@ Animal.prototype.avoidObstacle = function (obstacles) {
 }
 
 Animal.prototype.checkGoal = function (g) {
-  if (dist(this.position.x, this.position.y, g.x, g.y) < 20) {
+  if (dist(this.position.x, this.position.y, g.x, g.y) < 20 && this.goalCounter < this.goals.length -1) {
     this.goalCounter++;
   }
 }

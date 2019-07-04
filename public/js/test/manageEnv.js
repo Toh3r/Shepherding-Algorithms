@@ -13,6 +13,15 @@ ManageEnvironment.prototype.createNewEnv = function () {
     img = img1;      // Use image one loaded in manageControl.js
     canvas.parent('myCanvas');
 
+    sel.remove();
+    sel = createSelect();
+    sel.parent('addDrop');
+    sel.option('Add Animal');
+    sel.option('Add Shepherd');
+    sel.option('Add Novelty');
+    sel.option('Add Obstacle');
+    canvas.mouseClicked(addStuff);
+
     shepX = 970, shepY = 250; // Create shepherd starting co-ords
     goalX = 990, goalY = 255; // Create goal co-ords for shepherd and animal agents
     gzX = createVector(850, 1000), gzY = createVector(180, 330); // Create goalzone co-ords
@@ -25,8 +34,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
     }
 
     for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
-      x = random(201);
-      y = random(501);
+      x = random(xMinAnimalsSlider.value(), xMaxAnimalsSlider.value());
+      y = random(yMinAnimalsSlider.value(), yMaxAnimalsSlider.value());
       var a = new Animal(x, y, goalX, goalY, gzX, gzY, shepGoals); // Pass through staring position, position of goal and position of goalZone
       environment.addAnimal(a); // Positions of goal and goalZone used for removalfunction and goal function in animal class
     }
@@ -42,6 +51,15 @@ ManageEnvironment.prototype.createNewEnv = function () {
     canvas = createCanvas(1000,600);
     img = img2;
     canvas.parent('myCanvas');
+
+    sel.remove();
+    sel = createSelect();
+    sel.parent('addDrop');
+    sel.option('Add Animal');
+    sel.option('Add Shepherd');
+    sel.option('Add Novelty');
+    sel.option('Add Obstacle');
+    canvas.mouseClicked(addStuff);
 
     shepX = 970, shepY = 570; // Various Co-ords
     goalX = 970, goalY = 580;
@@ -80,6 +98,15 @@ ManageEnvironment.prototype.createNewEnv = function () {
     canvas = createCanvas(1800,600);
     img = img3;
     canvas.parent('myCanvas');
+
+    sel.remove();
+    sel = createSelect();
+    sel.parent('addDrop');
+    sel.option('Add Animal');
+    sel.option('Add Shepherd');
+    sel.option('Add Novelty');
+    sel.option('Add Obstacle');
+    canvas.mouseClicked(addStuff);
 
     shepX = 1030, shepY = 165; // Create various co-ordinates
     goalX = 1100, goalY = 255;
@@ -139,6 +166,15 @@ ManageEnvironment.prototype.createNewEnv = function () {
     img = img4;
     canvas.parent('myCanvas');
 
+    sel.remove();
+    sel = createSelect();
+    sel.parent('addDrop');
+    sel.option('Add Animal');
+    sel.option('Add Shepherd');
+    sel.option('Add Novelty');
+    sel.option('Add Obstacle');
+    canvas.mouseClicked(addStuff);
+
     shepX = 450, shepY = 450; // Create various co-ords
     goalX = 2370, goalY = 35;
     gzX = createVector(2250, 2400), gzY = createVector(0, 85);
@@ -195,6 +231,15 @@ ManageEnvironment.prototype.createNewEnv = function () {
     canvas = createCanvas(1800,600);
     img = img3;
     canvas.parent('myCanvas');
+
+    sel.remove();
+    sel = createSelect();
+    sel.parent('addDrop');
+    sel.option('Add Animal');
+    sel.option('Add Shepherd');
+    sel.option('Add Novelty');
+    sel.option('Add Obstacle');
+    canvas.mouseClicked(addStuff);
 
     shepX = 1030, shepY = 165; // Create various co-ords
     goalX = 1100, goalY = 255;
@@ -257,13 +302,13 @@ ManageEnvironment.prototype.createNewEnv = function () {
 function addStuff() {
   var dropSelect = sel.value();
   if (dropSelect == "Add Animal") {
-    environment.addAnimal(new Animal(mouseX, mouseY, goalX, goalY, gzX, gzY));
+    environment.addAnimal(new Animal(mouseX, mouseY, goalX, goalY, gzX, gzY, shepGoals));
   }
   if (dropSelect == "Add Shepherd") {
     environment.addShepherd(new Shepherd(mouseX, mouseY));
   }
   if (dropSelect == "Add Novelty") {
-    environment.addNovelty(new NovelObject(mouseX, mouseY, 25.0));
+    environment.addNovelty(new NovelObject(mouseX, mouseY, 25.0,25.0, 0, 0));
   }
   if (dropSelect == "Add Obstacle") {
     environment.addObstacle(new Obstacle(mouseX, mouseY, 25.0, 25.0, 0));
@@ -301,6 +346,6 @@ function oracle() {
 
 function multiDrone() {
   console.log("Well");
-  environment.addMultiGPS(new MultiGPSShepherd(shepX, shepY, goalX, goalY, false, 1))
-  environment.addMultiGPS(new MultiGPSShepherd(shepX, shepY, goalX, goalY, true, 2))
+  environment.addMultiGPS(new MultiGPSShepherd(shepX, shepY, goalX, goalY, false, 1, shepGoals))
+  environment.addMultiGPS(new MultiGPSShepherd(shepX, shepY, goalX, goalY, true, 2, shepGoals))
 }

@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 
 // Render home page
 app.get('/index', (req, res) => {
-  res.render('index.hbs');
+  res.render('test.hbs');
 });
 
 // Render test page
