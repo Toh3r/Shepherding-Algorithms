@@ -24,18 +24,19 @@ function Animal(x,y, gx, gy, gzX, gzY, goals) {
   this.wanderCenter = 0;
   this.wanderAngle = random(50);
   this.wanderForce = createVector(0,0);
+  // -------- ENVIRONMENT INTERACTION
   this.vocalizing = false;
   this.oldheading = 0;
-  this.goals = goals;   // Holds all goal points
-  this.goalCounter = 0; //
+  this.goals = goals;    // Holds all goal points
+  this.goalCounter = 0;  // Holds current goal point
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS
 
-// Call functions for each animal each frame
+// Call functions for each animal each time step
 Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds) {
   this.accumulateMovevmentForces(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds); // Apply forces
-  this.updatePosition();    // Update position based on forces
+  this.updatePosition(); // Update position based on forces
   this.borders();   // Keep animal in enclosure
   this.render();    // Render animal
   if (zoneCheck.checked() == true) {
