@@ -180,8 +180,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
     gzX = createVector(2250, 2400), gzY = createVector(0, 85);
 
     goal1 = createVector(470, 500), goal2 = createVector(470, 400);
-    goal3 = createVector(1000, 70), goal4 = createVector(1150, 70);
-    goal5 = createVector(1650, 50), goal6 = createVector(1800, 50);
+    goal3 = createVector(1100, 70), goal4 = createVector(1150, 70);
+    goal5 = createVector(1670, 750), goal6 = createVector(1800, 750);
     goal7 = createVector(2370, 35);
     shepGoals = [goal1, goal2, goal3, goal4, goal5, goal6, goal7];
 
@@ -205,19 +205,19 @@ ManageEnvironment.prototype.createNewEnv = function () {
     environment.addNovelty(n);
     var n = new NovelObject(2150,20,200, 30);
     environment.addNovelty(n);
+    var n = new NovelObject(1400,400,100,180);
+    environment.addNovelty(n);
 
     // Passing obstacles passing through positions and dimensions
-    var ob = new Obstacle(0, 440, 430, 20);
+    var ob = new Obstacle(0, 440, 430, 10);    // Left-Wall Between F1 and F2
     environment.addObstacle(ob);
-    var ob = new Obstacle(500, 440, 600, 20);
+    var ob = new Obstacle(500, 440, 600, 10);  // Right-Wall Between F1 and F2
     environment.addObstacle(ob);
-    // var ob = new Obstacle(0, 50, 2400, 20, 0);
-    // environment.addObstacle(ob);
-    var ob = new Obstacle(1080, 120, 20, 680, 0);
+    var ob = new Obstacle(1100, 100, 10, 700); // Wall between F1, F2 and F3
     environment.addObstacle(ob);
-    var ob = new Obstacle(1730, 90, 20, 720);
+    var ob = new Obstacle(1730, 0, 10, 720);   // Wall Betweem F3 and F4
     environment.addObstacle(ob);
-    var ob = new Obstacle(2010, 575, 50, 35);
+    var ob = new Obstacle(2010, 575, 50, 35);  // Massey
     environment.addObstacle(ob);
 
     var g = new Gate(2390, 10); // Create gate
@@ -245,8 +245,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
     goalX = 1100, goalY = 255;
     gzX = createVector(1100, 1250), gzY = createVector(155, 305);
 
-    goal1 = createVector(1050, 170), goal2 = createVector(1140, 170), goal3 = createVector(1100, 255);
-    shepGoals = [goal1, goal2, goal3];
+    goal1 = createVector(1030, 400), goal2 = createVector(1500, 400), goal3 = createVector(1450, 150), goal4 = createVector(1180,160), goal5 = createVector(1100, 255);
+    shepGoals = [goal1, goal2, goal3, goal4, goal5];
 
     oracleSearch = {
       dir: "tr",
@@ -271,25 +271,29 @@ ManageEnvironment.prototype.createNewEnv = function () {
     environment.addNovelty(n);
 
     // Create starting obstacles with starting positions and obstacles
-    var ob = new Obstacle(0, 0, 1500, 20, 0);
+    var ob = new Obstacle(1500, 0, 70, 150, 0);   // Shed Top-Right
     environment.addObstacle(ob);
-    var ob = new Obstacle(1500, 0, 70, 120, 0);
+    var ob = new Obstacle(1560, 150, 10, 130, 0); // Farm Exit
     environment.addObstacle(ob);
-    var ob = new Obstacle(1560, 120, 10, 160, 0);
+    var ob = new Obstacle(1615, 185, 160, 90, 0); // Sheds Far-Right
     environment.addObstacle(ob);
-    var ob = new Obstacle(1615, 185, 160, 90, 0);
+    var ob = new Obstacle(1525, 275, 100, 50, 0); // Oher Shed Right
     environment.addObstacle(ob);
-    var ob = new Obstacle(1525, 275, 100, 50, 0);
+    var ob = new Obstacle(1680, 270, 10, 550, 0); // Far-Right Wall
     environment.addObstacle(ob);
-    var ob = new Obstacle(1680, 270, 20, 550, 0);
+    var ob = new Obstacle(1050, 500, 640, 10, 0); // Bottom-Right Wall
     environment.addObstacle(ob);
-    var ob = new Obstacle(0, 450, 1700, 20, 0);
+    var ob = new Obstacle(1050, 430, 10, 70, 0);  // Bottom Vertical Wall
     environment.addObstacle(ob);
-    var ob = new Obstacle(1030, 180, 60, 170, 0);
+    var ob = new Obstacle(0, 430, 1055, 10, 0);   // Bottom-Left Wall
     environment.addObstacle(ob);
-    var ob = new Obstacle(1220, 180, 75, 170, 0);
+    var ob = new Obstacle(1030, 180, 60, 170, 0); // Left-Middle Shed
     environment.addObstacle(ob);
-    var ob = new Obstacle(1030, 350, 255, 20, 0);
+    var ob = new Obstacle(1220, 180, 75, 170, 0); // Right-Middle Shed
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1030, 350, 265, 10, 0); // Shed Divide Wall
+    environment.addObstacle(ob);
+    var ob = new Obstacle(1080, 0, 10, 180, 0);   // Top-Middle Shed
     environment.addObstacle(ob);
 
     var g = new Gate(1090, 230); // Create gate

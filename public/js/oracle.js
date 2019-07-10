@@ -54,7 +54,7 @@ Oracle.prototype.runTheShow = function (herd) { // Function which determines act
   }
 
   if (this.firstRun == false && bun == true) {
-    console.log("I.. I.. I.. Follow")  // If animals are bunched, move to centre of herd
+    // console.log("I.. I.. I.. Follow")  // If animals are bunched, move to centre of herd
     this.following = true;
     var follow = this.followHerd(herd);                // and keep passing positions to oracle shepherd
     this.applyForce(follow);
@@ -158,7 +158,7 @@ Oracle.prototype.locateFirstTarget = function () { // Function to find first tar
     target = this.targets.find(target => target.id.x === this.leftCol && target.id.y === this.topRow);
     this.startPos = "tl";
     this.movingUp = false;
-    this.isForDisplayStart = this.leftCol + ", " + this.topRow; 
+    this.isForDisplayStart = this.leftCol + ", " + this.topRow;
   } else if (this.startx < width / 2 && this.starty > width / 2) {
     target = this.targets.find(target => target.id.x === this.leftCol && target.id.y === this.bottomRow);
     this.startPos = "bl";
@@ -216,7 +216,7 @@ Oracle.prototype.calculateTarget = function (minSec, maxSec) {
         }
       this.movingUp = !this.movingUp;
     } else {
-      console.log("Why you do this")
+      // console.log("Why you do this")
     }
   } else if (this.startPos == "tr") {
     if (this.movingUp == false && this.currentTarget.id.y < bottomR) {
@@ -351,7 +351,8 @@ Oracle.prototype.keepSearching = function (herd) {
       this.rCol = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
     }
 
-    if (this.animals.length < herd.length-1 && this.start.diffstart == false) {
+    if (this.animals.length < herd.length && this.start.diffstart == false) {
+      console.log("I run yo")
       if (this.lCol >= 2) {
         this.lCol = this.lCol - 1;
       }
@@ -412,13 +413,13 @@ Oracle.prototype.keepSearching = function (herd) {
     if ((this.position.x - 5 < this.currentTarget.position.x && this.currentTarget.position.x < this.position.x + 5) && (this.position.y - 5 < this.currentTarget.position.y && this.currentTarget.position.y < this.position.y + 5)){
       this.firstSearch = false;
       this.targetNum = 0;
-      console.log("rcol: ", this.rCol)
-      console.log("row: ", this.bRow - (this.tRow - 1))
+      // console.log("rcol: ", this.rCol)
+      // console.log("row: ", this.bRow - (this.tRow - 1))
       this.numSectors = ((this.rCol - (this.lCol - 1))*(this.bRow - (this.tRow - 1))); // <---- -_-
-      console.log("Num Sectors: ", this.numSectors)
+      // console.log("Num Sectors: ", this.numSectors)
       this.animals.length = 0;
       this.start.diffStart = false;
-      console.log("My current target is : ", this.currentTarget)
+      // console.log("My current target is : ", this.currentTarget)
       // this.usingMinSec = !this.usingMinSec;
     }
   } else if (this.moving == false) {
@@ -436,9 +437,9 @@ Oracle.prototype.keepSearching = function (herd) {
   if ((this.position.x - 5 < this.currentTarget.position.x && this.currentTarget.position.x < this.position.x + 5) && (this.position.y - 5 < this.currentTarget.position.y && this.currentTarget.position.y < this.position.y + 5)){
     this.moving = false;
     this.targetNum ++;
-    console.log("Hit Target Number: ", this.targetNum);
+    // console.log("Hit Target Number: ", this.targetNum);
     this.saveAnimalPos(herd);
-    console.log("Saved co-ords");
+    // console.log("Saved co-ords");
   }
   return steer;
 }

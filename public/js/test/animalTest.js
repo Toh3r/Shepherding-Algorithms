@@ -6,7 +6,7 @@ function Animal(x,y, gx, gy, gzX, gzY, goals) {
   this.position = createVector(x,y); // Starting position
   this.r = 2.5;         // Animal size
   this.maxspeed = .1;   // Maximum speed
-  this.maxforce = 0.05; // Maximum steering force
+  this.maxforce = 0.03; // Maximum steering force
   this.velocity.setMag(0.1);   // Create starting velocity speed
   this.name = chance.first();  // Give every animal a random name
   this.stressLevel = 0;        // Starting stress level of animal
@@ -16,8 +16,9 @@ function Animal(x,y, gx, gy, gzX, gzY, goals) {
   this.red = random(255);      // Set colours for name
   this.green = random(255);
   this.blue = random(255);
-  this.timeCount = 5;          // Set starting timecount
+  this.timeCount = 5;          // Set starting timecount for speed reduce function
   this.reducingSpeed = false;  // Set boolean for setInterval
+  // ----- FOR WANDER BEHAVIOUR
   this.wanderRadius = 10;      // Set wander rule variables
   this.wanderDistance = 2.5;
   this.wanderCenter = 0;
@@ -25,21 +26,16 @@ function Animal(x,y, gx, gy, gzX, gzY, goals) {
   this.wanderForce = createVector(0,0);
   this.vocalizing = false;
   this.oldheading = 0;
-  // this.gate = createVector(gx, gy);
-  this.gateX = gx;
-  this.gateY = gy;
-  this.gzX = gzX;
-  this.gzY = gzY;
-  this.goals = goals;
-  this.goalCounter = 0;
+  this.goals = goals;   // Holds all goal points
+  this.goalCounter = 0; //
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS
 
 // Call functions for each animal each frame
 Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds) {
-  this.herd(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds); // Apply forces
-  this.update();    // Update position based on forces
+  this.accumulateMovevmentForces(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds); // Apply forces
+  this.updatePosition();    // Update position based on forces
   this.borders();   // Keep animal in enclosure
   this.render();    // Render animal
   if (zoneCheck.checked() == true) {
@@ -49,19 +45,15 @@ Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, mu
     this.showName();    // Render Animal info
   }
   if(forceCheck.checked() == true) {
-    this.renderForces();
+    this.renderForces(); // Render force zones
   }
 
-  // fill(255,30,30)
-  // stroke(0);
-  // ellipse(this.goals[this.goalCounter].x, this.goals[this.goalCounter].y, 10 ,10)
-  // for(var i = 0; i < this.goals.length; i++) {
-  //   ellipse(this.goals[i].x, this.goals[i].y, 10 ,10)
-  // }
-
-  // var avo = this.avoid(novelObjects);
-  // avo.mult(5);
-  // this.applyForce(avo);
+  fill(255,30,30)
+  stroke(0);
+  ellipse(this.goals[this.goalCounter].x, this.goals[this.goalCounter].y, 10 ,10)
+  for(var i = 0; i < this.goals.length; i++) {
+    ellipse(this.goals[i].x, this.goals[i].y, 10 ,10)
+  }
 }
 
 // Apply each behavioural rule to each animal
@@ -70,16 +62,16 @@ Animal.prototype.applyForce = function(force) {
 }
 
 // Accumulate a new acceleration each time based on all rules
-Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds) {
+Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds) {
   var sep = this.separate(herd);      // Separation
   var ali = this.align(herd);         // Alignment
   var coh = this.cohesion(herd);      // Cohesion
   var pre = this.pressure(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds);   // shepherds in pressure zone
   var fli = this.flightZone(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds); // shepherds in pressure zone
   var mov = this.move(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds);             // Steer herd
-  var goa = this.goal(herd);              // Seek (Goal area)
-  var avo = this.avoid(novelObjects); // Avoid Novelty
-  var bun = this.bunched(herd);       // Bunched
+  var goa = this.goal(herd);            // Seek (Goal area)
+  var avo = this.avoid(novelObjects);   // Avoid Novelty
+  var bun = this.bunched(herd);         // Bunched
   var obs = this.avoidObstacle(obstacles);
   var moveChance = int(random(1,20));
 
@@ -116,7 +108,9 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, m
     }
     if (this.oldFli > fli && bun == true) {
       this.timeCount = (Math.round(this.velocity.mag()*10));
-      this.speedRed();
+      if(dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) > 120) {
+        this.speedRed();
+      }
       mov.mult(dSepPreSlider.value());
       sep.mult(sepPreSlider.value());
       ali.mult(aliPreSlider.value());
@@ -131,7 +125,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, m
     coh.mult(cohWanSlider.value());
     this.maxspeed = wSpeedSlider.value();
     // this.velocity.setMag(wVelSlider.value());
-    if (this.oldPre > pre) {
+    if (this.oldPre > pre && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) > 120) {
       this.timeCount = Math.round(this.velocity.mag()*10);
       this.speedRed();
     }
@@ -171,7 +165,7 @@ Animal.prototype.herd = function(herd, shepherds, novelObjects, autoShepherds, m
 }
 
 // Method to update location
-Animal.prototype.update = function() {
+Animal.prototype.updatePosition = function() {
   // Update velocity
   this.velocity.add(this.acceleration);
   // Limit speed
@@ -604,11 +598,11 @@ Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, or
 // }
 // setting behaviour when animal comes within certain area of a gate
 Animal.prototype.goal = function () {
-  if (dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 200 && environment.checkBunched() == true) {
-    console.log("animal goal is runnung yo")
+  if (dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 120 && environment.checkBunched() == true) {
+    // console.log("animal goal is runnung yo")
     var gate = createVector(this.goals[this.goalCounter].x, this.goals[this.goalCounter].y);
     this.checkGoal(gate);
-    if (this.goalCounter == this.goals.length -1 && this.position.x > this.goals[this.goalCounter].x - 20 && this.position.x < this.goals[this.goalCounter].x + 20 && this.position.y > this.goals[this.goalCounter].y - 20 && this.position.y < this.goals[this.goalCounter].y) {
+    if (this.goalCounter == this.goals.length -1 && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 40) {
       console.log("Name of animal leaving: " + this.name);
       environment.hitTheGap(this);
     }
@@ -631,7 +625,7 @@ Animal.prototype.avoid = function (novelObjects) {
   // For every animal in the system, check if it's too close
   for (var i = 0; i < novelObjects.length; i++) {
 
-    var ex = novelObjects[i].w + 10, ey = novelObjects[i].h + 10; // Adding "+ whatever for size of flight zone"
+    var ex = novelObjects[i].w + 20, ey = novelObjects[i].h + 20; // Adding "+ whatever for size of flight zone"
     var xx = this.position.x - novelObjects[i].position.x
     var yy = this.position.y - novelObjects[i].position.y;
     var eyy = ey * sqrt(abs(ex * ex - xx * xx)) / ex;
@@ -744,20 +738,24 @@ Animal.prototype.avoidObstacle = function (obstacles) {
     var obs = obstacles[i];
     xReach = obs.w;
     yReach = obs.h;
-    if (this.position.x > obs.position.x && this.position.x < obs.position.x + xReach && this.position.y < obs.position.y + 5 && this.position.y > obs.position.y) {
+    if (this.position.x > obs.position.x && this.position.x < obs.position.x + xReach && this.position.y > obs.position.y - 5 && this.position.y < obs.position.y) {
       this.velocity.y *= -1;
+      this.position.y = obs.position.y - 5;
     } else if (this.position.x > obs.position.x && this.position.x < obs.position.x + xReach && this.position.y < obs.position.y + yReach + 5 && this.position.y > obs.position.y) {
       this.velocity.y *= -1;
+      this.position.y = obs.position.y + yReach + 5;
     } else if (this.position.y > obs.position.y && this.position.y < obs.position.y + yReach && this.position.x < obs.position.x + xReach + 5 && this.position.x > obs.position.x) {
       this.velocity.x *= -1;
+      this.position.x = obs.position.x + xReach + 5;
     } else if (this.position.y > obs.position.y && this.position.y < obs.position.y + yReach && this.position.x > obs.position.x - 5 && this.position.x < obs.position.x) {
       this.velocity.x *= -1;
+      this.position.x = obs.position.x - 5;
     }
   }
 }
 
 Animal.prototype.checkGoal = function (g) {
-  if (dist(this.position.x, this.position.y, g.x, g.y) < 20 && this.goalCounter < this.goals.length -1) {
+  if (dist(this.position.x, this.position.y, g.x, g.y) < 50 && this.goalCounter < this.goals.length -1) {
     this.goalCounter++;
   }
 }
