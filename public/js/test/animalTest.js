@@ -20,7 +20,7 @@ function Animal(x,y, gx, gy, gzX, gzY, goals) {
   this.reducingSpeed = false;  // Set boolean for setInterval
   // ----- FOR WANDER BEHAVIOUR
   this.wanderRadius = 10;      // Set wander rule variables
-  this.wanderDistance = 2.5;
+  this.wanderDistance = 1;
   this.wanderCenter = 0;
   this.wanderAngle = random(50);
   this.wanderForce = createVector(0,0);
@@ -149,6 +149,11 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
     }
   }
 
+  if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 100) {
+    goa.mult(0.1);
+    console.log("well")
+    this.timeCount = 4;
+  }
   avo.mult(0.3);
 
   // Add the force vectors to acceleration
@@ -491,15 +496,15 @@ Animal.prototype.wander = function() {
     displacement.mult(this.wanderRadius);
 
     this.setAngle(displacement, this.wanderAngle);
-    this.wanderAngle += random(-0.1, 0.1);
-
-    // fill(0,0,0,0.1);
-    // stroke(0);
-    // line(this.velocity.heading.x, this.position.y, this.wanderCenter.x, this.wanderCenter.y);
+    this.wanderAngle += random(-0.05, 0.05);
 
     this.wanderForce = this.wanderCenter.add(displacement);
-    // this.wanderForce.limit(this.maxForce);
+    // // this.wanderForce.limit(this.maxForce);
+    // fill(0,0,0,0.1);
+    // stroke(0);
+    // line(this.position.x, this.position.y, this.position.x + this.wanderForce.x + 20, this.position.y + this.wanderForce.y + 20);
 
+    this.wanderForce.normalize();
     this.wanderForce.mult(this.maxspeed);
     this.wanderForce.sub(this.velocity);
     this.wanderForce.limit(this.maxforce);
@@ -609,10 +614,10 @@ Animal.prototype.goal = function () {
     }
     var desired = p5.Vector.sub(gate, this.position);
     desired.normalize();
+    this.maxspeed = 1.5;
     desired.mult(this.maxspeed);
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
-    this.maxspeed = 3;
     return steer;
   }
 }
