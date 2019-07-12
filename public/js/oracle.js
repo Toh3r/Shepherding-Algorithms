@@ -5,9 +5,9 @@ function Oracle (x, y, gx, gy, os) { // Passing through starting co-ords, goal c
   this.acceleration = createVector(0,0); // Starting acceleration of 0
   this.velocity = createVector(0,0);     // Starting acceleration of 0
   this.position = createVector(x, y);    // Starting position
-  this.r = 3.0;         // Radius of Oracle
+  this.r = 2.5;         // Radius of Oracle
   this.maxspeed = 1;    // Starting Maxspeed
-  this.maxForce = 0.3;  // Max strength of forces
+  this.maxForce = 1;  // Max strength of forces
 
   // Searching/managing attributes
   this.firstSearch = true; // True when searching for first target
@@ -540,6 +540,7 @@ Oracle.prototype.createSectors = function () {  // Creates sectors in enclosure 
 }
 
 Oracle.prototype.drawSectors = function () { // Draws enclosure sectors and Oracle targets when checked
+  textSize(16);
   for (var i = 0; i < this.targets.length; i++) { // For loop to write label for each sector
     text(this.targets[i].id.x + "." + this.targets[i].id.y, this.targets[i].pos.x + 10, this.targets[i].pos.y);
   }

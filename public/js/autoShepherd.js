@@ -5,7 +5,7 @@ function AutoShepherd(x, y, gx, gy, shepGoals) {
   this.velocity = createVector(random(-1,1),random(-1,1));
   this.position = createVector(x, y);
   this.r = 3.0;
-  this.maxForce = 0.3;
+  this.maxForce = 1;
   this.maxspeed = uavSpeedSlider.value();
   this.movingUp = false;
   this.target = createVector(0,0);
