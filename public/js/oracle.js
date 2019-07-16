@@ -351,7 +351,7 @@ Oracle.prototype.keepSearching = function (herd) {
       this.rCol = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
     }
 
-    if (this.animals.length < herd.length && this.start.diffstart == false) {
+    if (this.animals.length < 10 && this.start.diffstart == false) {
       console.log("I run yo")
       if (this.lCol >= 2) {
         this.lCol = this.lCol - 1;

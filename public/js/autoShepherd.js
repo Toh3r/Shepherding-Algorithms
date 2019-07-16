@@ -1,27 +1,17 @@
 // Shepherd Class
 // Create shepherd attributes
-function AutoShepherd(x, y, gx, gy, shepGoals) {
+function AutoShepherd(startPos, shepGoals) {
   this.acceleration = createVector(0,0);
-  this.velocity = createVector(random(-1,1),random(-1,1));
-  this.position = createVector(x, y);
-  this.r = 3.0;
+  this.velocity = createVector(0,0);
+  this.position = createVector(startPos.x, startPos.y);
+  this.r = 2.5;
   this.maxForce = 1;
   this.maxspeed = uavSpeedSlider.value();
   this.movingUp = false;
   this.target = createVector(0,0);
   this.targetLock = false;
   this.oldTarget = createVector(0,0);
-  this.herdBottom = 0;
-  this.herdTop = 0;
-  this.herdLeft = 0;
-  this.herdRight = 0;
-  this.targetDir = "right";
   this.timestep = 0;
-  this.goalX = gx;
-  this.goalY = gy;
-  this.targets = [];    // Holds number of sectors in an environment
-  this.furthestAnimal = 0;
-  this.targetAnimal = {};
   this.oldTargetAnimal = {
     position: createVector(2000, 2000)
   }
@@ -45,21 +35,13 @@ AutoShepherd.prototype.run = function(herd) {
   this.herdAnimals(herd);
   if(lineCheck.checked() == true && herd.length > 0) {
     this.displayShepLines(herd);
-    // this.drawShepGoals();
   }
-  // if (this.targets.length == 0) { // Create sectors on first call
-  //   this.createSectors();
-  // }
-  // if (sectorCheck.checked() == true) { // Display enclosure sectors if checked (auto-checked on)
-  //   this.drawSectors();
-  // }
+  if (shepGoalCheck.checked() == true) {
+    this.drawShepGoals();
+  }
   if (herd.length > 0) {
     this.timestep++;
   }
-  // if (this.timestep % 50 == 0){
-  //   console.log("Timestep: " + this.timestep);
-  // }
-
 }
 
 // Apply each behavioural rule to each animal
@@ -388,7 +370,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     // this.maxspeed = 0.4;
     goal = this.avoidObstacle(center, goal, herd);
     if(this.wait = "true") {
-      this.maxspeed = 0.2;
+      this.maxspeed = 0.4;
       this.waitForAnimals();
     } else {
       this.wait = true;
@@ -522,6 +504,17 @@ AutoShepherd.prototype.targetInBounds = function (target) {
 AutoShepherd.prototype.outOfHerd = function (target) { //In herd
   fill(241, 244, 66, 100);
   stroke(66, 66, 244);
+  // quad(this.topLeft.x, this.topLeft.y, this.topRight.x, this.topRight.y, this.bottomRight.x, this.bottomRight.y, this.bottomLeft.x, this.bottomLeft.y);
+  // quad(this.topLeft.x, this.topLeft.y - 100, this.topRight.x, this.topRight.y - 100, this.topRight.x, this.topRight.y , this.topLeft.x, this.topLeft.y)
+  // quad(this.topRight.x, this.topRight.y, this.topRight.x + 100, this.topRight.y, this.bottomRight.x + 100, this.bottomRight.y , this.bottomRight.x, this.bottomRight.y)
+  // quad(this.bottomLeft.x, this.bottomLeft.y, this.bottomRight.x, this.bottomRight.y, this.bottomRight.x, this.bottomRight.y + 100, this.bottomLeft.x, this.bottomLeft.y + 100)
+  // quad(this.topLeft.x - 100, this.topLeft.y, this.topLeft.x, this.topLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x - 100, this.bottomLeft.y);
+  // quad(this.topLeft.x - 100, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y, this.topLeft.x - 100, this.topLeft.y)
+  // quad(this.topRight.x, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y, this.topRight.x, this.topRight.y)
+  // quad(this.bottomRight.x, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y + 100, this.bottomRight.x, this.bottomRight.y + 100)
+  // quad(this.bottomLeft.x - 100, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y + 100, this.bottomLeft.x - 100, this.bottomLeft.y + 100)
+  // stroke(66, 66, 244); // Around herd
+  // fill(255,30,30,100);
   if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y && this.position.y < this.bottomLeft.y) {
     stroke(66, 66, 244); // Around herd
     fill(255,30,30,100);

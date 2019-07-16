@@ -1,6 +1,6 @@
 // Animal class
 // Set Animal attributes
-function Animal(x,y, gx, gy, gzX, gzY, goals) {
+function Animal(x, y, goals) {
   this.acceleration = createVector(0,0); // Starting accelertion
   this.velocity = createVector(random(-1,1),random(-1,1)); // Create starting velocity direction
   this.position = createVector(x,y); // Starting position
@@ -49,12 +49,6 @@ Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, mu
     this.renderForces(); // Render force zones
   }
 
-  fill(255,30,30)
-  stroke(0);
-  ellipse(this.goals[this.goalCounter].x, this.goals[this.goalCounter].y, 10 ,10)
-  for(var i = 0; i < this.goals.length; i++) {
-    ellipse(this.goals[i].x, this.goals[i].y, 10 ,10)
-  }
 }
 
 // Apply each behavioural rule to each animal
@@ -70,7 +64,6 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
   var pre = this.pressure(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds);   // shepherds in pressure zone
   var fli = this.flightZone(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds); // shepherds in pressure zone
   var mov = this.move(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds);             // Steer herd
-  var goa = this.goal(herd);            // Seek (Goal area)
   var avo = this.avoid(novelObjects);   // Avoid Novelty
   var bun = this.bunched(herd);         // Bunched
   var obs = this.avoidObstacle(obstacles);
@@ -149,9 +142,9 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
     }
   }
 
-  if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 100) {
-    goa.mult(0.1);
-    console.log("well")
+  if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 120) {
+    var goa = this.goal(herd);            // Seek (Goal area)
+    goa.mult(0.3);
     this.timeCount = 4;
   }
   avo.mult(0.3);
@@ -604,8 +597,7 @@ Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, or
 // }
 // setting behaviour when animal comes within certain area of a gate
 Animal.prototype.goal = function () {
-  if (dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 120 && environment.checkBunched() == true) {
-    // console.log("animal goal is runnung yo")
+    console.log("animal goal is runnung yo")
     var gate = createVector(this.goals[this.goalCounter].x, this.goals[this.goalCounter].y);
     this.checkGoal(gate);
     if (this.goalCounter == this.goals.length -1 && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 40) {
@@ -614,12 +606,10 @@ Animal.prototype.goal = function () {
     }
     var desired = p5.Vector.sub(gate, this.position);
     desired.normalize();
-    this.maxspeed = 1.5;
     desired.mult(this.maxspeed);
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
     return steer;
-  }
 }
 
 // Try to avoid novel objects -- ** Code needs to be put out on the line **
@@ -765,7 +755,3 @@ Animal.prototype.checkGoal = function (g) {
     this.goalCounter++;
   }
 }
-
-// Animal.prototype.getDistance = function () {
-//
-// }

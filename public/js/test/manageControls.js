@@ -9,8 +9,9 @@ ManageControls.prototype.createControls = function () {
   var canvas = createCanvas(1000,600);
   img1 = loadImage('./css/images/Field1B.jpg'); // Load background images
   img2 = loadImage('./css/images/Field_1.jpg'); // Image to be used is selected in draw function
-  img3 = loadImage('./css/images/Field_2.jpg'); // in sketchTest
+  img3 = loadImage('./css/images/Field_2.jpg'); // in sketchTest Image by Gerd Altmann from Pixabay
   img4 = loadImage('./css/images/Field_3.jpg');
+  img5 = loadImage('./css/images/fence.jpg');
   canvas.parent('myCanvas'); // .parent allows item to manipulated on html page
 
   // frameRate(30); // Set Frame Rate
@@ -221,12 +222,20 @@ ManageControls.prototype.createControls = function () {
   nameCheck.parent("zoneDiv");
 
   // Create checkbox to display flight/Pressure zones
+  animalGoalCheck = createCheckbox("Show Animal Goals" , true);
+  animalGoalCheck.parent("zoneDiv");
+
+  // Create checkbox to display flight/Pressure zones
   lineCheck = createCheckbox("Show Shep Lines", true);
-  lineCheck.parent("zoneDiv");
+  lineCheck.parent("uavStuff");
+
+  // Create checkbox to display flight/Pressure zones
+  shepGoalCheck = createCheckbox("Show Shep Goals", true);
+  shepGoalCheck.parent("uavStuff");
 
   // Create checkbox to display flight/Pressure zones
   sectorCheck = createCheckbox("Show Sectors", true);
-  sectorCheck.parent("zoneDiv");
+  sectorCheck.parent("oracleStuff");
 
   // -------- START AUTO SHEPHERD --------
   droneHerd = createButton('GPS UAV');
@@ -271,7 +280,7 @@ ManageControls.prototype.createControls = function () {
   // fill(255, 0, 0);
 
   //  Select starting environment
-  envRadio._getInputChildrenArray()[0].checked = true;
+  envRadio._getInputChildrenArray()[3].checked = true;
 
   // Initialize new environment
   environment = new Environment();

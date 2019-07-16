@@ -13,6 +13,7 @@ Obstacle.prototype.run = function() {
 }
 
 Obstacle.prototype.render = function () {
+  rectMode(CORNER);
   fill(20,20,200, 130);
   stroke(20,20,200, 130);
   push();

@@ -13,21 +13,13 @@ ManageEnvironment.prototype.createNewEnv = function () {
     img = img1;      // Use image one loaded in manageControl.js
     canvas.parent('myCanvas');
 
-    sel.remove();
-    sel = createSelect();
-    sel.parent('addDrop');
-    sel.option('Add Animal');
-    sel.option('Add Shepherd');
-    sel.option('Add Novelty');
-    sel.option('Add Obstacle');
-    canvas.mouseClicked(addStuff);
+    resetDropdown();
 
-    shepX = 970, shepY = 250; // Create shepherd starting co-ords
-    goalX = 990, goalY = 255; // Create goal co-ords for shepherd and animal agents
-    gzX = createVector(850, 1000), gzY = createVector(180, 330); // Create goalzone co-ords
-
+    shepStartPos = createVector(990, 255); // Create shepherd starting co-ords
     goal1 = createVector(990, 255);
     shepGoals = [goal1];
+
+    animalGoals = [goal1];
 
     oracleSearch = {
       dir: "start"
@@ -36,12 +28,12 @@ ManageEnvironment.prototype.createNewEnv = function () {
     for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
       x = random(xMinAnimalsSlider.value(), xMaxAnimalsSlider.value());
       y = random(yMinAnimalsSlider.value(), yMaxAnimalsSlider.value());
-      var a = new Animal(x, y, goalX, goalY, gzX, gzY, shepGoals); // Pass through staring position, position of goal and position of goalZone
+      var a = new Animal(x, y, shepGoals); // Pass through staring position, position of goal and position of goalZone
       environment.addAnimal(a); // Positions of goal and goalZone used for removalfunction and goal function in animal class
     }
 
-    var g = new Gate(990, 230); // Create gate
-    environment.addGate(g);
+
+    environment.addGate(animalGoals);
   }
 
   // ------------ ENVIRONMENT 2 ------------
@@ -52,21 +44,13 @@ ManageEnvironment.prototype.createNewEnv = function () {
     img = img2;
     canvas.parent('myCanvas');
 
-    sel.remove();
-    sel = createSelect();
-    sel.parent('addDrop');
-    sel.option('Add Animal');
-    sel.option('Add Shepherd');
-    sel.option('Add Novelty');
-    sel.option('Add Obstacle');
-    canvas.mouseClicked(addStuff);
+    resetDropdown();
 
-    shepX = 970, shepY = 570; // Various Co-ords
-    goalX = 970, goalY = 580;
-    gzX = createVector(850, 1000), gzY = createVector(450, 600);
-
-    goal1 = createVector(970, 580);
+    shepStartPos = createVector(975, 580); // Create shepherd starting co-ords
+    goal1 = createVector(975, 580);
     shepGoals = [goal1];
+
+    animalGoals = [goal1];
 
     oracleSearch = {
       dir: "start"
@@ -75,7 +59,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
       x = random(201);
       y = random(501);
-      var a = new Animal(x, y, goalX, goalY, gzX, gzY, shepGoals);
+      var a = new Animal(x, y, animalGoals);
       environment.addAnimal(a);
     }
 
@@ -87,16 +71,16 @@ ManageEnvironment.prototype.createNewEnv = function () {
     var ob = new Obstacle(240, 240, 50, 50);
     environment.addObstacle(ob);
 
-    var g = new Gate(990, 580); // Create gate
+    var g = new Gate(animalGoals); // Create gate
     environment.addGate(g);
   }
 
-  // ------------ ENVIRONMENT 3 ------------
+  // ------------ BROKEN ENVIRONMENT 3 BROKEN ------------
   if (envRadio.value() == 3) {
 
     canvas.remove(); // Canvas
-    canvas = createCanvas(1800,600);
-    img = img3;
+    canvas = createCanvas(1000,600);
+    img = img5;
     canvas.parent('myCanvas');
 
     sel.remove();
@@ -166,24 +150,18 @@ ManageEnvironment.prototype.createNewEnv = function () {
     img = img4;
     canvas.parent('myCanvas');
 
-    sel.remove();
-    sel = createSelect();
-    sel.parent('addDrop');
-    sel.option('Add Animal');
-    sel.option('Add Shepherd');
-    sel.option('Add Novelty');
-    sel.option('Add Obstacle');
-    canvas.mouseClicked(addStuff);
+    resetDropdown();
 
-    shepX = 450, shepY = 450; // Create various co-ords
-    goalX = 2370, goalY = 35;
-    gzX = createVector(2250, 2400), gzY = createVector(0, 85);
+    shepStartPos = createVector(450, 450); // Create shepherd starting co-ords
+    goal1 = createVector(470, 450), goal2 = createVector(1100, 70);
+    goal3 = createVector(1735, 750), goal4 = createVector(2380, 35);
+    shepGoals = [goal1, goal2, goal3, goal4];
 
-    goal1 = createVector(470, 500), goal2 = createVector(470, 400);
-    goal3 = createVector(1100, 70), goal4 = createVector(1150, 70);
-    goal5 = createVector(1670, 750), goal6 = createVector(1800, 750);
-    goal7 = createVector(2370, 35);
-    shepGoals = [goal1, goal2, goal3, goal4, goal5, goal6, goal7];
+    aGoal1 = createVector(470, 500), aGoal2 = createVector(470, 400);
+    aGoal3 = createVector(1050, 70), aGoal4 = createVector(1150, 70);
+    aGoal5 = createVector(1670, 750), aGoal6 = createVector(1800, 750);
+    aGoal7 = createVector(2380, 35);
+    animalGoals = [aGoal1, aGoal2, aGoal3, aGoal4, aGoal5, aGoal6, aGoal7];
 
     oracleSearch = {
       dir: "tl",
@@ -196,7 +174,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     for (var i = 0; i < numAnimalsSlider.value(); i++) {
       x = random(801);
       y = random(551,751);
-      var a = new Animal(x, y, goalX, goalY, gzX, gzY, shepGoals);
+      var a = new Animal(x, y, animalGoals);
       environment.addAnimal(a);
     }
 
@@ -220,7 +198,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     var ob = new Obstacle(2010, 575, 50, 35);  // Massey
     environment.addObstacle(ob);
 
-    var g = new Gate(2390, 10); // Create gate
+    var g = new Gate(animalGoals); // Create gate
     environment.addGate(g);
   }
 
@@ -232,21 +210,25 @@ ManageEnvironment.prototype.createNewEnv = function () {
     img = img3;
     canvas.parent('myCanvas');
 
-    sel.remove();
-    sel = createSelect();
-    sel.parent('addDrop');
-    sel.option('Add Animal');
-    sel.option('Add Shepherd');
-    sel.option('Add Novelty');
-    sel.option('Add Obstacle');
-    canvas.mouseClicked(addStuff);
+    resetDropdown();
 
     shepX = 1030, shepY = 165; // Create various co-ords
     goalX = 1100, goalY = 255;
     gzX = createVector(1100, 1250), gzY = createVector(155, 305);
 
-    goal1 = createVector(1030, 400), goal2 = createVector(1500, 400), goal3 = createVector(1450, 150), goal4 = createVector(1180,160), goal5 = createVector(1100, 255);
+    goal1 = createVector(1030, 400), goal2 = createVector(1500, 400);
+    goal3 = createVector(1450, 150), goal4 = createVector(1180,160), goal5 = createVector(1100, 255);
     shepGoals = [goal1, goal2, goal3, goal4, goal5];
+
+    shepStartPos = createVector(1030, 165); // Create shepherd starting co-ords
+    goal1 = createVector(1030, 400), goal2 = createVector(1350, 400);
+    goal3 = createVector(1350, 150), goal4 = createVector(1180,160);
+    goal5 = createVector(1100, 255);
+    shepGoals = [goal1, goal2, goal3, goal4, goal5];
+
+    aGoal1 = createVector(1030, 400), aGoal2 = createVector(1250,160);
+    aGoal3 = createVector(1100, 240);
+    animalGoals = [aGoal1, aGoal2, aGoal3];
 
     oracleSearch = {
       dir: "tr",
@@ -258,14 +240,14 @@ ManageEnvironment.prototype.createNewEnv = function () {
     for (var i = 0; i < numAnimalsSlider.value(); i++) {   //Create starting animals in random positions
       x = random(100,251);
       y = random(50,351);
-      var a = new Animal(x, y, goalX, goalY, gzX, gzY, shepGoals);
+      var a = new Animal(x, y, animalGoals);
       environment.addAnimal(a);
     }
 
     // Create novelties with starting positions and dimensions
     var n = new NovelObject(1050,50,300,90);
     environment.addNovelty(n);
-    var n = new NovelObject(1400,265,45,90);
+    var n = new NovelObject(1400,265,45,80);
     environment.addNovelty(n);
     var n = new NovelObject(700,260,45,75);
     environment.addNovelty(n);
@@ -296,7 +278,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     var ob = new Obstacle(1080, 0, 10, 180, 0);   // Top-Middle Shed
     environment.addObstacle(ob);
 
-    var g = new Gate(1090, 230); // Create gate
+    var g = new Gate(animalGoals); // Create gate
     environment.addGate(g);
   }
 
@@ -306,7 +288,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
 function addStuff() {
   var dropSelect = sel.value();
   if (dropSelect == "Add Animal") {
-    environment.addAnimal(new Animal(mouseX, mouseY, goalX, goalY, gzX, gzY, shepGoals));
+    environment.addAnimal(new Animal(mouseX, mouseY, animalGoals));
   }
   if (dropSelect == "Add Shepherd") {
     environment.addShepherd(new Shepherd(mouseX, mouseY));
@@ -337,10 +319,21 @@ function deleteAll() {
   environment.removeAll();
 }
 
+function resetDropdown() {
+  sel.remove();
+  sel = createSelect();
+  sel.parent('addDrop');
+  sel.option('Add Animal');
+  sel.option('Add Shepherd');
+  sel.option('Add Novelty');
+  sel.option('Add Obstacle');
+  canvas.mouseClicked(addStuff);
+}
+
 // ---------- FUNCTIONS TO CREATE SHEPHERDS ON BUTTON CLICKS ----------
 function herd() {
   console.log("Goin' Herding");
-  environment.addAutoShepherd(new AutoShepherd(shepX, shepY, goalX, goalY, shepGoals));
+  environment.addAutoShepherd(new AutoShepherd(shepStartPos,shepGoals));
 }
 
 function oracle() {
