@@ -29,6 +29,7 @@ function Animal(x, y, goals) {
   this.oldheading = 0;
   this.goals = goals;    // Holds all goal points
   this.goalCounter = 0;  // Holds current goal point
+  this.inFlightZone = 0;
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS
@@ -76,6 +77,7 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
 
   // WHEN SHEPHERD IN FLIGHT ZONE
   if (fli > 0) {
+    this.inFlightZone += 1;
     mov.mult(dSepFliSlider.value());
     sep.mult(sepFliSlider.value());
     ali.mult(aliFliSlider.value());
@@ -86,6 +88,7 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
 
   // WHEN SHEPHERD IN PRESSURE ZONE
   if (pre > 0) {
+    this.inFlightZone = 0;
     if (bun == false) {
       this.maxspeed = pSpeedSlider.value();
       this.velocity.setMag(pVelSlider.value());
@@ -114,6 +117,7 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
 
   // WHEN SHEPHERDS ARE NOT IN EITHER ZONE
   if (!pre && !fli) {
+    this.inFlightZone = 0;
     sep.mult(sepWanSlider.value());
     ali.mult(aliWanSlider.value());
     coh.mult(cohWanSlider.value());
@@ -193,17 +197,14 @@ Animal.prototype.seek = function(target) {
 Animal.prototype.render = function () {
   // Draw a triangle rotated in the direction of velocity
   var theta = this.velocity.heading() + radians(90);
-  // var theta = -1.5 + radians(90);
   fill(0, 0, 0);
   stroke(255);
   push();
   translate(this.position.x,this.position.y);
   rotate(theta);
   beginShape();
-  vertex(0, -this.r*1.5);
-  vertex(-this.r, this.r*2.5);
-  vertex(this.r, this.r*2.5);
-  // rect(0, 0, 25, 15, 10, 0);
+  ellipse(0,0, 5, 10)
+  ellipse(0,-5,5,5)
   endShape(CLOSE);
   pop();
 }
@@ -563,7 +564,9 @@ Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, or
   // Average -- divide by how many
   if (count > 0) {
     steer.div(count);
-    this.stressLevel = (this.stressLevel + 0.01);
+    if (this.inFlightZone > 150) {
+      this.stressLevel = (this.stressLevel + 0.01);
+    }
   }
 
   // As long as the vector is greater than 0
@@ -577,27 +580,8 @@ Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, or
   return steer;
 }
 
-// ----- ANIMAL BEHAVIOURAL RULES WITH ENVIRONMENT
-
-// // setting behaviour when animal comes within certain area of a gate
-// Animal.prototype.goal = function () {
-//   if (this.position.x > this.gzX.x && this.position.x < this.gzX.y && this.position.y > this.gzY.x && this.position.y < this.gzY.y) {
-//     var gate = createVector(this.gateX, this.gateY);
-//     if (this.position.x > this.gateX - 20 && this.position.x < this.gateX + 20 && this.position.y > this.gateY - 20 && this.position.y < this.gateY + 20) {
-//       console.log("Name of animal leaving: " + this.name);
-//       environment.hitTheGap(this);
-//     }
-//     var desired = p5.Vector.sub(gate, this.position);
-//     desired.normalize();
-//     desired.mult(this.maxspeed);
-//     var steer = p5.Vector.sub(desired, this.velocity);
-//     steer.limit(this.maxforce);
-//     return steer;
-//   }
-// }
 // setting behaviour when animal comes within certain area of a gate
 Animal.prototype.goal = function () {
-    console.log("animal goal is runnung yo")
     var gate = createVector(this.goals[this.goalCounter].x, this.goals[this.goalCounter].y);
     this.checkGoal(gate);
     if (this.goalCounter == this.goals.length -1 && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 40) {
@@ -640,17 +624,11 @@ Animal.prototype.avoid = function (novelObjects) {
       count++;            // Keep track of how many
     }
   }
-  // if (count > 0) {
-  //   // console.log("Count: ", count);
-  // }
 
   // Average -- divide by how many
   if (count > 0) {
     steer.div(count);
-    // this.velocity.setMag(0.1);
     this.vocalizing = true;
-    // console.log("Vocalizing");
-    // console.log("Vocalizing");
     this.stressLevel = (this.stressLevel + 0.1);
   } else {
     this.vocalizing = false;
@@ -665,42 +643,6 @@ Animal.prototype.avoid = function (novelObjects) {
     steer.limit(this.maxforce);
   }
   return steer;
-  // var desiredseparation = 50.0;
-  // var steer = createVector(0,0);
-  // var count = 0;
-  // // For every animal in the system, check if it's too close
-  // for (var i = 0; i < novelObjects.length; i++) {
-  //   var d = p5.Vector.dist(this.position,novelObjects[i].position);
-  //   // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
-  //   if ((d > 0) && (d < desiredseparation)) {
-  //     // Calculate vector pointing away from neighbor
-  //     var diff = p5.Vector.sub(this.position,novelObjects[i].position);
-  //     diff.normalize();
-  //     diff.div(d);        // Weight by distance
-  //     steer.add(diff);
-  //     count++;            // Keep track of how many
-  //   }
-  // }
-  // // Average -- divide by how many
-  // if (count > 0) {
-  //   steer.div(count);
-  //   // this.velocity.setMag(0.1);
-  //   this.vocalizing = true;
-  //   // console.log("Vocalizing");
-  //   this.stressLevel = (this.stressLevel + 0.1);
-  // } else {
-  //   this.vocalizing = false;
-  // }
-  //
-  // // As long as the vector is greater than 0
-  // if (steer.mag() > 0) {
-  //   // Implement Reynolds: Steering = Desired - Velocity
-  //   steer.normalize();
-  //   steer.mult(this.maxspeed);
-  //   steer.sub(this.velocity);
-  //   steer.limit(this.maxforce);
-  // }
-  // return steer;
 }
 
 // ----- ANIMAL SPEED FUNCTIONS

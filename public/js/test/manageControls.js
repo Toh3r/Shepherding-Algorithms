@@ -70,12 +70,12 @@ ManageControls.prototype.createControls = function () {
   aliWanOut = createElement("h6", aliWanSlider.value());
   aliWanOut.parent('aliWan');
 
-  aliPreSlider = createSlider(0, 5, 0.5, 0.1);
+  aliPreSlider = createSlider(0, 5, 0.7, 0.1);
   aliPreSlider.parent('aliPre');
   aliPreOut = createElement("h6", aliPreSlider.value());
   aliPreOut.parent('aliPre');
 
-  aliFliSlider = createSlider(0, 5, 0.5, 0.1);
+  aliFliSlider = createSlider(0, 5, 0.7, 0.1);
   aliFliSlider.parent('aliFli');
   aliFliOut = createElement("h6", aliFliSlider.value());
   aliFliOut.parent('aliFli');
@@ -279,8 +279,14 @@ ManageControls.prototype.createControls = function () {
   // textAlign(CENTER);
   // fill(255, 0, 0);
 
+  collectRadio = createRadio();
+  collectRadio.parent("collectRadio");
+  collectRadio.option('FFHC', 1);
+  collectRadio.option('ZZ', 2);
+
   //  Select starting environment
   envRadio._getInputChildrenArray()[3].checked = true;
+  collectRadio._getInputChildrenArray()[0].checked = true;
 
   // Initialize new environment
   environment = new Environment();

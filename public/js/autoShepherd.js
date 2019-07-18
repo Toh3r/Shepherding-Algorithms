@@ -1,30 +1,30 @@
 // Shepherd Class
 // Create shepherd attributes
-function AutoShepherd(startPos, shepGoals) {
-  this.acceleration = createVector(0,0);
+function AutoShepherd(startPos, shepGoals) { // Pass through starting position and goal points/exit point
+  this.acceleration = createVector(0,0);     // Creating starting variables
   this.velocity = createVector(0,0);
   this.position = createVector(startPos.x, startPos.y);
-  this.r = 2.5;
-  this.maxForce = 1;
+  this.maxForce = 0.6;
   this.maxspeed = uavSpeedSlider.value();
-  this.movingUp = false;
+  this.timestep = 0;
+  this.movingUp = false;            // ----- Herd Moving variables
   this.target = createVector(0,0);
   this.targetLock = false;
   this.oldTarget = createVector(0,0);
-  this.timestep = 0;
   this.oldTargetAnimal = {
     position: createVector(2000, 2000)
   }
   this.switchingActions = false;
   this.collectBool = true;
   this.moveBool = false;
-  this.avoidHerdBool = false;
-  this.shepGoals = shepGoals;
+  this.shepGoals = shepGoals;       // ----- Goal variables
   this.goalCounter = 0;
   this.oldMovement = "starting";
+  this.avoidHerdBool = false;       // ----- Avoiding variables
   this.avoiding = false;
   this.timeCount = 2;
   this.wait = true;
+  this.firstAvoid = false;
 }
 
 // Call methods for each shepherd
@@ -33,13 +33,13 @@ AutoShepherd.prototype.run = function(herd) {
   this.borders();
   this.render();
   this.herdAnimals(herd);
-  if(lineCheck.checked() == true && herd.length > 0) {
+  if(lineCheck.checked() == true && herd.length > 0) { // Display shepherd tagets/lines
     this.displayShepLines(herd);
   }
-  if (shepGoalCheck.checked() == true) {
+  if (shepGoalCheck.checked() == true) { // Display Shepherd Goal Points
     this.drawShepGoals();
   }
-  if (herd.length > 0) {
+  if (herd.length > 0) { // Count time steps
     this.timestep++;
   }
 }
@@ -50,24 +50,25 @@ AutoShepherd.prototype.applyForce = function(force) {
 }
 
 AutoShepherd.prototype.herdAnimals = function (herd) {
-  if (herd.length == 0) {
+  if (herd.length == 0) { // When no animals, stop UAV movement
     this.maxspeed = 0;
   }
-
-  var bun = this.bunched(herd);
-  if (bun == true) {
+  var bun = this.bunched(herd); // Check if herd is bunched
+  if (bun == true) {  	        // If bunched, call move function
     var mov = this.moveAnimals(herd);
     this.applyForce(mov);
-    this.collectBool = false;
+    this.collectBool = false;  // Booleans for UI output
     this.moveBool = true;
   }
 
-  if (bun == false) {
-    // var col = this.collectAnimals(herd);
-    // this.applyForce(col);
-    var adCol = this.advanceCollect(herd);
-    this.applyForce(adCol);
-    this.collectBool = true;
+  if (bun == false) { // If false, call collecting function
+    if (collectRadio.value() == 1) { // FFHC Collect
+      var col = this.advanceCollect(herd);
+    } else if (collectRadio.value() == 2) { // ZZ Collect
+      var col = this.collectAnimals(herd);
+    }
+    this.applyForce(col);
+    this.collectBool = true; // Booleans for UI output
     this.moveBool = false;
   }
 
@@ -75,28 +76,22 @@ AutoShepherd.prototype.herdAnimals = function (herd) {
 
 // Method to update location
 AutoShepherd.prototype.update = function() {
-  // Update velocity
-  this.velocity.add(this.acceleration);
-  // Limit speed
-  this.velocity.limit(this.maxspeed);
-  this.position.add(this.velocity);
-  // Reset accelertion to 0 each cycle
-  this.acceleration.mult(0);
+  this.velocity.add(this.acceleration); // Update velocity
+  this.velocity.limit(this.maxspeed);   // Limit speed
+  this.position.add(this.velocity);     // Update position
+  this.acceleration.mult(0);            // Reset accelertion to 0 each cycle
 }
 
 // Method to prevent shepherd from leaving enclosure
+// Keep position just inside edge
 AutoShepherd.prototype.borders = function () {
   if (this.position.x < 10) {
-    this.velocity.x *= -1;
     this.position.x = 10;
   } else if (this.position.y < 10) {
-    this.velocity.y *= -1;
     this.position.y = 10;
   } else if (this.position.x > width - 10) {
-    this.velocity.x *= -1;
     this.position.x = width - 15;
   } else if (this.position.y > height - 10) {
-    this.velocity.y *= -1;
     this.position.y = height - 10;
   }
 }
@@ -111,27 +106,30 @@ AutoShepherd.prototype.render = function() {
   translate(this.position.x,this.position.y);
   rotate(theta);
   beginShape();
-  vertex(0, -this.r*1.5);
-  vertex(-this.r, this.r*1.5);
-  vertex(this.r, this.r*1.5);
+  ellipse(-5, 0, 5,5); // 2
+  ellipse(0, 0, 5,5); // 4
+  fill(0,0,255);
+  ellipse(-5,-5, 5,5); // 1
+  ellipse(0,-5, 5,5); // 3
   endShape(CLOSE);
   pop();
 }
 
+// Fubction to calculate if herd is bunched and create secter used for herd avoidance
 AutoShepherd.prototype.bunched = function (herd) {
+  // Find positions furthest animals in each direction
   this.herdBottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
   this.herdTop = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
   this.herdLeft = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
   this.herdRight = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
 
+  // Use these positions to create corners of the herd zone
   this.topLeft = createVector(this.herdLeft, this.herdTop);
   this.topRight =  createVector(this.herdRight, this.herdTop);
   this.bottomLeft =  createVector(this.herdLeft, this.herdBottom);
   this.bottomRight =  createVector(this.herdRight, this.herdBottom);
 
-  fill(0,255,255)
-  ellipse(this.herdLeft, this.herdTop)
-
+  // Create corner sectors used for herd aversion
   this.sec5 = { // Top Left Corner
     tl: createVector(this.topLeft.x - 100, this.topLeft.y - 100),
     tr: createVector(this.topLeft.x, this.topLeft.y - 100),
@@ -157,28 +155,25 @@ AutoShepherd.prototype.bunched = function (herd) {
     bl: createVector(this.bottomLeft.x - 100, this.bottomLeft.y + 100)
   }
 
-  var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
-  var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
-
-  // line(this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y, herdX, herdY);
-
-  herDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
-  if (herDist < 200) {
+  // Return if herd is bunched or not
+  herdDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
+  if (herdDist < 200) {
     return true;
   } else {
     return false;
   }
+
 }
 
+// ----------- ZIG-ZAG COLLECTING -----------
 AutoShepherd.prototype.collectAnimals = function (herd) {
-  this.oldMovement = "collecting";
+  this.oldMovement = "collecting"; // Set current movement
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
-
   var center = createVector(herdX, herdY); // Centre co-ords of herd
-  // var goal = createVector(this.goalX,this.goalY); // Location of exit
   var goal = this.shepGoals[this.goalCounter];
 
+  // Functions to deal with stressor aversion if necessary
   if (environment.vocalizing() == true && herd.length > 0) {
     this.avoiding = true;
     if(this.wait = "false") {
@@ -189,23 +184,20 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
     }
   } else if (environment.vocalizing() == false && herd.length > 0) {
     this.wait = false;
-    this.avoid1 = false;
-    this.avoid2 = false;
-    this.avoid3 = false;
-    this.avoid4 = false;
     this.maxspeed = uavSpeedSlider.value();
     this.avoiding = false;
   }
 
-  animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
+  animalFL = Math.abs(herdX - this.herdLeft);   // Cords of animal furthest left
   animalFR = Math.abs(herdX - this.herdRight);  // Cords of animal furthest right
-  animalFT = Math.abs(herdY - this.herdTop); // Cords of animal furthest top
+  animalFT = Math.abs(herdY - this.herdTop);    // Cords of animal furthest top
   animalFB = Math.abs(herdY - this.herdBottom); // Cords of animal furthest bottom
   furthestAnimal = Math.max(animalFL, animalFR, animalFT, animalFB);
 
+  var myLine = this.findClosestAnimal(herd, center);
   // Lines to flight zone and pressure zone
-  let l2fz = this.adjustLineLen(center,goal,furthestAnimal+20);
-  let l2pz = this.adjustLineLen(center,goal,furthestAnimal+60);
+  let l2fz = this.adjustLineLen(center,goal,myLine+20);
+  let l2pz = this.adjustLineLen(center,goal,myLine+60);
 
   // Get co-ords for flight zone line points
   let fzp1 = this.createPCo1(l2fz.x,l2fz.y,herdX,herdY);
@@ -223,24 +215,26 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
  if (this.movingUp == false) {
    var target = createVector(pzp1.x,pzp1.y);
    this.targetInBounds(target);
+   this.outOfHerd(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
-   if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
+   if (dist(this.position.x, this.position.y, target.x, target.y) < 5){
      this.movingUp = true;
    }
    return steer;
  } else if (this.movingUp == true) {
    var target = createVector(pzp2.x,pzp2.y);
    this.targetInBounds(target);
+   this.outOfHerd(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
-   if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
+   if (dist(this.position.x, this.position.y, target.x, target.y) < 5) {
      this.movingUp = false;
    }
    return steer;
@@ -248,62 +242,51 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
 }
 
 AutoShepherd.prototype.advanceCollect = function (herd) {
-  this.oldMovement = "collecting";
+  this.oldMovement = "collecting"; // Set movement type to collecting
   this.avoidHerdBool = false;
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
+  var center = createVector(herdX, herdY);          // Centre co-ords of herd
+  var goal = this.shepGoals[this.goalCounter];      // Current Goal Point
 
-  var center = createVector(herdX, herdY); // Centre co-ords of herd
-  // var goal = createVector(this.goalX,this.goalY); // Location of exit
-  var goal = this.shepGoals[this.goalCounter];
-
+  // Functions to deal with stressor avoidance
   if (environment.vocalizing() == true && herd.length > 0) {
     this.avoiding = true;
     this.maxspeed = 0.5;
-    goal = this.avoidObstacle(center, goal, herd);
+    goal = this.avoidObstacle(center, goal, herd); // function to switch target points
   } else if (environment.vocalizing() == false && herd.length > 0) {
     this.maxspeed = uavSpeedSlider.value();
     this.avoiding = false;
   }
 
+  // Locate furthest animal from centre of herd
   var furthestPos = 0;
   for (var i = 0; i < herd.length; i++) {
     currentDist = dist(herd[i].position.x, herd[i].position.y, herdX, herdY);
     if (currentDist > furthestPos) {
       furthestPos = currentDist;
-      this.targetAnimal = herd[i];
+      this.targetAnimal = herd[i]; // Make it the targeted animal
     }
   }
 
+  // Draw circle around target animal
   if (herd.length > 0) {
     fill(255,0,0, 20);
     stroke(0);
     ellipse(this.targetAnimal.position.x, this.targetAnimal.position.y, 20,20);
+    ellipse(this.oldTargetAnimal.position.x, this.oldTargetAnimal.position.y, 20,20)
   }
 
+  //
   var comp1 = dist(this.targetAnimal.position.x, this.targetAnimal.position.y, herdX, herdY);
   var comp2 = dist(this.oldTargetAnimal.position.x, this.oldTargetAnimal.position.y, herdX, herdY);
 
-  if(Math.abs(comp1 - comp2) < 30) {
+  if(Math.abs(comp1 - comp2) < 30) { // Keep old target animal if distance to
     this.targetAnimal = this.oldTargetAnimal;
-  }
-
-  if (herd.length > 0) {
-    fill(255,0,0, 20);
-    stroke(0);
-    ellipse(this.targetAnimal.position.x, this.targetAnimal.position.y, 20,20);
-    ellipse(center.x, center.y, 10,10);
-    line(center.x, center.y, this.targetAnimal.position.x, this.targetAnimal.position.y);
   }
 
   let fz2hc = this.adjustLineLen(this.targetAnimal.position, center, 40);
   let pz2hc = this.adjustLineLen(this.targetAnimal.position, center, 70);
-  if (herd.length > 0) {
-    line(pz2hc.x, pz2hc.y, center.x, center.y);
-    fill(0,255,0)
-    stroke(0,255,0);
-    line(fz2hc.x, fz2hc.y, center.x, center.y);
-  }
 
   // Get co-ords for flight zone line points
   let fzp10 = this.createPCo1(fz2hc.x,fz2hc.y,pz2hc.x,pz2hc.y);
@@ -312,17 +295,20 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
   let pzp10 = this.createPCo1(pz2hc.x,pz2hc.y,fz2hc.x, fz2hc.y);
   let pzp20 = this.createPCo2(pz2hc.x,pz2hc.y,fz2hc.x, fz2hc.y);
 
-  if (herd.length > 0) {
+  if (herd.length > 0) { // Draw herding lines/target points
+    fill(0,255,0)
+    stroke(0,255,0);
+    line(pz2hc.x, pz2hc.y, center.x, center.y);
+    line(fz2hc.x, fz2hc.y, center.x, center.y);
     ellipse(fzp10.x, fzp10.y, 10,10);
     ellipse(fzp20.x, fzp20.y, 10,10);
     ellipse(pzp10.x, pzp10.y, 10,10);
     ellipse(pzp20.x, pzp20.y, 10,10);
-
     line(fzp10.x, fzp10.y,fzp20.x, fzp20.y)
     line(pzp10.x, pzp10.y,pzp20.x, pzp20.y)
   }
 
-  this.oldTargetAnimal = this.targetAnimal;
+  this.oldTargetAnimal = this.targetAnimal; //
 
  if (this.movingUp == false) {
    var target = createVector(fzp10.x,fzp10.y);
@@ -334,8 +320,7 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
    if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
-     this.movingUp = true;
-     // console.log("Hit it");
+     this.movingUp = !this.movingUp;
    }
    return steer;
  } else if (this.movingUp == true) {
@@ -347,9 +332,8 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
-   if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
-     this.movingUp = false;
-     // console.log("Hit it");
+   if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)) {
+     this.movingUp = !this.movingUp;
    }
    return steer;
  }
@@ -361,38 +345,33 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
   var center = createVector(herdX, herdY); // Centre co-ords of herd
-  // var goal = createVector(this.goalX,this.goalY); // Location of exit
   var goal = this.shepGoals[this.goalCounter];
   this.checkGoal(center, goal);
 
   if (environment.vocalizing() == true && herd.length > 0) {
     this.avoiding = true;
-    // this.maxspeed = 0.4;
     goal = this.avoidObstacle(center, goal, herd);
     if(this.wait = "true") {
       this.maxspeed = 0.4;
       this.waitForAnimals();
     } else {
-      this.wait = true;
-      this.maxspeed = 0.4;
-      // goal = this.avoidObstacle(center, goal, herd);
+      this.wait = false;
     }
-    // goal = this.avoidObstacle(center, goal, herd);
   } else if (environment.vocalizing() == false && herd.length > 0) {
+    if(this.avoiding == true) {
+      this.switchingActions = true;
+      this.avoiding = false;
+    }
     this.maxspeed = uavSpeedSlider.value();
     this.avoiding = false;
   }
 
-  animalFL = Math.abs(herdX - this.herdLeft); // Cords of animal furthest left
-  animalFR = Math.abs(herdX - this.herdRight);  // Cords of animal furthest right
-  animalFT = Math.abs(herdY - this.herdTop); // Cords of animal furthest top
-  animalFB = Math.abs(herdY - this.herdBottom); // Cords of animal furthest bottom
-  furthestAnimal = Math.max(animalFL, animalFR, animalFT, animalFB);
-
   var myLine = this.findClosestAnimal(herd, center);
-  // console.log("furthestAnimal: ", furthestAnimal);
-  // console.log("myLine: ", myLine);
-
+  if (myLine < 20) {
+    myLine = 20;
+  } else if (myLine > 100) {
+    myLine = 100;
+  }
   // Lines to flight zone and pressure zone
   let l2fz = this.adjustLineLen(center,goal,myLine+20);
   let l2pz = this.adjustLineLen(center,goal,myLine+60);
@@ -412,22 +391,35 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
 
   herdHeading = this.checkHeading(herd);
 
-  if (this.movingUp == false) {
-    // if (this.targetLock == false) {
-      if (environment.avgSpeed() < 0.35 || !(-0.75 < herdHeading && herdHeading < 0.75)) {
-        // console.log("t1")
-        var target = createVector(fzp1.x,fzp1.y);
-        // this.targetLock = true;
-      } else {
-        // console.log("t1")
-        var target = createVector(pzp1.x,pzp1.y);
-        // this.targetLock = true;
-      }
-    // } else {
-    //   var target = this.oldTarget;
-    // }
+  if(this.firstAvoid == true) {
+    if (dist(fzp1.x, fzp1.y, this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y) > dist(fzp2.x, fzp2.y, this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y)) {
+      this.movingUp = false;
+      this.firstAvoid = false;
+      console.log("First Avoid Moving Up false")
+    } else if (dist(fzp2.x, fzp2.y, this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y) > dist(fzp1.x, fzp1.y, this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y)) {
+      this.movingUp = true;
+      this.firstAvoid = false;
+      console.log("First Avoid Moving Up true")
+    }
+  }
 
-    // this.outOfHerd(target);
+  if(this.switchingActions == true) {
+    console.log("Switch running")
+    if (dist(this.position.x, this.position.y, fzp1.x, fzp1.y) > dist(this.position.x, this.position.y, fzp2.x, fzp2.y)) {
+      this.movingUp = false;
+      this.switchingActions = false;
+    } else if (dist(this.position.x, this.position.y, fzp2.x, fzp2.y) > dist(this.position.x, this.position.y, fzp1.x, fzp1.y)) {
+      this.movingUp = true;
+      this.switchingActions = false;
+    }
+  }
+
+  if (this.movingUp == false) {
+      if (environment.avgSpeed() < 0.35 || !(-0.75 < herdHeading && herdHeading < 0.75)) {
+        var target = createVector(fzp1.x,fzp1.y);
+      } else {
+        var target = createVector(pzp1.x,pzp1.y);
+      }
     this.targetInBounds(target);
     if (this.oldMovement != "moving") {
       this.outOfHerd(target);
@@ -441,29 +433,18 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
     if (dist(this.position.x, this.position.y, target.x, target.y) < 5){
-      this.movingUp = true;
-      // console.log("Moving up now true")
-      // this.targetLock = false;
-      this.oldMovement = "moving";
-      // console.log("Hit in Move down")
+      this.movingUp = !this.movingUp;
+      this.firstAvoid = false;
+      this.switchingActions = false;
+      this.oldMovement = 'moving';
     }
-    // this.oldTarget = target;
     return steer;
   } else if (this.movingUp == true) {
-    // if (this.targetLock == false) {
       if (environment.avgSpeed() < 0.35 || !(-0.75 < herdHeading && herdHeading < 0.75)) {
-        // console.log("t2")
         var target = createVector(fzp2.x,fzp2.y);
-        // this.targetLock = true;
       } else {
-        // console.log("t2")
         var target = createVector(pzp2.x,pzp2.y);
-        // this.targetLock = true;
       }
-    // } else {
-    //   var target = this.oldTarget;
-    // }
-    // this.outOfHerd(target);
     this.targetInBounds(target);
     if (this.oldMovement != "moving") {
       this.outOfHerd(target);
@@ -477,17 +458,16 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce);
     if (dist(this.position.x, this.position.y, target.x, target.y) < 5){
-      this.movingUp = false;
-      // console.log("Moving up now false")
-      // this.targetLock = false;
-      this.oldMovement = "moving";
-      // console.log("Hit in Move up")
+      this.movingUp = !this.movingUp;
+      this.firstAvoid = false;
+      this.switchingActions = false;
+      this.oldMovement = 'moving';
     }
-    // this.oldTarget = target;
     return steer;
   }
 }
 
+// Function to keep target within enclosure
 AutoShepherd.prototype.targetInBounds = function (target) {
   if (target.x < 15) {
     target.x = 15;
@@ -504,17 +484,6 @@ AutoShepherd.prototype.targetInBounds = function (target) {
 AutoShepherd.prototype.outOfHerd = function (target) { //In herd
   fill(241, 244, 66, 100);
   stroke(66, 66, 244);
-  // quad(this.topLeft.x, this.topLeft.y, this.topRight.x, this.topRight.y, this.bottomRight.x, this.bottomRight.y, this.bottomLeft.x, this.bottomLeft.y);
-  // quad(this.topLeft.x, this.topLeft.y - 100, this.topRight.x, this.topRight.y - 100, this.topRight.x, this.topRight.y , this.topLeft.x, this.topLeft.y)
-  // quad(this.topRight.x, this.topRight.y, this.topRight.x + 100, this.topRight.y, this.bottomRight.x + 100, this.bottomRight.y , this.bottomRight.x, this.bottomRight.y)
-  // quad(this.bottomLeft.x, this.bottomLeft.y, this.bottomRight.x, this.bottomRight.y, this.bottomRight.x, this.bottomRight.y + 100, this.bottomLeft.x, this.bottomLeft.y + 100)
-  // quad(this.topLeft.x - 100, this.topLeft.y, this.topLeft.x, this.topLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x - 100, this.bottomLeft.y);
-  // quad(this.topLeft.x - 100, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y, this.topLeft.x - 100, this.topLeft.y)
-  // quad(this.topRight.x, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y, this.topRight.x, this.topRight.y)
-  // quad(this.bottomRight.x, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y + 100, this.bottomRight.x, this.bottomRight.y + 100)
-  // quad(this.bottomLeft.x - 100, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y + 100, this.bottomLeft.x - 100, this.bottomLeft.y + 100)
-  // stroke(66, 66, 244); // Around herd
-  // fill(255,30,30,100);
   if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y && this.position.y < this.bottomLeft.y) {
     stroke(66, 66, 244); // Around herd
     fill(255,30,30,100);
@@ -760,10 +729,6 @@ AutoShepherd.prototype.displayShepLines = function (herd) {
   let l2fz = this.adjustLineLen(center,goal,myLine+20);
   let l2pz = this.adjustLineLen(center,goal,myLine+60);
 
-  // // Lines to flight zone and pressure zone
-  // let l2fz = this.adjustLineLen(center,goal,furthestAnimal+20);
-  // let l2pz = this.adjustLineLen(center,goal,furthestAnimal+60);
-
   // Get co-ords for flight zone line points
   let fzp1 = this.createPCo1(l2fz.x,l2fz.y,herdX,herdY);
   let fzp2 = this.createPCo2(l2fz.x,l2fz.y,herdX,herdY);
@@ -804,6 +769,9 @@ AutoShepherd.prototype.displayShepLines = function (herd) {
 }
 
 AutoShepherd.prototype.avoidObstacle = function (center, goal, herd) {
+  if (this.oldMovement == "moving") {
+    this.firstAvoid = true;
+  }
   this.oldMovement = "avoiding";
   this.waitForAnimals();
   herdHeading = this.checkHeading(herd);
@@ -830,53 +798,8 @@ AutoShepherd.prototype.avoidObstacle = function (center, goal, herd) {
 
   this.targetInBounds(goal);
   return goal;
-
-
-  // // if (center.y < height/2) {
-  // //   var avoidPointCentre = this.createPCo2(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
-  // //   this.targetInBounds(avoidPointCentre);
-  // // } else {
-  // //   var avoidPointCentre = this.createPCo1(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
-  // //   this.targetInBounds(avoidPointCentre);
-  // // }
-  // // return avoidPointCentre;
-  //
-  // if (center.y < height/4 || this.avoid1 == true) { //down
-  //   var avoidPointCentre = this.createPCo2(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
-  //   this.targetInBounds(avoidPointCentre);
-  //   this.avoid1 = true;
-  // } else if (center.y < height/2 || this.avoid2 == true) { // up
-  //   var avoidPointCentre = this.createPCo1(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
-  //   this.targetInBounds(avoidPointCentre);
-  //   this.avoid2 = true;
-  // } else if (center.y < height*3/4 || this.avoid3 == true) {
-  //   var avoidPointCentre = this.createPCo2(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
-  //   this.targetInBounds(avoidPointCentre);
-  //   this.avoid3 = true;
-  // } else if (center.y < height || this.avoid4 == true) {
-  //   var avoidPointCentre = this.createPCo1(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
-  //   this.targetInBounds(avoidPointCentre);
-  //   this.avoid4 = true;
-  // }
-  // return avoidPointCentre;
-
 }
-// if (center.y < height/4) { //down
-//   var avoidPointCentre = this.createPCo2(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
-//   this.targetInBounds(avoidPointCentre);
-// } else if (center.y < height/2) { // up
-//   var avoidPointCentre = this.createPCo1(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
-//   this.targetInBounds(avoidPointCentre);
-// } else if (center.y < height/4*3) {
-//   var avoidPointCentre = this.createPCo2(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
-//   this.targetInBounds(avoidPointCentre);
-// } else {
-//   var avoidPointCentre = this.createPCo1(center.x, center.y, goal.x,goal.y); //  Use PCo2 for else statement
-//   this.targetInBounds(avoidPointCentre);
-// }
-// return avoidPointCentre;
 
-// Create point a for perpindicular lines
 AutoShepherd.prototype.createPCo1 = function (x1,y1,x2,y2) {
   xDiff = x1 - x2;
   yDiff = y1 - y2;
@@ -923,13 +846,13 @@ AutoShepherd.prototype.drawShepGoals = function () {
 }
 
 AutoShepherd.prototype.checkGoal = function (hc, g) {
-  if (dist(hc.x, hc.y, g.x, g.y) < 60 && this.goalCounter < this.shepGoals.length -1) {
+  if (dist(hc.x, hc.y, g.x, g.y) < 50 && this.goalCounter < this.shepGoals.length -1) {
     this.goalCounter++;
   }
 }
 
 AutoShepherd.prototype.findClosestAnimal = function (herd, c) {
-  closest = 4000;
+  closest = 40000;
   for (var i = 0; i < herd.length; i++) {
     shep2Animal = Math.abs(dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y)); // Find distance to each animal
     if (shep2Animal < closest) { // if this is the shortest distance
@@ -948,8 +871,7 @@ AutoShepherd.prototype.waitForAnimals = function () {
       self.wait = false;
       clearInterval(timer);
     } else {
-      self.maxspeed = 0.4;
-      console.log("Speed should be 0.3")
+      self.maxspeed = 0.3;
       self.timeCount--;
     }
   }, 1000);

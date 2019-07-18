@@ -18,7 +18,6 @@ ManageEnvironment.prototype.createNewEnv = function () {
     shepStartPos = createVector(990, 255); // Create shepherd starting co-ords
     goal1 = createVector(990, 255);
     shepGoals = [goal1];
-
     animalGoals = [goal1];
 
     oracleSearch = {
@@ -28,12 +27,12 @@ ManageEnvironment.prototype.createNewEnv = function () {
     for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
       x = random(xMinAnimalsSlider.value(), xMaxAnimalsSlider.value());
       y = random(yMinAnimalsSlider.value(), yMaxAnimalsSlider.value());
-      var a = new Animal(x, y, shepGoals); // Pass through staring position, position of goal and position of goalZone
+      var a = new Animal(x, y, animalGoals); // Pass through staring position, position of goal and position of goalZone
       environment.addAnimal(a); // Positions of goal and goalZone used for removalfunction and goal function in animal class
     }
 
-
-    environment.addGate(animalGoals);
+    var g = new Gate(animalGoals); // Create gate
+    environment.addGate(g);
   }
 
   // ------------ ENVIRONMENT 2 ------------
@@ -153,7 +152,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     resetDropdown();
 
     shepStartPos = createVector(450, 450); // Create shepherd starting co-ords
-    goal1 = createVector(470, 450), goal2 = createVector(1100, 70);
+    goal1 = createVector(470, 425), goal2 = createVector(1100, 70);
     goal3 = createVector(1735, 750), goal4 = createVector(2380, 35);
     shepGoals = [goal1, goal2, goal3, goal4];
 
@@ -212,21 +211,13 @@ ManageEnvironment.prototype.createNewEnv = function () {
 
     resetDropdown();
 
-    shepX = 1030, shepY = 165; // Create various co-ords
-    goalX = 1100, goalY = 255;
-    gzX = createVector(1100, 1250), gzY = createVector(155, 305);
-
-    goal1 = createVector(1030, 400), goal2 = createVector(1500, 400);
-    goal3 = createVector(1450, 150), goal4 = createVector(1180,160), goal5 = createVector(1100, 255);
-    shepGoals = [goal1, goal2, goal3, goal4, goal5];
-
     shepStartPos = createVector(1030, 165); // Create shepherd starting co-ords
-    goal1 = createVector(1030, 400), goal2 = createVector(1350, 400);
-    goal3 = createVector(1350, 150), goal4 = createVector(1180,160);
+    goal1 = createVector(1070, 400), goal2 = createVector(1350, 400);
+    goal3 = createVector(1300, 150), goal4 = createVector(1180,160);
     goal5 = createVector(1100, 255);
     shepGoals = [goal1, goal2, goal3, goal4, goal5];
 
-    aGoal1 = createVector(1030, 400), aGoal2 = createVector(1250,160);
+    aGoal1 = createVector(1070, 400), aGoal2 = createVector(1250,160);
     aGoal3 = createVector(1100, 240);
     animalGoals = [aGoal1, aGoal2, aGoal3];
 
@@ -245,7 +236,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     }
 
     // Create novelties with starting positions and dimensions
-    var n = new NovelObject(1050,50,300,90);
+    var n = new NovelObject(1050,50,280,70);
     environment.addNovelty(n);
     var n = new NovelObject(1400,265,45,80);
     environment.addNovelty(n);
@@ -343,6 +334,6 @@ function oracle() {
 
 function multiDrone() {
   console.log("Well");
-  environment.addMultiGPS(new MultiGPSShepherd(shepX, shepY, goalX, goalY, false, 1, shepGoals))
-  environment.addMultiGPS(new MultiGPSShepherd(shepX, shepY, goalX, goalY, true, 2, shepGoals))
+  environment.addMultiGPS(new MultiGPSShepherd(shepStartPos, false, 1, shepGoals))
+  environment.addMultiGPS(new MultiGPSShepherd(shepStartPos, true, 2, shepGoals))
 }
