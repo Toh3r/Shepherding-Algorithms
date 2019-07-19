@@ -26,6 +26,8 @@ function MultiGPSShepherd(startPos, moving, uavNum, shepGoals) {
   this.timeCount = 2;
   this.wait = true;
   this.firstAvoid = false;
+  this.goodMovement = 0;
+  this.correctHeading = 0;
 }
 
 // Call methods for each shepherd
@@ -37,7 +39,7 @@ MultiGPSShepherd.prototype.run = function(herd) {
   if(lineCheck.checked() == true) {
     this.displayShepLines(herd);
   }
-  if (herd.length > 0) { // Count time steps
+  if (herd.length > 0 && this.uavNum == 1) { // Count time steps
     this.timestep++;
   }
 }
@@ -110,6 +112,11 @@ MultiGPSShepherd.prototype.render = function() {
   endShape(CLOSE);
   pop();
 }
+// // Draw shepherd
+// MultiGPSShepherd.prototype.heading = function() {
+//   // Draw a triangle rotated in the direction of velocity
+//   translate(this.position.x,this.position.y);
+// }
 
 MultiGPSShepherd.prototype.bunched = function (herd) {
   this.herdBottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
@@ -204,26 +211,30 @@ MultiGPSShepherd.prototype.collectAnimals = function (herd) {
  if (this.movingUp == false) {
    var target = createVector(pzp1.x,pzp1.y);
    this.targetInBounds(target);
+   fill(44,82,199);
+   ellipse(target.x, target.y, 30,30)
    this.outOfHerd(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
-   if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
+   if (dist(this.position.x, this.position.y, target.x, target.y) < 5){
      this.movingUp = true;
    }
    return steer;
  } else if (this.movingUp == true) {
    var target = createVector(pzp2.x,pzp2.y);
    this.targetInBounds(target);
+   fill(44,82,199);
+   ellipse(target.x, target.y, 30,30)
    this.outOfHerd(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
-   if ((this.position.x - 2 < target.x && target.x < this.position.x + 2) && (this.position.y - 2 < target.y && target.y < this.position.y + 2)){
+   if (dist(this.position.x, this.position.y, target.x, target.y) < 5){
      this.movingUp = false;
    }
    return steer;
@@ -239,6 +250,8 @@ MultiGPSShepherd.prototype.moveAnimals = function (herd) {
   // var goal = createVector(this.goalX,this.goalY); // Location of exit
   var goal = this.shepGoals[this.goalCounter];
   this.checkGoal(center, goal);
+
+
 
   if (environment.vocalizing() == true && herd.length > 0) {
     this.avoiding = true;
@@ -296,8 +309,12 @@ MultiGPSShepherd.prototype.moveAnimals = function (herd) {
   pzp2 = this.adjustLineLen(pzp2,l2pz, -40);
 
   herdHeading = this.checkHeading(herd);
-  ellipse(cpfz.x, cpfz.y, 10, 10);
+  this.correctHeading = this.getGoodHeading(center, goal);
+  if (environment.avgSpeed() > 0.35 && Math.abs(this.correctHeading - herdHeading) < 0.75) {
+    this.goodMovement += 1;
+  }
 
+  ellipse(cpfz.x, cpfz.y, 10, 10);
   if(this.firstAvoid == true) {
   if (dist(fzp1.x, fzp1.y, this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y) > dist(fzp2.x, fzp2.y, this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y)) {
     this.movingUp = false;
@@ -394,10 +411,8 @@ MultiGPSShepherd.prototype.advanceCollect = function (herd, uavNum) {
   // var goal = createVector(this.goalX,this.goalY); // Location of exit
   var goal = this.shepGoals[this.goalCounter];
 
-  // if (environment.vocalizing() == true) {
-  //   goal = this.avoidObstacle(center, goal);
-  // }
-  // Functions to deal with stressor avoidance
+  this.correctHeading = this.getGoodHeading(center, goal);
+
 if (environment.vocalizing() == true && herd.length > 0) {
   this.avoiding = true;
   this.maxspeed = 0.5;
@@ -929,4 +944,20 @@ MultiGPSShepherd.prototype.checkGoal = function (hc, g) {
   if (dist(hc.x, hc.y, g.x, g.y) < 60 && this.goalCounter < this.shepGoals.length -1) {
     this.goalCounter++;
   }
+}
+
+MultiGPSShepherd.prototype.getGoodHeading = function (hc, g) {
+
+  let v0 = createVector(hc.x, hc.y);
+  let v1 = createVector(g.x - hc.x, g.y - hc.y);
+
+  let myHeading = v1.heading();
+
+  noStroke();
+  text(
+   'vector heading: ' +
+     myHeading.toFixed(2) +
+     ' radians',50,50,90,50);
+
+  return myHeading;
 }

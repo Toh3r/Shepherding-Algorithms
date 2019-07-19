@@ -10,6 +10,7 @@ function Environment() {
   this.novelObjects = [];
   this.gates = [];
   this.obstacles = [];
+  this.allShepherds = [];
 
   // Create environmental variables
   this.accumulatedStress = 0;
@@ -18,7 +19,7 @@ function Environment() {
   this.averageSpeed = 0;
   this.vocal = false;
   this.oldTime = 0; // Used for displaying timesteps, timestep variable currently held by shepherd **change to here**
-
+  this.oldMoves = 0;
   // Hold positoins of herd to draw herd radius on canvas
   // this.herdBottom = 0;
   // this.herdTop = 0;
@@ -160,15 +161,39 @@ Environment.prototype.totalStress = function() {
 }
 
 Environment.prototype.timeSteps = function() {
+  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds);
   this.time = 0;
-  for (var i = 0; i < this.autoShepherds.length; i++) {
-    this.time += this.autoShepherds[i].timestep;
+  for (var i = 0; i < this.allShepherds.length; i++) {
+    this.time += this.allShepherds[i].timestep;
   }
   if (this.time % 50 == 0){
     this.oldTime = this.time;
     return this.time;
   } else {
     return this.oldTime;
+  }
+}
+
+Environment.prototype.goodMovementTime = function() {
+  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds);
+  this.goodMoves = 0;
+  for (var i = 0; i < this.allShepherds.length; i++) {
+    this.goodMoves += this.allShepherds[i].goodMovement;
+  }
+  if (this.goodMoves % 50 == 0){
+    this.oldMoves = this.goodMoves;
+    return this.goodMoves;
+  } else {
+    return this.oldMoves;
+  }
+}
+
+Environment.prototype.theCorrectHeading = function() {
+  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds);
+  if(this.allShepherds.length > 0) {
+    return this.allShepherds[0].correctHeading;
+  } else {
+    return 0;
   }
 }
 

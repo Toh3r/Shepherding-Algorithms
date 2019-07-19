@@ -212,7 +212,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     resetDropdown();
 
     shepStartPos = createVector(1030, 165); // Create shepherd starting co-ords
-    goal1 = createVector(1070, 400), goal2 = createVector(1350, 400);
+    goal1 = createVector(1070, 400), goal2 = createVector(1320, 390);
     goal3 = createVector(1300, 150), goal4 = createVector(1180,160);
     goal5 = createVector(1100, 255);
     shepGoals = [goal1, goal2, goal3, goal4, goal5];

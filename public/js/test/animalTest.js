@@ -148,10 +148,10 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
 
   if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 120) {
     var goa = this.goal(herd);            // Seek (Goal area)
-    goa.mult(0.3);
+    goa.mult(goalAnimalsSlider.value());
     this.timeCount = 4;
   }
-  avo.mult(0.3);
+  avo.mult(stressorAnimalsSlider.value());
 
   // Add the force vectors to acceleration
   this.applyForce(mov);
@@ -584,7 +584,7 @@ Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, or
 Animal.prototype.goal = function () {
     var gate = createVector(this.goals[this.goalCounter].x, this.goals[this.goalCounter].y);
     this.checkGoal(gate);
-    if (this.goalCounter == this.goals.length -1 && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 40) {
+    if (this.goalCounter == this.goals.length -1 && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 20) {
       console.log("Name of animal leaving: " + this.name);
       environment.hitTheGap(this);
     }

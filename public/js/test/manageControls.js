@@ -102,7 +102,7 @@ ManageControls.prototype.createControls = function () {
   dSepPreOut = createElement("h6", dSepPreSlider.value());
   dSepPreOut.parent('dSepPre');
 
-  dSepFliSlider = createSlider(0, 5, 2, 0.1);
+  dSepFliSlider = createSlider(0, 5, 1.5, 0.1);
   dSepFliSlider.parent('dSepFli');
   dSepFliOut = createElement("h6", dSepFliSlider.value());
   dSepFliOut.parent('dSepFli');
@@ -174,6 +174,16 @@ ManageControls.prototype.createControls = function () {
   yMaxAnimalsSlider.parent('yMaxAnimalsSli');
   yMaxAnimalsOut = createElement("h6", yMaxAnimalsSlider.value());
   yMaxAnimalsOut.parent('yMaxAnimalsSli');
+
+  goalAnimalsSlider = createSlider(0, 5, 0.5, 0.1);
+  goalAnimalsSlider.parent('goalAnimalsSli');
+  goalAnimalsOut = createElement("h6", goalAnimalsSlider.value());
+  goalAnimalsOut.parent('goalAnimalsSli');
+
+  stressorAnimalsSlider = createSlider(0, 5, 0.5, 0.1);
+  stressorAnimalsSlider.parent('stressorAnimalsSli');
+  stressorAnimalsOut = createElement("h6", stressorAnimalsSlider.value());
+  stressorAnimalsOut.parent('stressorAnimalsSli');
 
   // ---------- DROPDOWN TO ADD AGENTS/OBJETCS ----------
   sel = createSelect();
@@ -285,7 +295,7 @@ ManageControls.prototype.createControls = function () {
   collectRadio.option('ZZ', 2);
 
   //  Select starting environment
-  envRadio._getInputChildrenArray()[3].checked = true;
+  envRadio._getInputChildrenArray()[4].checked = true;
   collectRadio._getInputChildrenArray()[0].checked = true;
 
   // Initialize new environment
@@ -309,7 +319,8 @@ ManageControls.prototype.createControls = function () {
   stressDisplay = createP("Adverse Conditions: " + fixedStress);
   stressDisplay.parent("envInfoDiv");
 
-  movementDisplay = createP("Good Movement Steps: 0.00");
+  var goodMoves = environment.goodMovementTime();
+  movementDisplay = createP("Good Movement Steps: " + goodMoves);
   movementDisplay.parent("envInfoDiv");
 
   manualUAVDisplay = createP("Manual UAV: " + "No");
@@ -358,6 +369,10 @@ ManageControls.prototype.createControls = function () {
   avoherdDisplay = createP("Avoid herd: " + isAvoidingHerd);
   avoherdDisplay.parent("gpsInfoDiv");
 
+  var goodHeading = environment.theCorrectHeading().toFixed(2);
+  goodHeadingDisplay = createP("Desired Heading: " + goodHeading);
+  goodHeadingDisplay.parent("gpsInfoDiv");
+
 }
 
 // Function to update simulation info each frame
@@ -370,7 +385,6 @@ ManageControls.prototype.updateSimInfo = function () {
   animalDisplay.remove();
   stressDisplay.remove();
   speedDisplay.remove();
-  headingDisplay.remove();
   timeDisplay.remove();
   manualUAVDisplay.remove();
   totalUAVDisplay.remove();
@@ -385,6 +399,7 @@ ManageControls.prototype.updateSimInfo = function () {
   avoOBSDisplay.remove();
   avoherdDisplay.remove();
   currentSearchAreaDisplay.remove();
+  goodHeadingDisplay.remove();
 
   // Update with sim info from current frame
   var timeSteps = environment.timeSteps();
@@ -401,7 +416,8 @@ ManageControls.prototype.updateSimInfo = function () {
   stressDisplay = createP("Adverse Conditions: " + fixedStress);
   stressDisplay.parent("envInfoDiv");
 
-  movementDisplay = createP("Good Movement Steps: 0.00");
+  var goodMoves = environment.goodMovementTime();
+  movementDisplay = createP("Good Movement Steps: " + goodMoves);
   movementDisplay.parent("envInfoDiv");
 
   manualUAVDisplay = createP("Manual UAV: " + manShep);
@@ -449,6 +465,10 @@ ManageControls.prototype.updateSimInfo = function () {
   var isAvoidingHerd = environment.shepAvoidHerd();
   avoherdDisplay = createP("Avoid herd: " + isAvoidingHerd);
   avoherdDisplay.parent("gpsInfoDiv");
+
+  var goodHeading = environment.theCorrectHeading().toFixed(2);
+  goodHeadingDisplay = createP("Desired Heading: " + goodHeading);
+  goodHeadingDisplay.parent("gpsInfoDiv");
 }
 
 // Function to update controls values on mouse drag
@@ -551,6 +571,12 @@ ManageControls.prototype.applyControls = function () {
 
   yMaxAnimalsVal = yMaxAnimalsSlider.value();
   yMaxAnimalsOut.html(yMaxAnimalsVal);
+
+  goalAnimalsVal = goalAnimalsSlider.value();
+  goalAnimalsOut.html(goalAnimalsVal);
+
+  stressorAnimalsVal = stressorAnimalsSlider.value();
+  stressorAnimalsOut.html(stressorAnimalsVal);
 }
 
 // ---------- CALLED ON MOUSE DRAG TO UPDATE ALL SLIDERS ----------
