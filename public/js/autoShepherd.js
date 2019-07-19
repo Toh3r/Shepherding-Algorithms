@@ -26,6 +26,7 @@ function AutoShepherd(startPos, shepGoals) { // Pass through starting position a
   this.wait = true;
   this.firstAvoid = false;
   this.goodMovement = 0;
+  this.correctHeading = 0;
 }
 
 // Call methods for each shepherd
@@ -397,7 +398,8 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   pzp2 = this.adjustLineLen(pzp2,l2pz, -40);
 
   herdHeading = this.checkHeading(herd);
-  if (environment.avgSpeed() > 0.35 && (-0.75 < herdHeading && herdHeading < 0.75) && herd.length > 0) {
+  this.correctHeading = this.getGoodHeading(center, goal);
+  if (environment.avgSpeed() > 0.35 && Math.abs(this.correctHeading - herdHeading) < 0.75) {
     this.goodMovement += 1;
   }
 
@@ -868,4 +870,20 @@ AutoShepherd.prototype.findClosestAnimal = function (herd, c) {
     }
   }
   return closestDist;
+}
+
+AutoShepherd.prototype.getGoodHeading = function (hc, g) {
+
+  let v0 = createVector(hc.x, hc.y);
+  let v1 = createVector(g.x - hc.x, g.y - hc.y);
+
+  let myHeading = v1.heading();
+
+  noStroke();
+  text(
+   'vector heading: ' +
+     myHeading.toFixed(2) +
+     ' radians',50,50,90,50);
+
+  return myHeading;
 }
