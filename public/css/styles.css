@@ -141,6 +141,15 @@ label {
 min-width: 40px;
 }
 
+.hmmm label{
+	min-width: 30px;
+	max-width: 30px;
+}
+
+.path label {
+	min-width: 80px;
+}
+
 
 h5 {
 	padding-left: 10px;

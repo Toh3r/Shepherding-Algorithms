@@ -5,7 +5,7 @@ function AutoShepherd(startPos, shepGoals) { // Pass through starting position a
   this.velocity = createVector(0,0);
   this.position = createVector(startPos.x, startPos.y);
   this.maxForce = 0.6;
-  this.maxspeed = uavSpeedSlider.value();
+  this.maxspeed = 0.7;
   this.timestep = 0;
   this.movingUp = false;            // ----- Herd Moving variables
   this.target = createVector(0,0);
@@ -64,11 +64,13 @@ AutoShepherd.prototype.herdAnimals = function (herd) {
   }
 
   if (bun == false) { // If false, call collecting function
-    if (collectRadio.value() == 1) { // FFHC Collect
+    var avgDist = this.checkDist(herd)
+    if (avgDist > 150) { // FFHC Collect
       var col = this.advanceCollect(herd);
-    } else if (collectRadio.value() == 2) { // ZZ Collect
+    } else { // ZZ Collect
       var col = this.collectAnimals(herd);
     }
+
     this.applyForce(col);
     this.collectBool = true; // Booleans for UI output
     this.moveBool = false;
@@ -186,7 +188,7 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
     }
   } else if (environment.vocalizing() == false && herd.length > 0) {
     this.wait = false;
-    this.maxspeed = uavSpeedSlider.value();
+    this.maxspeed = 0.7;
     this.avoiding = false;
   }
 
@@ -258,7 +260,7 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
     this.maxspeed = 0.5;
     goal = this.avoidObstacle(center, goal, herd); // function to switch target points
   } else if (environment.vocalizing() == false && herd.length > 0) {
-    this.maxspeed = uavSpeedSlider.value();
+    this.maxspeed = 0.7;
     this.avoiding = false;
   }
 
@@ -366,7 +368,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
       this.switchingActions = true;
       this.avoiding = false;
     }
-    this.maxspeed = uavSpeedSlider.value();
+    this.maxspeed = 0.7;
     this.avoiding = false;
   }
 
@@ -724,7 +726,7 @@ AutoShepherd.prototype.displayShepLines = function (herd) {
 
     goal = this.avoidObstacle(center, goal, herd);
   } else if (environment.vocalizing() == false && herd.length > 0) {
-    this.maxspeed = uavSpeedSlider.value();
+    this.maxspeed = 0.7;
     this.avoiding = false;
   }
 
@@ -878,12 +880,27 @@ AutoShepherd.prototype.getGoodHeading = function (hc, g) {
   let v1 = createVector(g.x - hc.x, g.y - hc.y);
 
   let myHeading = v1.heading();
-
-  noStroke();
-  text(
-   'vector heading: ' +
-     myHeading.toFixed(2) +
-     ' radians',50,50,90,50);
+  // 
+  // noStroke();
+  // text(
+  //  'vector heading: ' +
+  //    myHeading.toFixed(2) +
+  //    ' radians',50,50,90,50);
 
   return myHeading;
+}
+
+AutoShepherd.prototype.checkDist = function (herd) {
+  var totalAvgDist = 0;
+  var avgDist = 0;
+  for(var i = 0; i < herd.length; i++) {
+    for(var j = 0; j < herd.length; j++) {
+      var d = dist(herd[i].position.x, herd[i].position.y, herd[j].position.x, herd[j].position.y);
+      avgDist += d;
+    }
+    avgDist = avgDist/herd.length;
+    totalAvgDist += avgDist
+  }
+  totalAvgDist = totalAvgDist / herd.length;
+  return totalAvgDist;
 }

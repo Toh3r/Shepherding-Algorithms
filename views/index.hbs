@@ -8,7 +8,11 @@
     <!-- Add styles -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/testStyles.css">
+    <!-- Add Google font -->
     <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
+    <!-- Add favicon -->
+    <link rel="icon" type="image/png" href="css/images/favicon.ico">
 
     <!-- Add p5.js scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/p5.min.js"></script>
@@ -17,12 +21,19 @@
     <script	src="https://cdnjs.cloudflare.com/ajax/libs/chance/1.0.18/chance.min.js"></script>
 
     <!-- Add my .js scripts -->
-    <script src="js/sketch.js"></script>
-    <script src="js/environment.js"></script>
-    <script src="js/animal.js"></script>
+    <script src="js/home/sketchHome.js"></script>
+    <script src="js/home/manageControls.js"></script>
+    <script src="js/home/manageEnv.js"></script>
+    <script src="js/home/environmentHome.js"></script>
+    <script src="js/home/animalHome.js"></script>
     <script src="js/shepherdManual.js"></script>
+    <script src="js/autoShepherd.js"></script>
+    <script src="js/multiGPS.js"></script>
     <script src="js/novelty.js"></script>
+    <script src="js/obstacle.js"></script>
     <script src="js/gate.js"></script>
+    <script src="js/oracle.js"></script>
+    <script src="js/oracleShepherd.js"></script>
 
   </head>
   <body>
@@ -32,75 +43,181 @@
     <!-- Canvas div -->
     <div class="container-fluid" align:'center'>
       <div class="row" id="simRow">
-        	<div id="myCanvas"></div>
+
+        <div class="col-lg-2" id="moreControls">
+          <div>
+            <div>
+              <h6><strong><u>Run It...</u></strong></h6>
+              <div id="droneHerd">
+              </div>
+              <div id="oracleBtn" class="orange">
+              </div>
+              <div id="multiBtn">
+              </div>
+              <div id="multiOracleBtn" class="orange">
+              </div>
+
+              <br><br>
+              <h6><strong><u>Select Env</u></strong></h6>
+              <div id="envRadio">
+              </div>
+              <h6><strong><u>Select Path</u></strong></h6>
+              <div class="path label" id="pathRadio">
+              </div>
+              <br>
+              <h6><strong><u>Animals</u></strong></h6>
+              <div id="anNumRadio">
+              </div>
+              <h6><strong><u>Animal Type</u></strong></h6>
+              <div class="path label" id="anTypeRadio">
+              </div>
+              <br>
+              <h6><strong><u>Number of tests</u></strong></h6>
+              <div class="hmmm label" id="testNumRadio">
+              </div>
+              <br>
+              <div id="pauseBtn">
+              </div>
+              <div id="resetBtn">
+              </div>
+
+            </div>
+          </div>
+          <br>
+
+        </div> <!-- Close moreControls col -->
+
+        <div class="col-lg-10">
+          <div id="myCanvas"></div>
+        </div>
+
+      </div> <!-- Close Simrow -->
+
+      <div class="row simHeader">
+          <div class="col-lg-2 borderRight infoHeader" >
+            <h5><b>Env Info</b></h5>
+          </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>Herd Info</b></h5>
+          </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>GPS UAV</b></h5>
+          </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>Oracle UAV</b></h5>
+          </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>Animal Display</b></h5>
+          </div>
+          <div class="col-lg-2 infoHeader">
+            <h5><b>UAV Display</b></h5>
+          </div>
       </div>
 
       <!-- Behaviour Sliders -->
       <div class="row" id="controls">
-        <div class="col-lg-3" id='controlsLeft'>
-          <div>
-            <h5><strong><u>Force Sliders</u></strong></h5>
-          </div>
-          <br>
-          <div id="speSli">
-            <label for="speedSlider">Speed: </label>
-          </div>
-          <div id="sepSli">
-            <label for="separationSlider">Seperation: </label>
-          </div>
-          <div id="aliSli">
-            <label for="aliSlider">Allignment: </label>
-          </div>
-          <div id="cohSli">
-            <label for="cohesionSlider">Cohesion: </label>
+        <div class="col-lg-2 con" id='control1'>
+          <div id="envInfoDiv">
+
           </div>
         </div>
 
         <!-- Add/Delete Buttons -->
-        <div class="col-lg-3" id="controlsMiddle" align="center">
-          <div id="midName">
-            <h5><strong><u>Edit Canvas</u></strong></h5>
-          </div>
-          <br>
-          <div id="addDrop">
-            <label for="sel" style="display:block">Click canvas to ...</label>
-          </div><br>
-          <div id="animalButtons">
-          </div>
-          <div id="shepButtons">
-          </div>
-          <div id="novButtons">
-          </div><br>
-          <div id="delAll">
+        <div class="col-lg-2 con" id="control2" align="center">
+          <div id="animalInfoDiv">
+
           </div>
         </div>
 
         <!-- CheckBox xontorls -->
-        <div class="col-lg-3" id="controlsRight">
-          <div>
-            <h5><strong><u>Display Info</u></strong></h5>
+        <div class="col-lg-2 con" id="control3">
+          <h6><strong><u>GPS Shep</u></strong></h6>
+          <br>
+          <div id="gpsInfoDiv">
+
+          </div>
+          <p>Desired Speed: .35 - .6</p>
+        </div>
+
+        <!-- CheckBox xontorls -->
+        <div class="col-lg-2 con orangeLetters" id="control4">
+          <h6><strong><u>Oracle</u></strong></h6>
+          <div id="oracleInfoDiv">
+
           </div>
           <br>
+          <h6><strong><u>Oracle Shep</u></strong></h6>
+          <p>Collecting: X</p>
+          <p>Moving: X</p>
+          <p>Avoiding: X</p>
+          <p>Desired Speed: X</p>
+          <p>Desired Heading: X</p>
+        </div>
+
+        <!-- CheckBox xontorls -->
+        <div class="col-lg-2 con" id="control5">
           <div id="zoneDiv">
           </div>
         </div>
 
         <!-- CheckBox xontorls -->
-        <div class="col-lg-3" id="controlsInfo">
-          <div>
-            <h5><strong><u>Sim Info</u></strong></h5>
+        <div class="col-lg-2 con" id="control6">
+          <div id="uavStuff">
           </div>
-          <br>
-          <div id="numAnimalsDiv">
+          <div id="oracleStuff">
+          </div>
+        </div>
+      </div> <!-- Close controls row -->
 
+      <div class="row simHeader">
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>Test 1-10</b></h5>
           </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>Test 11-20</b></h5>
+          </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>Test 21-30</b></h5>
+          </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>Test 31-40</b></h5>
+          </div>
+          <div class="col-lg-2 borderRight infoHeader">
+            <h5><b>Test 41-50</b></h5>
+          </div>
+          <div class="col-lg-2 infoHeader">
+            <h5><b>Stats</b></h5>
+          </div>
+      </div>
+
+      <div class="row" id="controlsRow2">
+
+        <div class="col-lg-2 con2" id="test0">
+          <br>
+        </div>
+
+        <div class="col-lg-2 con2" id="test1">
+          <br>
+        </div>
+        <div class="col-lg-2 con2" id="test2">
+          <br>
+        </div>
+        <div class="col-lg-2 con2" id="test3">
+          <br>
+        </div>
+        <div class="col-lg-2 con2" id="test4">
+          <br>
+        </div>
+        <div class="col-lg-2 con2" id="control12">
+          <br>
         </div>
 
       </div>
-    </div>
+    </div> <!-- Close container -->
 
     <!-- More scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-{{> footer}}
+
+{{> footer}} <!--Use footer partial -->
