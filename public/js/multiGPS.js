@@ -79,6 +79,8 @@ MultiGPSShepherd.prototype.herdAnimals = function (herd) {
     this.collectBool = true; // Bolleans for UI output
     this.moveBool = false;
   }
+  // 
+  // this.tooClose(herd);
 }
 
 // Method to update location
@@ -724,6 +726,7 @@ MultiGPSShepherd.prototype.outOfHerd = function (target) { //In herd
   if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y && this.position.y < this.bottomLeft.y) {
     stroke(66, 66, 244); // Around herd
     fill(255,30,30,100);
+    this.redAlert();
     quad(this.topLeft.x, this.topLeft.y, this.topRight.x, this.topRight.y, this.bottomRight.x, this.bottomRight.y, this.bottomLeft.x, this.bottomLeft.y);
   } else if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y - 100 && this.position.y < this.topLeft.y) { // top
     // Top
@@ -985,3 +988,34 @@ MultiGPSShepherd.prototype.checkDist = function (herd) {
   totalAvgDist = totalAvgDist / herd.length;
   return totalAvgDist;
 }
+
+MultiGPSShepherd.prototype.redAlert = function () {
+  let tl = dist(this.position, this.topLeft);
+  let tr = dist(this.position, this.topRight);
+  let bl = dist(this.position, this.bottomLeft);
+  let br = dist(this.position, this.bottomRight);
+
+  let shortestDist = Math.min(tl, tr, bl, br);
+  if (shortestDist == tl) {
+    target = createVector(this.topLeft.x - 10, this.topLeft.y - 10)
+  } else if (shortestDist == tr) {
+    target = create(this.topRight.x + 10, this.topRight.y - 10)
+  } else if (shortestDist == bl) {
+    target = create(this.bottomLeft.x - 10, this.bottomLeft.y + 10)
+  } else if (shortestDist == br) {
+    target = create(this.bottomRight.x + 10, this.bottomRight.y - 10)
+  }
+}
+
+// MultiGPSShepherd.prototype.tooClose = function (herd) {
+//   let count = 0;
+//   for (var i = 0; i < herd.length; i++) {
+//     if(dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y) < 100) {
+//       count++;
+//     }
+//   }
+//   if(count > 0) {
+//     console.log("lolol")
+//    this.maxSpeed = 0.2;
+//   }
+// }

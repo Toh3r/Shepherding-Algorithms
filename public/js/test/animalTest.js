@@ -68,7 +68,19 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
   var avo = this.avoid(novelObjects);   // Avoid Novelty
   var bun = this.bunched(herd);         // Bunched
   var obs = this.avoidObstacle(obstacles);
+  var bre = this.breakUp(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds)
   var moveChance = int(random(1,20));
+
+  if (bre == true) {
+    console.log("Running break")
+    this.inFlightZone += 1;
+    mov.mult(1.5);
+    sep.mult(1.2);
+    ali.mult(0.1);
+    coh.mult(0.1);
+    this.maxspeed = 0.6;
+    this.velocity.setMag(0.6);
+  }
 
   // If UAVS in FZ and PZ, disregard UAVS in FZ
   if (fli > 0 && pre > 0) {
@@ -76,7 +88,7 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
   }
 
   // WHEN SHEPHERD IN FLIGHT ZONE
-  if (fli > 0) {
+  if (fli > 0 && bre == false) {
     this.inFlightZone += 1;
     mov.mult(dSepFliSlider.value());
     sep.mult(sepFliSlider.value());
@@ -87,7 +99,7 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
   }
 
   // WHEN SHEPHERD IN PRESSURE ZONE
-  if (pre > 0) {
+  if (pre > 0 && bre == false) {
     this.inFlightZone = 0;
     if (bun == false) {
       this.maxspeed = pSpeedSlider.value();
@@ -460,12 +472,12 @@ Animal.prototype.flightZone = function(herd, shepherds, autoShepherds, multiGPSS
 }
 
 Animal.prototype.bunched = function (herd) {
-  var bottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
-  var top = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
-  var left = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
-  var right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
+  this.bottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
+  this.top = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
+  this.left = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
+  this.right = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
 
-  herDist = dist(left, top, right, bottom);
+  herDist = dist(this.left, this.top, this.right, this.bottom);
   if (herDist < 200) {
     return true;
   } else {
@@ -695,5 +707,23 @@ Animal.prototype.avoidObstacle = function (obstacles) {
 Animal.prototype.checkGoal = function (g) {
   if (dist(this.position.x, this.position.y, g.x, g.y) < 50 && this.goalCounter < this.goals.length -1) {
     this.goalCounter++;
+  }
+}
+
+Animal.prototype.breakUp = function (shep, auto, multi, oShep) {
+  var allSheps = shep.concat(auto, multi, oShep);
+  var count = 0;
+  for(let i = 0; i < allSheps.length; i++) {
+    if(allSheps[i].position.x > this.left && allSheps[i].position.x < this.right && allSheps[i].position.y > this.top && allSheps[i].position.y < this.bottom) {
+      console.log("Yololo")
+      count ++;
+    }
+  }
+  if (count > 0) {
+    console.log("returning true")
+    this.stressLevel += 0.1;
+    return true;
+  } else {
+    return false;
   }
 }

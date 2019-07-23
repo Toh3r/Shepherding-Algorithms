@@ -34,7 +34,6 @@ Gate.prototype.goalZone = function () {
   fill(0,0,0,0);
   stroke(255);
   ellipse(this.position.x, this.position.y, 240,240)
-
 }
 
 Gate.prototype.displayAnimalGoals = function () {

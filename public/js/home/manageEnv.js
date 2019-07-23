@@ -8,6 +8,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
   // Create new environment depending on radio button
   if (envRadio.value() == 1) {
 
+    environment.removeGate();
     canvas.remove(); // Always destroy current canvas before creating new one
     canvas = createCanvas(1000,600);
     img = img1;      // Use image one loaded in manageControl.js
@@ -36,6 +37,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
   // ------------ ENVIRONMENT 2 ------------
   if (envRadio.value() == 2) {
 
+    environment.removeGate();
     canvas.remove(); // Canvas
     canvas = createCanvas(1000,600);
     img = img2;
@@ -140,6 +142,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
   // ------------ ENVIRONMENT 4 ------------
   if (envRadio.value() == 4) {
 
+    environment.removeGate();
     canvas.remove(); // Create canvas
     canvas = createCanvas(2400,800);
     img = img4;
@@ -198,6 +201,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
   // ------------ ENVIRONMENT 5 -----------
   if (envRadio.value() == 5) {
 
+    environment.removeGate();
     canvas.remove(); // Canvas
     canvas = createCanvas(1800,600);
     img = img3;

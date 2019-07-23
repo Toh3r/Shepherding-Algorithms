@@ -145,6 +145,10 @@ Environment.prototype.addGate = function(g) {
   this.gates.push(g);
 }
 
+Environment.prototype.removeGate = function () {
+  this.gates.pop();
+}
+
 // ------------ FUNCTIONS TO REMOVE AGENTS/OBJECTS ------------
 Environment.prototype.deleteAnimal = function() {
   this.herd.pop();
