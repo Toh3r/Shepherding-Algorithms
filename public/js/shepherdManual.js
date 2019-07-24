@@ -138,13 +138,9 @@ Shepherd.prototype.outOfHerd = function () { //In herd
 Shepherd.prototype.avoidHerd = function (c1, c2, c3, c4) {
   target = createVector(this.herdRight + 20, this.herdBottom - 20);
   if (target.x > c1.tl.x && target.x < c2.tr.x && target.y > c1.tl.y && target.y < c2.bl.y) {
-    console.log("target = target");
   } else if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c3.bl.y) {
-    console.log("T side section");
   } else if (target.x > c2.tl.x && target.x < c2.tr.x && target.y > c2.bl.y && target.y < c4.bl.y) {
-    console.log("T side section");
   } else {
-    console.log("Target in opposite section")
   }
 
 }

@@ -115,8 +115,8 @@ ManageControls.prototype.createControls = function () {
   testNumRadio.option('50', 50);
 
   //  Select starting environment
-  envRadio._getInputChildrenArray()[0].checked = true;
-  pathRadio._getInputChildrenArray()[0].checked = true;
+  envRadio._getInputChildrenArray()[3].checked = true;
+  pathRadio._getInputChildrenArray()[1].checked = true;
   anNumRadio._getInputChildrenArray()[0].checked = true;
   anTypeRadio._getInputChildrenArray()[0].checked = true;
   testNumRadio._getInputChildrenArray()[0].checked = true;
@@ -305,6 +305,20 @@ function togglePlay() {
      pauseBtn.html('Play');
      isPlaying = true;
   }
+}
+
+function keyPressed() {
+  if (keyCode == 80) {
+    if (isPlaying == true) {
+       loop();  // Lets canvas update
+       pauseBtn.html('Pause'); // Change wording on button
+       isPlaying = false;
+    } else if (isPlaying == false) {
+       noLoop(); // Stops canvas from updating
+       pauseBtn.html('Play');
+       isPlaying = true;
+    }
+}
 }
 
 ManageControls.prototype.addTestResult = function () {

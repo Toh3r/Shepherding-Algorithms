@@ -72,7 +72,7 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
   var moveChance = int(random(1,20));
 
   if (bre == true) {
-    console.log("Running break")
+    // console.log("Running break")
     this.inFlightZone += 1;
     mov.mult(1.5);
     sep.mult(1.2);
@@ -652,7 +652,7 @@ Animal.prototype.avoid = function (novelObjects) {
     steer.normalize();
     steer.mult(this.maxspeed);
     steer.sub(this.velocity);
-    steer.limit(this.maxforce);
+    steer.limit(0.01);
   }
   return steer;
 }
@@ -715,12 +715,12 @@ Animal.prototype.breakUp = function (shep, auto, multi, oShep) {
   var count = 0;
   for(let i = 0; i < allSheps.length; i++) {
     if(allSheps[i].position.x > this.left && allSheps[i].position.x < this.right && allSheps[i].position.y > this.top && allSheps[i].position.y < this.bottom) {
-      console.log("Yololo")
+      // console.log("Yololo")
       count ++;
     }
   }
   if (count > 0) {
-    console.log("returning true")
+    // console.log("returning true")
     this.stressLevel += 0.1;
     return true;
   } else {

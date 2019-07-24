@@ -4,6 +4,17 @@ function ManageEnvironment () {}
 // Function to create the different environments
 ManageEnvironment.prototype.createNewEnv = function () {
 
+  let animalNumber;
+  if(anNumRadio.value() == 1) {
+    animalNumber = 10;
+  } else if(anNumRadio.value() == 2) {
+    animalNumber = 25;
+  } else if(anNumRadio.value() == 3) {
+    animalNumber = 50;
+  }
+
+
+
   // ------------ ENVIRONMENT 1 ------------
   // Create new environment depending on radio button
   if (envRadio.value() == 1) {
@@ -23,7 +34,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
       dir: "start"
     }
 
-    for (var i = 0; i < 10; i++) { //Create starting animals in random positions
+    for (var i = 0; i < animalNumber; i++) { //Create starting animals in random positions
       x = random(0 ,201);
       y = random(0, 501);
       var a = new Animal(x, y, animalGoals); // Pass through staring position, position of goal and position of goalZone
@@ -44,16 +55,22 @@ ManageEnvironment.prototype.createNewEnv = function () {
     canvas.parent('myCanvas');
 
     shepStartPos = createVector(975, 580); // Create shepherd starting co-ords
-    goal1 = createVector(975, 580);
-    shepGoals = [goal1];
+    if (pathRadio.value() == 1) {
+      goal1 = createVector(975, 580);
+      shepGoals = [goal1];
+    } else if (pathRadio.value() == 2) {
+      goal1 = createVector(925, 280), goal2 = createVector(975, 580);
+      shepGoals = [goal1, goal2];
+    }
 
-    animalGoals = [goal1];
+    aGoal1 = createVector(975, 580);
+    animalGoals = [aGoal1];
 
     oracleSearch = {
       dir: "start"
     }
 
-    for (var i = 0; i < 10; i++) { //Create starting animals in random positions
+    for (var i = 0; i < animalNumber; i++) { //Create starting animals in random positions
       x = random(201);
       y = random(501);
       var a = new Animal(x, y, animalGoals);
@@ -94,7 +111,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     gzX = createVector(1100, 1250), gzY = createVector(155, 305);
 
     //Create starting animals in random positions
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < animalNumber; i++) {
       x = random(100,251);
       y = random(50,351);
       var a = new Animal(x, y, goalX, goalY, gzX, gzY);
@@ -149,9 +166,17 @@ ManageEnvironment.prototype.createNewEnv = function () {
     canvas.parent('myCanvas');
 
     shepStartPos = createVector(450, 450); // Create shepherd starting co-ords
-    goal1 = createVector(470, 425), goal2 = createVector(1100, 70);
-    goal3 = createVector(1735, 750), goal4 = createVector(2380, 35);
-    shepGoals = [goal1, goal2, goal3, goal4];
+    if (pathRadio.value() == 1) {
+      goal1 = createVector(470, 425), goal2 = createVector(1100, 70);
+      goal3 = createVector(1735, 750), goal4 = createVector(2380, 35);
+      shepGoals = [goal1, goal2, goal3, goal4];
+    } else if (pathRadio.value() == 2) {
+      goal1 = createVector(470, 425), goal2 = createVector(1100, 70);
+      goal3 = createVector(1200, 200), goal4 = createVector(1200, 700);
+      goal5 = createVector(1735, 750), goal6 = createVector(1900, 150);
+      goal7 = createVector(2380, 35);
+      shepGoals = [goal1, goal2, goal3, goal4, goal5, goal6, goal7];
+    }
 
     aGoal1 = createVector(470, 500), aGoal2 = createVector(470, 400);
     aGoal3 = createVector(1050, 70), aGoal4 = createVector(1150, 70);
@@ -167,7 +192,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     }
 
     //Create starting animals in random positions
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < animalNumber; i++) {
       x = random(801);
       y = random(551,751);
       var a = new Animal(x, y, animalGoals);
@@ -208,12 +233,21 @@ ManageEnvironment.prototype.createNewEnv = function () {
     canvas.parent('myCanvas');
 
     shepStartPos = createVector(1030, 165); // Create shepherd starting co-ords
-    goal1 = createVector(1070, 400), goal2 = createVector(1320, 390);
-    goal3 = createVector(1300, 150), goal4 = createVector(1180,160);
-    goal5 = createVector(1100, 255);
-    shepGoals = [goal1, goal2, goal3, goal4, goal5];
+    if (pathRadio.value() == 1) {
+      goal1 = createVector(1070, 400), goal2 = createVector(1320, 390);
+      goal3 = createVector(1300, 150), goal4 = createVector(1180,160);
+      goal5 = createVector(1100, 255);
+      shepGoals = [goal1, goal2, goal3, goal4, goal5];
+    } else if (pathRadio.value() == 2) {
+      goal1 = createVector(650, 380), goal2 = createVector(1070, 400);
+      goal3 = createVector(1450, 410), goal4 = createVector(1490, 320);
+      goal5 = createVector(1450, 150), goal6 = createVector(1300, 150);
+      goal7 = createVector(1190,170), goal8 = createVector(1100, 255);
+      shepGoals = [goal1, goal2, goal3, goal4, goal5, goal6, goal7, goal8];
+    }
 
-    aGoal1 = createVector(1070, 400), aGoal2 = createVector(1250,160);
+
+    aGoal1 = createVector(1070, 400), aGoal2 = createVector(1190,170);
     aGoal3 = createVector(1100, 240);
     animalGoals = [aGoal1, aGoal2, aGoal3];
 
@@ -224,7 +258,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
       endSec: createVector(5,3)
     }
 
-    for (var i = 0; i < 10; i++) {   //Create starting animals in random positions
+    for (var i = 0; i < animalNumber; i++) {   //Create starting animals in random positions
       x = random(100,251);
       y = random(50,351);
       var a = new Animal(x, y, animalGoals);

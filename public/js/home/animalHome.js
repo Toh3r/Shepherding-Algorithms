@@ -77,8 +77,8 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
     sep.mult(1.2);
     ali.mult(0.1);
     coh.mult(0.1);
-    this.maxspeed = 0.6;
-    this.velocity.setMag(0.6);
+    this.maxspeed = 0.5;
+    this.velocity.setMag(0.5);
   }
 
   // If UAVS in FZ and PZ, disregard UAVS in FZ
@@ -93,8 +93,8 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
     sep.mult(1.2);
     ali.mult(0.7);
     coh.mult(0.8);
-    this.maxspeed = 0.6;
-    this.velocity.setMag(0.6);
+    this.maxspeed = 0.5;
+    this.velocity.setMag(0.5);
   }
 
   // WHEN SHEPHERD IN PRESSURE ZONE
@@ -162,7 +162,7 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
     goa.mult(0.5);
     this.timeCount = 4;
   }
-  avo.mult(0.5);
+  avo.mult(1);
 
   // Add the force vectors to acceleration
   this.applyForce(mov);
@@ -651,7 +651,7 @@ Animal.prototype.avoid = function (novelObjects) {
     steer.normalize();
     steer.mult(this.maxspeed);
     steer.sub(this.velocity);
-    steer.limit(this.maxforce);
+    steer.limit(0.01);
   }
   return steer;
 }
@@ -675,7 +675,7 @@ Animal.prototype.speedRed = function() {
         // console.log(self.name + "'s SPEED: " + self.velocity.mag());
         self.timeCount--;
       }
-    }, 3000);
+    }, 4000);
   } else {
     // console.log("ALREADY DECREASING SPEED");
   }

@@ -600,3 +600,17 @@ function togglePlay() {
      isPlaying = true;
   }
 }
+
+function keyPressed() {
+  if (keyCode == 80) {
+    if (isPlaying == true) {
+       loop();  // Lets canvas update
+       pauseBtn.html('Pause'); // Change wording on button
+       isPlaying = false;
+    } else if (isPlaying == false) {
+       noLoop(); // Stops canvas from updating
+       pauseBtn.html('Play');
+       isPlaying = true;
+    }
+  }
+}
