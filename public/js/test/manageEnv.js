@@ -328,8 +328,8 @@ function herd() {
 }
 
 function oracle() {
-  environment.addOracle(new Oracle(shepX, shepY, goalX, goalY, oracleSearch));
-  environment.addOracleShepherd(new OracleShepherd(shepX, shepY, goalX, goalY));
+  environment.addOracle(new Oracle(shepStartPos, oracleSearch));
+  environment.addOracleShepherd(new OracleShepherd(shepStartPos, shepGoals));
 }
 
 function multiDrone() {

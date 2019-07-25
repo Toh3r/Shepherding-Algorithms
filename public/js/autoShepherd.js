@@ -164,7 +164,6 @@ AutoShepherd.prototype.bunched = function (herd) {
     br: createVector(this.bottomLeft.x, this.bottomLeft.y + 100),
     bl: createVector(this.bottomLeft.x - 100, this.bottomLeft.y + 100)
   }
-
   // Return if herd is bunched or not
   herdDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
   if (herdDist < 100) {
@@ -352,7 +351,6 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   this.avoidHerdBool = false;
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
-
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = this.shepGoals[this.goalCounter];
   this.checkGoal(center, goal);
@@ -382,9 +380,6 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     myLine = 100;
   }
 
-  // if (this.avoiding == true) {
-  //   myLine = myLine + 20;
-  // }
   // Lines to flight zone and pressure zone
   let l2fz = this.adjustLineLen(center,goal,myLine+20);
   let l2pz = this.adjustLineLen(center,goal,myLine+60);
@@ -403,8 +398,9 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   pzp2 = this.adjustLineLen(pzp2,l2pz, -40);
 
   herdHeading = this.checkHeading(herd);
+
   this.correctHeading = this.getGoodHeading(center, goal);
-  if (environment.avgSpeed() > 0.30 && Math.abs(this.correctHeading - herdHeading) < 0.75) {
+  if (environment.avgSpeed() > 0.30 && Math.abs(this.correctHeading - herdHeading) < 0.50) {
     this.goodMovement += 1;
   }
 
@@ -430,11 +426,9 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     }
   }
 
-  let statues = this.checkForStatues(herd);
-  this.checkForStatues(herd);
-  // console.log("statues: " + statues);
+  let statues = this.checkForStatues(herd, center);
   if (this.movingUp == false) {
-      if (environment.avgSpeed() < 0.30 || !(-0.75 < herdHeading && herdHeading < 0.75) || statues == true) {
+      if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50) || statues == true) {
         var target = createVector(fzp1.x,fzp1.y);
       } else {
         var target = createVector(pzp1.x,pzp1.y);
@@ -458,7 +452,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     }
     return steer;
   } else if (this.movingUp == true) {
-      if (environment.avgSpeed() < 0.30 || !(-0.75 < herdHeading && herdHeading < 0.75) || statues == true) {
+      if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50) || statues == true) {
         var target = createVector(fzp2.x,fzp2.y);
       } else {
         var target = createVector(pzp2.x,pzp2.y);
@@ -740,10 +734,7 @@ AutoShepherd.prototype.displayShepLines = function (herd) {
   var goal = this.shepGoals[this.goalCounter];
 
   if (environment.vocalizing() == true && herd.length > 0) {
-    this.avoiding = true;
     goal = this.avoidObstacle(center, goal, herd);
-  } else if (environment.vocalizing() == false && herd.length > 0) {
-    this.avoiding = false;
   }
 
   var myLine = this.findClosestAnimal(herd, center);
@@ -856,21 +847,6 @@ AutoShepherd.prototype.checkHeading = function (herd) {
   return averageHeading;
 }
 
-AutoShepherd.prototype.checkForStatues = function (herd) {
-  console.log("I run")
-  let count = 0;
-  for (var i = 0; i < herd.length; i++) {
-    if(herd[i].velocity.mag() < 0.5) {
-      count++;
-    }
-  }
-  if (count > 0) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 AutoShepherd.prototype.drawShepGoals = function () {
   fill(255,30,30)
   stroke(0);
@@ -961,4 +937,22 @@ AutoShepherd.prototype.redAlert = function (target) {
     target.x = this.bottomRight.x + 10, target.y = this.bottomRight.y - 10;
   }
   return target;
+}
+
+AutoShepherd.prototype.checkForStatues = function (herd, center) {
+  let count = 0;
+  let n = this.findClosestAnimal(herd, center);
+  for (var i = 0; i < herd.length; i++) {
+    if(herd[i].velocity.mag() < 1.1 && dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y) == n) {
+      count++;
+      fill(30,30,30,30)
+      ellipse(herd[i].position.x, herd[i].position.y, 30, 30)
+    }
+  }
+  if (count > 0) {
+    console.log("I run")
+    return true;
+  } else {
+    return false;
+  }
 }

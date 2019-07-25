@@ -27,7 +27,7 @@ ManageControls.prototype.createControls = function () {
   pSpeOut = createElement("h6", pSpeedSlider.value());
   pSpeOut.parent('pSpeSli');
 
-  fSpeedSlider = createSlider(0, 2, 0.6, 0.1);
+  fSpeedSlider = createSlider(0, 2, 0.5, 0.1);
   fSpeedSlider.parent('fSpeSli');
   fSpeOut = createElement("h6", fSpeedSlider.value());
   fSpeOut.parent('fSpeSli');
@@ -43,7 +43,7 @@ ManageControls.prototype.createControls = function () {
   pVelOut = createElement("h6", pVelSlider.value());
   pVelOut.parent('pVelSli');
 
-  fVelSlider = createSlider(0, 2, 0.6, 0.1);
+  fVelSlider = createSlider(0, 2, 0.5, 0.1);
   fVelSlider.parent('fVelSli');
   fVelOut = createElement("h6", fVelSlider.value());
   fVelOut.parent('fVelSli');
@@ -295,7 +295,7 @@ ManageControls.prototype.createControls = function () {
   collectRadio.option('ZZ', 2);
 
   //  Select starting environment
-  envRadio._getInputChildrenArray()[4].checked = true;
+  envRadio._getInputChildrenArray()[0].checked = true;
   collectRadio._getInputChildrenArray()[0].checked = true;
 
   // Initialize new environment

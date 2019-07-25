@@ -153,11 +153,7 @@ Environment.prototype.avgHeading = function() {
 }
 
 Environment.prototype.totalStress = function() {
-  this.stress = 0;
-  for (var i = 0; i < this.herd.length; i++) {
-    this.stress += this.herd[i].stressLevel;
-  }
-  return this.stress;
+  return this.accumulatedStress;
 }
 
 Environment.prototype.timeSteps = function() {

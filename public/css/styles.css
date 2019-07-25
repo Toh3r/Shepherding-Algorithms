@@ -38,6 +38,7 @@ canvas {
   justify-content: center;
   align-items: center;
   background-image: url('./images/greenNeon.jpg');  /* Unsplash */
+	/* background-image: url('./images/graffiti.jpg');  /* Unsplash */
   background-size: cover;
   background-position: center;
 	overflow-x: auto;

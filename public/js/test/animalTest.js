@@ -78,8 +78,8 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
     sep.mult(1.2);
     ali.mult(0.1);
     coh.mult(0.1);
-    this.maxspeed = 0.6;
-    this.velocity.setMag(0.6);
+    this.maxspeed = 0.5;
+    this.velocity.setMag(0.5);
   }
 
   // If UAVS in FZ and PZ, disregard UAVS in FZ

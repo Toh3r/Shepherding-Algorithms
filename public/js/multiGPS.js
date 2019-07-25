@@ -447,7 +447,7 @@ MultiGPSShepherd.prototype.moveAnimals = function (herd) {
 
   herdHeading = this.checkHeading(herd);
   this.correctHeading = this.getGoodHeading(center, goal);
-  if (environment.avgSpeed() > 0.35 && Math.abs(this.correctHeading - herdHeading) < 0.75) {
+  if (environment.avgSpeed() > 0.35 && Math.abs(this.correctHeading - herdHeading) < 0.50) {
     this.goodMovement += 1;
   }
 
@@ -473,16 +473,16 @@ if(this.switchingActions == true) {
   }
 }
 
-  let statues = this.checkForStatues(herd);
+  let statues = this.checkForStatues(herd, center);
   if (this.movingUp == false) {
     if (this.uavNum == 2) {
-      if (environment.avgSpeed() < 0.30 || !(-0.75 < herdHeading && herdHeading < 0.75) || statues == true) {
+      if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50) || statues == true) {
         var target = createVector(fzp1.x,fzp1.y);
       } else {
         var target = createVector(pzp1.x,pzp1.y);
       }
     } else if (this.uavNum == 1) {
-      if (environment.avgSpeed() < 0.30 || !(-0.75 < herdHeading && herdHeading < 0.75) || statues == true) {
+      if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50) || statues == true) {
         var target = createVector(cpfz.x,cpfz.y);
       } else {
         var target = createVector(cppz.x,cppz.y);
@@ -510,13 +510,13 @@ if(this.switchingActions == true) {
     return steer;
   } else if (this.movingUp == true) {
     if (this.uavNum == 2) {
-      if (environment.avgSpeed() < 0.30 || !(-0.75 < herdHeading && herdHeading < 0.75) || statues == true) {
+      if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50) || statues == true) {
         var target = createVector(cpfz.x,cpfz.y);
       } else {
         var target = createVector(cppz.x,cppz.y);
       }
     } else if (this.uavNum == 1) {
-      if (environment.avgSpeed() < 0.30 || !(-0.75 < herdHeading && herdHeading < 0.75) || statues == true) {
+      if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50) || statues == true) {
         var target = createVector(fzp2.x,fzp2.y);
       } else {
         var target = createVector(pzp2.x,pzp2.y);
@@ -1009,14 +1009,18 @@ MultiGPSShepherd.prototype.redAlert = function (target) {
   return target;
 }
 
-AutoShepherd.prototype.checkForStatues = function (herd) {
+MultiGPSShepherd.prototype.checkForStatues = function (herd, center) {
   let count = 0;
+  let n = this.findClosestAnimal(herd, center);
   for (var i = 0; i < herd.length; i++) {
-    if(herd[i].velocity.mag() < 0.05) {
+    if(herd[i].velocity.mag() < 1.1 && dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y) == n) {
       count++;
+      fill(30,30,30,30)
+      ellipse(herd[i].position.x, herd[i].position.y, 30, 30)
     }
   }
   if (count > 0) {
+    console.log("I run")
     return true;
   } else {
     return false;

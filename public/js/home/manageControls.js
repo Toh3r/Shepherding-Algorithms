@@ -115,8 +115,8 @@ ManageControls.prototype.createControls = function () {
   testNumRadio.option('50', 50);
 
   //  Select starting environment
-  envRadio._getInputChildrenArray()[3].checked = true;
-  pathRadio._getInputChildrenArray()[1].checked = true;
+  envRadio._getInputChildrenArray()[0].checked = true;
+  pathRadio._getInputChildrenArray()[0].checked = true;
   anNumRadio._getInputChildrenArray()[0].checked = true;
   anTypeRadio._getInputChildrenArray()[0].checked = true;
   testNumRadio._getInputChildrenArray()[0].checked = true;

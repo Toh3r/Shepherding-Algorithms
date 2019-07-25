@@ -72,6 +72,7 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
   var moveChance = int(random(1,20));
 
   if (bre == true) {
+    console.log("returning true")
     this.inFlightZone += 1;
     mov.mult(1.5);
     sep.mult(1.2);
