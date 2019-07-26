@@ -321,6 +321,14 @@ function keyPressed() {
 }
 }
 
+// function mouseClicked() {
+//   addAnAnimal();
+// }
+//
+// function addAnAnimal () {
+//   envronment.addAnimal(new Animal(mouseX, mouseY, animalGoals));
+// }
+
 ManageControls.prototype.addTestResult = function () {
   var results = environment.testResults;
     for(var i = results.length-1; i < results.length; i++) {

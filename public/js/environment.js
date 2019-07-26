@@ -157,7 +157,7 @@ Environment.prototype.totalStress = function() {
 }
 
 Environment.prototype.timeSteps = function() {
-  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds);
+  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
   this.time = 0;
   for (var i = 0; i < this.allShepherds.length; i++) {
     this.time += this.allShepherds[i].timestep;
@@ -171,7 +171,7 @@ Environment.prototype.timeSteps = function() {
 }
 
 Environment.prototype.goodMovementTime = function() {
-  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds);
+  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
   this.goodMoves = 0;
   for (var i = 0; i < this.allShepherds.length; i++) {
     this.goodMoves += this.allShepherds[i].goodMovement;
@@ -185,7 +185,7 @@ Environment.prototype.goodMovementTime = function() {
 }
 
 Environment.prototype.theCorrectHeading = function() {
-  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds);
+  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
   if(this.allShepherds.length > 0) {
     return this.allShepherds[0].correctHeading;
   } else {

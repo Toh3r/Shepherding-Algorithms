@@ -166,7 +166,7 @@ AutoShepherd.prototype.bunched = function (herd) {
   }
   // Return if herd is bunched or not
   herdDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
-  if (herdDist < 100) {
+  if (herdDist < 150) {
     return true;
   } else {
     return false;
@@ -217,9 +217,9 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
 
  if (this.movingUp == false) {
    var target = createVector(pzp1.x,pzp1.y);
-   this.targetInHerd(target);
-   this.targetInBounds(target);
    this.outOfHerd(target);
+   this.targetInBounds(target);
+   this.targetInHerd(target);
    this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
@@ -232,9 +232,9 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
    return steer;
  } else if (this.movingUp == true) {
    var target = createVector(pzp2.x,pzp2.y);
-   this.targetInHerd(target);
-   this.targetInBounds(target);
    this.outOfHerd(target);
+   this.targetInBounds(target);
+   this.targetInHerd(target);
    this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
@@ -478,15 +478,17 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
   }
 }
 
-// Function to keep target within enclosure
 AutoShepherd.prototype.targetInBounds = function (target) {
   if (target.x < 15) {
     target.x = 15;
-  } else if (target.y < 15) {
+  }
+  if (target.y < 15) {
     target.y = 15;
-  } else if (target.x > width - 15) {
+  }
+  if (target.x > width - 15) {
     target.x = width - 15;
-  } else if (target.y > height - 15) {
+  }
+  if (target.y > height - 15) {
     target.y = height - 15;
   }
   return target;
@@ -495,11 +497,14 @@ AutoShepherd.prototype.targetInBounds = function (target) {
 AutoShepherd.prototype.targetInHerd = function (target) {
   if (target.x < this.topLeft.x - 100) {
     target.x = this.topLeft - 20;
-  } else if (target.y < this.topLeft.y - 100) {
+  }
+  if (target.y < this.topLeft.y - 100) {
     target.y = this.topLeft.y - 20;
-  } else if (target.x > this.topRight.x + 100) {
+  }
+  if (target.x > this.topRight.x + 100) {
     target.x = this.topRight.x + 20;
-  } else if (target.y > this.bottomRight.y + 100) {
+  }
+  if (target.y > this.bottomRight.y + 100) {
     target.y = this.bottomRight.y + 20;
   }
   return target;

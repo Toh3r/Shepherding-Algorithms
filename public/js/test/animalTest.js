@@ -715,12 +715,10 @@ Animal.prototype.breakUp = function (shep, auto, multi, oShep) {
   var count = 0;
   for(let i = 0; i < allSheps.length; i++) {
     if(allSheps[i].position.x > this.left && allSheps[i].position.x < this.right && allSheps[i].position.y > this.top && allSheps[i].position.y < this.bottom) {
-      // console.log("Yololo")
       count ++;
     }
   }
   if (count > 0) {
-    // console.log("returning true")
     this.stressLevel += 0.1;
     return true;
   } else {

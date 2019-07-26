@@ -25,8 +25,13 @@ function OracleShepherd(startPos, shepGoals) {  // Passing through starting co-o
   this.avoiding = false;
   this.wait = true;
   this.firstAvoid = false;
-  this.goodMovement = 0;
-  this.correctHeading = 0;
+
+  this.gotToAnimal1 = true
+  this.AC_Counter = 0;
+  this.oldTar = {
+    position: createVector(startPos.x, startPos.y),
+    id: createVector(0,0)
+  }
 }
 
 // Call methods for each shepherd
@@ -38,23 +43,26 @@ OracleShepherd.prototype.run = function(oracles) {
   if (oracles[0].targetNum == oracles[0].numSectors || oracles[0].targetNum == 0 || oracles[0].following == true) {
     if(currentAnimals.length != 0) {
       this.oldAnimals.length = 0;
-      this.herdAnimals(currentAnimals);
-      this.timestep++;
+      this.herdAnimals(currentAnimals, oracles[0]);
       this.saveOldPositions(currentAnimals);
       if(lineCheck.checked() == true) {
         this.displayShepLines(currentAnimals);
       }
     }
   } else if (this.oldAnimals.length > 0) {
-    this.herdAnimals(this.oldAnimals);
-    this.timestep++;
+    this.herdAnimals(this.oldAnimals, oracles[0]);
     if(lineCheck.checked() == true) {
       this.displayShepLines(this.oldAnimals);
     }
   }
-  // else {
-  //   this.maxspeed = 0;
-  // }
+  else if (this.oldAnimals.length == 0) {
+    var pat = this.patrol(oracles[0]);
+    this.applyForce(pat);
+  }
+
+  if (oracles.length > 0) { // Count time steps
+    this.timestep++;
+  }
 
   if(oracles[0].maxspeed == 0) {
     this.maxspeed = 0;
@@ -66,7 +74,7 @@ OracleShepherd.prototype.applyForce = function(force) {
   this.acceleration.add(force);
 }
 
-OracleShepherd.prototype.herdAnimals = function (animals) {
+OracleShepherd.prototype.herdAnimals = function (animals, oracle) {
   var bun = this.bunched(animals);
   var too = this.tooClose(animals);
 
@@ -78,12 +86,12 @@ OracleShepherd.prototype.herdAnimals = function (animals) {
   }
 
   if (bun == false) { // If false, call collecting function
-  var avgDist = this.checkDist(animals)
-  if (avgDist > 150) { // FFHC Collect
-    var col = this.advanceCollect(animals);
-  } else { // ZZ Collect
-    var col = this.collectAnimals(animals);
-  }
+  // var avgDist = this.checkDist(animals)
+  // if (avgDist > 150) { // FFHC Collect
+    var col = this.advanceCollect(animals, oracle);
+  // } else { // ZZ Collect
+    // var col = this.collectAnimals(animals);
+  // }
 
   this.applyForce(col);
   this.collectBool = true; // Booleans for UI output
@@ -174,11 +182,40 @@ OracleShepherd.prototype.bunched = function (animals) {
   }
 
   herDist = dist(this.animalsLeft, this.animalsTop, this.animalsRight, this.animalsBottom);
-  if (herDist < 100) {
+  if (herDist < 150) {
     return true;
   } else {
     return false;
   }
+}
+
+OracleShepherd.prototype.patrol = function (oracle) {
+  var orTarXString = oracle.isForShep.id.x.toString();
+  var orTarPosX = oracle.isForShep.position.x.toString();
+  console.log("the string or, this.old: " + orTarXString + ", " + this.oldTarX)
+  console.log(" POSES the string or, this.old: " + orTarPosX + ", " + this.oldTarPos)
+  // console.log("Old vs this.old: " + orTar.x + ", " + this.oldTar.x)
+  if (orTarXString != this.oldTarX && oracle.animals.length == 0) {
+    this.patroling = true;
+    this.pPos = Number(this.oldTarPos);
+    console.log("pPos: " + this.pPos)
+  }
+  if (this.patroling == true) {
+    var target = createVector(this.pPos, height/2);
+  } else {
+    var target = createVector(this.position.x, this.position.y);
+  }
+  var desired = p5.Vector.sub(target, this.position);
+  desired.normalize();
+  desired.mult(this.maxspeed);
+  var steer = p5.Vector.sub(desired, this.velocity);
+  steer.limit(this.maxforce);
+  if (dist(this.position.x, this.position.y, target.x, target.y) < 2){
+    this.patroling = false;
+  }
+  this.oldTarX = orTarXString;
+  this.oldTarPos = orTarPosX;
+  return steer;
 }
 
 OracleShepherd.prototype.collectAnimals = function (animals) {
@@ -223,9 +260,9 @@ OracleShepherd.prototype.collectAnimals = function (animals) {
 
  if (this.movingUp == false) {
    var target = createVector(pzp1.x,pzp1.y);
-   this.targetInHerd(target);
-   this.targetInBounds(target);
    this.outOfHerd(target);
+   this.targetInBounds(target);
+   this.targetInHerd(target);
    this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
@@ -238,9 +275,9 @@ OracleShepherd.prototype.collectAnimals = function (animals) {
    return steer;
  } else if (this.movingUp == true) {
    var target = createVector(pzp2.x,pzp2.y);
-   this.targetInHerd(target);
-   this.targetInBounds(target);
    this.outOfHerd(target);
+   this.targetInBounds(target);
+   this.targetInHerd(target);
    this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
@@ -254,7 +291,7 @@ OracleShepherd.prototype.collectAnimals = function (animals) {
  }
 }
 
-OracleShepherd.prototype.advanceCollect = function (animals) {
+OracleShepherd.prototype.advanceCollect = function (animals, oracle) {
   this.oldMovement = "collecting"; // Set movement type to collecting
   this.avoidHerdBool = false;
   var herdX = (this.animalsRight + this.animalsLeft) / 2; // X co-ord of herd centre
@@ -272,28 +309,54 @@ OracleShepherd.prototype.advanceCollect = function (animals) {
     this.avoiding = false;
   }
 
-  var furthestPos = 0;
-  for (var i = 0; i < animals.length; i++) {
-    currentDist = dist(animals[i].position.x, animals[i].position.y, herdX, herdY);
-    if (currentDist > furthestPos) {
-      furthestPos = currentDist;
-      this.targetAnimal = animals[i];
+  if (Math.abs(this.animalsLeft - this.animalsRight) > Math.abs(this.animalsTop - this.animalsBottom)) {
+    var furthestPos1 = 0;
+    for (var i = 0; i < animals.length; i++) {
+      currentDist = dist(animals[i].position.x, animals[i].position.y, herdX, herdY);
+      if (currentDist > furthestPos1 && animals[i].position.x > herdX) {
+        furthestPos1 = currentDist;
+        this.targetAnimal1 = animals[i];
+      }
+    }
+    var furthestPos2 = 0;
+    for (var i = 0; i < animals.length; i++) {
+      currentDist = dist(animals[i].position.x, animals[i].position.y, herdX, herdY);
+      if (currentDist > furthestPos2 && animals[i].position.x < herdX) {
+        furthestPos2 = currentDist;
+        this.targetAnimal2 = animals[i];
+      }
+    }
+  } else {
+    var furthestPos1 = 0;
+    for (var i = 0; i < animals.length; i++) {
+      currentDist = dist(animals[i].position.x, animals[i].position.y, herdX, herdY);
+      if (currentDist > furthestPos1 && animals[i].position.y > herdY) {
+        furthestPos1 = currentDist;
+        this.targetAnimal1 = animals[i];
+      }
+    }
+    var furthestPos2 = 0;
+    for (var i = 0; i < animals.length; i++) {
+      currentDist = dist(animals[i].position.x, animals[i].position.y, herdX, herdY);
+      if (currentDist > furthestPos2 && animals[i].position.y < herdY) {
+        furthestPos2 = currentDist;
+        this.targetAnimal2 = animals[i];
+      }
     }
   }
 
   if (animals.length > 0) {
     fill(255,0,0, 20);
     stroke(0);
-    ellipse(this.targetAnimal.position.x, this.targetAnimal.position.y, 20,20);
-    ellipse(this.oldTargetAnimal.position.x, this.oldTargetAnimal.position.y, 20,20)
+    ellipse(this.targetAnimal1.position.x, this.targetAnimal1.position.y, 20,20);
+    ellipse(this.targetAnimal2.position.x, this.targetAnimal2.position.y, 20,20);
   }
 
-  var comp1 = dist(this.targetAnimal.position.x, this.targetAnimal.position.y, herdX, herdY);
-  var comp2 = dist(this.oldTargetAnimal.position.x, this.oldTargetAnimal.position.y, herdX, herdY);
-
-  // if(Math.abs(comp1 - comp2) < 30) {
-  //   this.targetAnimal = this.oldTargetAnimal;
-  // }
+  if (this.gotToAnimal1 == true) {
+    this.targetAnimal = this.targetAnimal1;
+  } else {
+    this.targetAnimal = this.targetAnimal2;
+  }
 
   let fz2hc = this.adjustLineLen(this.targetAnimal.position, center, 40);
   let pz2hc = this.adjustLineLen(this.targetAnimal.position, center, 70);
@@ -318,12 +381,13 @@ OracleShepherd.prototype.advanceCollect = function (animals) {
     line(pzp10.x, pzp10.y,pzp20.x, pzp20.y)
   }
 
-  this.oldTargetAnimal = this.targetAnimal;
-
  if (this.movingUp == false) {
    var target = createVector(fzp10.x,fzp10.y);
    this.targetInBounds(target);
    this.outOfHerd(target);
+   fill(255,255,0);
+   stroke(0)
+   ellipse(target.x, target.y, 30,30)
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
@@ -331,12 +395,20 @@ OracleShepherd.prototype.advanceCollect = function (animals) {
    steer.limit(this.maxforce);
    if (dist(this.position.x, this.position.y, target.x, target.y) < 5){
      this.movingUp = true;
+     this.AC_Counter++;
+     if (this.AC_Counter == 2) {
+       this.gotToAnimal1 = !this.gotToAnimal1;
+       this.AC_Counter = 0;
+     }
    }
    return steer;
  } else if (this.movingUp == true) {
    var target = createVector(fzp20.x,fzp20.y);
    this.targetInBounds(target);
    this.outOfHerd(target);
+   fill(255,255,0);
+   stroke(0)
+   ellipse(target.x, target.y, 30,30)
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
@@ -344,13 +416,17 @@ OracleShepherd.prototype.advanceCollect = function (animals) {
    steer.limit(this.maxforce);
    if (dist(this.position.x, this.position.y, target.x, target.y) < 5){
      this.movingUp = false;
+     this.AC_Counter++;
+     if (this.AC_Counter == 2) {
+       this.gotToAnimal1 = !this.gotToAnimal1;
+       this.AC_Counter = 0;
+     };
    }
    return steer;
  }
 }
 
 OracleShepherd.prototype.moveAnimals = function (animals) {
-
   var herdX = (this.animalsRight + this.animalsLeft) / 2; // X co-ord of herd centre
   var herdY = (this.animalsTop + this.animalsBottom) / 2; // Y co-ord of herd centre
   var center = createVector(herdX, herdY); // Centre co-ords of herd
@@ -400,9 +476,10 @@ OracleShepherd.prototype.moveAnimals = function (animals) {
   pzp2 = this.adjustLineLen(pzp2,l2pz, -40);
 
   herdHeading = this.checkHeading(animals);
+  avgAnimalSpeed = this.checkAnimalSpeeds(animals);
 
   this.correctHeading = this.getGoodHeading(center, goal);
-  if (environment.avgSpeed() > 0.30 && Math.abs(this.correctHeading - herdHeading) < 0.50) {
+  if (environment.avgSpeed() > 0.20 && Math.abs(this.correctHeading - herdHeading) < 0.50) {
     this.goodMovement += 1;
   }
 
@@ -431,7 +508,7 @@ if(this.switchingActions == true) {
 let statues = this.checkForStatues(animals, center);
 
   if (this.movingUp == false) {
-    if (environment.avgSpeed() < 0.20 || !(-0.50 < herdHeading && herdHeading < 0.50)) {
+    if (avgAnimalSpeed < 0.20 || !(-0.50 < herdHeading && herdHeading < 0.50) || statues == true) {
       var target = createVector(fzp1.x,fzp1.y);
     } else {
       var target = createVector(pzp1.x,pzp1.y);
@@ -452,7 +529,7 @@ let statues = this.checkForStatues(animals, center);
     }
     return steer;
   } else if (this.movingUp == true) {
-    if (environment.avgSpeed() < 0.20 || !(-0.50 < herdHeading && herdHeading < 0.50)) {
+    if (avgAnimalSpeed < 0.20 || !(-0.50 < herdHeading && herdHeading < 0.50) || statues == true) {
       var target = createVector(fzp2.x,fzp2.y);
     } else {
       var target = createVector(pzp2.x,pzp2.y);
@@ -478,11 +555,14 @@ let statues = this.checkForStatues(animals, center);
 OracleShepherd.prototype.targetInBounds = function (target) {
   if (target.x < 15) {
     target.x = 15;
-  } else if (target.y < 15) {
+  }
+  if (target.y < 15) {
     target.y = 15;
-  } else if (target.x > width - 15) {
+  }
+  if (target.x > width - 15) {
     target.x = width - 15;
-  } else if (target.y > height - 15) {
+  }
+  if (target.y > height - 15) {
     target.y = height - 15;
   }
   return target;
@@ -491,11 +571,14 @@ OracleShepherd.prototype.targetInBounds = function (target) {
 OracleShepherd.prototype.targetInHerd = function (target) {
   if (target.x < this.topLeft.x - 100) {
     target.x = this.topLeft - 20;
-  } else if (target.y < this.topLeft.y - 100) {
+  }
+  if (target.y < this.topLeft.y - 100) {
     target.y = this.topLeft.y - 20;
-  } else if (target.x > this.topRight.x + 100) {
+  }
+  if (target.x > this.topRight.x + 100) {
     target.x = this.topRight.x + 20;
-  } else if (target.y > this.bottomRight.y + 100) {
+  }
+  if (target.y > this.bottomRight.y + 100) {
     target.y = this.bottomRight.y + 20;
   }
   return target;
@@ -563,20 +646,20 @@ OracleShepherd.prototype.avoidObstacle = function (center, goal, animals) {
   stroke(0);
   if (herdHeading >= -0.75 && herdHeading <= 0.75) {
     text("Move Right", 50, 50);
-    ellipse(width, (this.herdTop + this.herdBottom) / 2, 50,50);
-    goal = createVector(width, (this.herdTop + this.herdBottom) / 2);
+    ellipse(width, (this.animalsTop + this.animalsBottom) / 2, 50,50);
+    goal = createVector(width, (this.animalsTop + this.animalsBottom) / 2);
   } else if (herdHeading >= 0.75 && herdHeading <= 2.25) {
     text("Move Down", 50, 50);
-    ellipse((this.herdRight + this.herdLeft) / 2, height, 50,50);
-    goal = createVector((this.herdRight + this.herdLeft) / 2, height);
+    ellipse((this.animalsRight + this.herdLeft) / 2, height, 50,50);
+    goal = createVector((this.animalsRight + this.herdLeft) / 2, height);
   } else if (herdHeading >= -2.25 && herdHeading <= -0.75) {
     text("Move Up", 50, 50);
-    ellipse((this.herdRight + this.herdLeft) / 2, 0, 50,50);
-    goal = createVector((this.herdRight + this.herdLeft) / 2, 0);
+    ellipse((this.animalsRight + this.herdLeft) / 2, 0, 50,50);
+    goal = createVector((this.animalsRight + this.herdLeft) / 2, 0);
   } else {
     text("Move Left", 50, 50);
-    ellipse(0, (this.herdTop + this.herdBottom) / 2, 50,50);
-    goal = createVector(0, (this.herdTop + this.herdBottom) / 2);
+    ellipse(0, (this.animalsTop + this.animalsBottom) / 2, 50,50);
+    goal = createVector(0, (this.animalsTop + this.animalsBottom) / 2);
   }
 
   this.targetInBounds(goal);
@@ -611,6 +694,7 @@ OracleShepherd.prototype.adjustLineLen = function (p1,p2,d) {
   point = createVector(lp1,lp2);
   return point;
 }
+
 OracleShepherd.prototype.checkHeading = function (animals) {
   totalHeading = 0;
   for (var i = 0; i < animals.length; i++) {
@@ -618,6 +702,14 @@ OracleShepherd.prototype.checkHeading = function (animals) {
   }
   averageHeading = totalHeading/ animals.length;
   return averageHeading;
+}
+OracleShepherd.prototype.checkAnimalSpeeds = function (animals) {
+  totalSpeed = 0;
+  for (var i = 0; i < animals.length; i++) {
+    totalSpeed += animals[i].speed;
+  }
+  averageSpeed = totalSpeed/ animals.length;
+  return averageSpeed;
 }
 
 OracleShepherd.prototype.saveOldPositions = function (animals) {
@@ -695,18 +787,18 @@ OracleShepherd.prototype.avoidHerdTop = function (target, c1, c2, c3, c4) {
     target = target;
   } else if (target.x > c4.tl.x && target.x < c4.tr.x && target.y > c1.bl.y && target.y < c4.bl.y) {
     this.avoidHerdBool = true;
-    target.x = this.herdLeft - 20, target.y = this.herdTop - 20;
+    target.x = this.herdLeft - 20, target.y = this.animalsTop - 20;
   } else if (target.x > c3.tl.x && target.x < c3.tr.x && target.y > c2.bl.y && target.y < c3.bl.y) {
     this.avoidHerdBool = true;
-    target.x = this.herdRight + 20, target.y = this.herdTop - 20;
+    target.x = this.animalsRight + 20, target.y = this.animalsTop - 20;
   } else {
     this.avoidHerdBool = true;
-    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.herdTop) + dist(this.herdLeft, this.herdTop, this.herdLeft, this.herdBottom) + dist(this.herdLeft, this.herdBottom, target.x, target.y);
-    var swingRight = dist(this.position.x, this.position.y, this.herdRight, this.herdTop) + dist(this.herdRight, this.herdTop, this.herdRight, this.herdBottom) + dist(this.herdRight, this.herdBottom, target.x, target.y);
+    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.animalsTop) + dist(this.herdLeft, this.animalsTop, this.herdLeft, this.animalsBottom) + dist(this.herdLeft, this.animalsBottom, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.animalsRight, this.animalsTop) + dist(this.animalsRight, this.animalsTop, this.animalsRight, this.animalsBottom) + dist(this.animalsRight, this.animalsBottom, target.x, target.y);
     if(swingLeft < swingRight) {
-      target.x = this.herdLeft - 20, target.y = this.herdTop - 20;
+      target.x = this.herdLeft - 20, target.y = this.animalsTop - 20;
     } else if (swingRight < swingLeft) {
-      target.x = this.herdRight + 20, target.y = this.herdTop - 20;
+      target.x = this.animalsRight + 20, target.y = this.animalsTop - 20;
     }
   }
   fill(255)
@@ -719,18 +811,18 @@ OracleShepherd.prototype.avoidHerdRight = function (target, c1, c2, c3, c4) {
     target = target;
   } else if (target.x > c4.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
     this.avoidHerdBool = true;
-    target.x = this.herdRight + 20, target.y = this.herdTop - 20;
+    target.x = this.animalsRight + 20, target.y = this.animalsTop - 20;
   } else if (target.x > c3.tl.x && target.x < c2.tl.x && target.y > c2.tl.y && target.y < c2.bl.y) {
     this.avoidHerdBool = true;
-    target.x = this.herdRight + 20, target.y = this.herdBottom + 20;
+    target.x = this.animalsRight + 20, target.y = this.animalsBottom + 20;
   } else {
     this.avoidHerdBool = true;
-    var swingLeft = dist(this.position.x, this.position.y, this.herdRight, this.herdBottom) + dist(this.herdRight, this.herdBottom, this.herdLeft, this.herdBottom) + dist(this.herdLeft, this.herdBottom, target.x, target.y);
-    var swingRight = dist(this.position.x, this.position.y, this.herdRight, this.herdTop) + dist(this.herdRight, this.herdTop, this.herdLeft, this.herdTop) + dist(this.herdLeft, this.herdTop, target.x, target.y);
+    var swingLeft = dist(this.position.x, this.position.y, this.animalsRight, this.animalsBottom) + dist(this.animalsRight, this.animalsBottom, this.herdLeft, this.animalsBottom) + dist(this.herdLeft, this.animalsBottom, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.animalsRight, this.animalsTop) + dist(this.animalsRight, this.animalsTop, this.herdLeft, this.animalsTop) + dist(this.herdLeft, this.animalsTop, target.x, target.y);
     if(swingLeft < swingRight) {
-      target.x = this.herdRight + 20, target.y = this.herdBottom + 20;
+      target.x = this.animalsRight + 20, target.y = this.animalsBottom + 20;
     } else if (swingRight < swingLeft) {
-      target.x = this.herdRight + 20, target.y = this.herdTop - 20;
+      target.x = this.animalsRight + 20, target.y = this.animalsTop - 20;
     }
   }
   fill(255)
@@ -743,18 +835,18 @@ OracleShepherd.prototype.avoidHerdBottom = function (target, c1, c2, c3, c4) {
     target = target;
   } else if (target.x > c2.tl.x && target.x < c2.tr.x && target.y > c3.tl.y && target.y < c2.tl.y) {
     this.avoidHerdBool = true;
-    target.x = this.herdLeft - 20, target.y = this.herdBottom + 20;
+    target.x = this.herdLeft - 20, target.y = this.animalsBottom + 20;
   } else if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c4.tl.y && target.y < c1.tl.y) {
     this.avoidHerdBool = true;
-    target.x = this.herdRight + 20, target.y = this.herdBottom + 20;
+    target.x = this.animalsRight + 20, target.y = this.animalsBottom + 20;
   } else {
     this.avoidHerdBool = true;
-    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.herdBottom) + dist(this.herdLeft, this.herdBottom, this.herdLeft, this.herdTop) + dist(this.herdLeft, this.herdTop, target.x, target.y);
-    var swingRight = dist(this.position.x, this.position.y, this.herdRight, this.herdBottom) + dist(this.herdRight, this.herdBottom, this.herdRight, this.herdTop) + dist(this.herdRight, this.herdTop, target.x, target.y);
+    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.animalsBottom) + dist(this.herdLeft, this.animalsBottom, this.herdLeft, this.animalsTop) + dist(this.herdLeft, this.animalsTop, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.animalsRight, this.animalsBottom) + dist(this.animalsRight, this.animalsBottom, this.animalsRight, this.animalsTop) + dist(this.animalsRight, this.animalsTop, target.x, target.y);
     if(swingLeft < swingRight) {
-      target.x = this.herdLeft - 20, target.y = this.herdBottom + 20;
+      target.x = this.herdLeft - 20, target.y = this.animalsBottom + 20;
     } else if (swingRight < swingLeft) {
-      target.x = this.herdRight + 20, target.y = this.herdBottom + 20;
+      target.x = this.animalsRight + 20, target.y = this.animalsBottom + 20;
     }
   }
   fill(255)
@@ -767,18 +859,18 @@ OracleShepherd.prototype.avoidHerdLeft = function (target, c1, c2, c3, c4) {
     target = target;
   } else if (target.x > c2.tr.x && target.x < c3.tr.x && target.y > c2.tl.y && target.y < c2.bl.y) {
     this.avoidHerdBool = true;
-    target.x = this.herdLeft - 20, target.y = this.herdTop - 20;
+    target.x = this.herdLeft - 20, target.y = this.animalsTop - 20;
   } else if (target.x > c1.tr.x && target.x < c4.tr.x && target.y > c4.tl.y && target.y < c4.bl.y) {
     this.avoidHerdBool = true;
-    target.x = this.herdLeft - 20, target.y = this.herdBottom + 20;
+    target.x = this.herdLeft - 20, target.y = this.animalsBottom + 20;
   } else {
     this.avoidHerdBool = true;
-    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.herdTop) + dist(this.herdLeft, this.herdTop, this.herdRight, this.herdTop) + dist(this.herdRight, this.herdTop, target.x, target.y);
-    var swingRight = dist(this.position.x, this.position.y, this.herdLeft, this.herdBottom) + dist(this.herdLeft, this.herdBottom, this.herdRight, this.herdBottom) + dist(this.herdRight, this.herdBottom, target.x, target.y);
+    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.animalsTop) + dist(this.herdLeft, this.animalsTop, this.animalsRight, this.animalsTop) + dist(this.animalsRight, this.animalsTop, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.herdLeft, this.animalsBottom) + dist(this.herdLeft, this.animalsBottom, this.animalsRight, this.animalsBottom) + dist(this.animalsRight, this.animalsBottom, target.x, target.y);
     if(swingLeft < swingRight) {
-      target.x = this.herdLeft - 20, target.y = this.herdTop - 20;
+      target.x = this.herdLeft - 20, target.y = this.animalsTop - 20;
     } else if (swingRight < swingLeft) {
-      target.x = this.herdLeft - 20, target.y = this.herdBottom + 20;
+      target.x = this.herdLeft - 20, target.y = this.animalsBottom + 20;
     }
   }
   fill(255)
@@ -793,12 +885,12 @@ OracleShepherd.prototype.avoidHerdTopLeft = function (target, c1, c2, c3) {
     target = target;
   } else {
     this.avoidHerdBool = true;
-    var swingLeft = dist(this.position.x, this.position.y, this.herdRight, this.herdTop) + dist(this.herdRight, this.herdTop, target.x, target.y);
-    var swingRight = dist(this.position.x, this.position.y, this.herdLeft, this.herdBottom) + dist(this.herdLeft, this.herdBottom, target.x, target.y);
+    var swingLeft = dist(this.position.x, this.position.y, this.animalsRight, this.animalsTop) + dist(this.animalsRight, this.animalsTop, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.herdLeft, this.animalsBottom) + dist(this.herdLeft, this.animalsBottom, target.x, target.y);
     if(swingLeft < swingRight) {
-      target.x = this.herdRight + 20, target.y = this.herdTop - 20;
+      target.x = this.animalsRight + 20, target.y = this.animalsTop - 20;
     } else if (swingRight < swingLeft) {
-      target.x = this.herdLeft - 20, target.y = this.herdBottom + 20;
+      target.x = this.herdLeft - 20, target.y = this.animalsBottom + 20;
     }
   }
   fill(255)
@@ -813,12 +905,12 @@ OracleShepherd.prototype.avoidHerdTopRight = function (target, c1, c2, c3) {
     target = target;
   } else {
     this.avoidHerdBool = true;
-    var swingLeft = dist(this.position.x, this.position.y, this.herdRight, this.herdBottom) + dist(this.herdRight, this.herdBottom, target.x, target.y);
-    var swingRight = dist(this.position.x, this.position.y, this.herdLeft, this.herdTop) + dist(this.herdLeft, this.herdTop, target.x, target.y);
+    var swingLeft = dist(this.position.x, this.position.y, this.animalsRight, this.animalsBottom) + dist(this.animalsRight, this.animalsBottom, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.herdLeft, this.animalsTop) + dist(this.herdLeft, this.animalsTop, target.x, target.y);
     if(swingLeft < swingRight) {
-      target.x = this.herdRight + 20, target.y = this.herdBottom + 20;
+      target.x = this.animalsRight + 20, target.y = this.animalsBottom + 20;
     } else if (swingRight < swingLeft) {
-      target.x = this.herdLeft - 20, target.y = this.herdTop - 20;
+      target.x = this.herdLeft - 20, target.y = this.animalsTop - 20;
     }
   }
   fill(255)
@@ -833,12 +925,12 @@ OracleShepherd.prototype.avoidHerdBottomRight = function (target, c1, c2, c3) {
     target = target;
   } else {
     this.avoidHerdBool = true;
-    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.herdBottom) + dist(this.herdLeft, this.herdBottom, target.x, target.y);
-    var swingRight = dist(this.position.x, this.position.y, this.herdRight, this.herdTop) + dist(this.herdRight, this.herdTop, target.x, target.y);
+    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.animalsBottom) + dist(this.herdLeft, this.animalsBottom, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.animalsRight, this.animalsTop) + dist(this.animalsRight, this.animalsTop, target.x, target.y);
     if(swingLeft < swingRight) {
-      target.x = this.herdLeft - 20, target.y = this.herdBottom + 20;
+      target.x = this.herdLeft - 20, target.y = this.animalsBottom + 20;
     } else if (swingRight < swingLeft) {
-      target.x = this.herdRight + 20, target.y = this.herdTop - 20;
+      target.x = this.animalsRight + 20, target.y = this.animalsTop - 20;
     }
   }
   fill(255)
@@ -853,12 +945,12 @@ OracleShepherd.prototype.avoidHerdBottomLeft = function (target, c1, c2, c3) {
     target = target;
   } else {
     this.avoidHerdBool = true;
-    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.herdTop) + dist(this.herdLeft, this.herdTop, target.x, target.y);
-    var swingRight = dist(this.position.x, this.position.y, this.herdRight, this.herdBottom) + dist(this.herdRight, this.herdBottom, target.x, target.y);
+    var swingLeft = dist(this.position.x, this.position.y, this.herdLeft, this.animalsTop) + dist(this.herdLeft, this.animalsTop, target.x, target.y);
+    var swingRight = dist(this.position.x, this.position.y, this.animalsRight, this.animalsBottom) + dist(this.animalsRight, this.animalsBottom, target.x, target.y);
     if(swingLeft < swingRight) {
-      target.x = this.herdLeft - 20, target.y = this.herdTop - 20;
+      target.x = this.herdLeft - 20, target.y = this.animalsTop - 20;
     } else if (swingRight < swingLeft) {
-      target.x = this.herdRight + 20, target.y = this.herdBottom + 20;
+      target.x = this.animalsRight + 20, target.y = this.animalsBottom + 20;
     }
   }
   fill(255)
@@ -899,12 +991,6 @@ OracleShepherd.prototype.getGoodHeading = function (hc, g) {
   let v1 = createVector(g.x - hc.x, g.y - hc.y);
 
   let myHeading = v1.heading();
-  //
-  // noStroke();
-  // text(
-  //  'vector heading: ' +
-  //    myHeading.toFixed(2) +
-  //    ' radians',50,50,90,50);
 
   return myHeading;
 }
@@ -969,7 +1055,6 @@ OracleShepherd.prototype.checkForStatues = function (animals, center) {
     }
   }
   if (count > 0) {
-    console.log("I run")
     return true;
   } else {
     return false;

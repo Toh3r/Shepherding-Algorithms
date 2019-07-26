@@ -216,9 +216,9 @@ MultiGPSShepherd.prototype.collectAnimals = function (herd) {
    this.targetInBounds(target);
    fill(255,0,0);
    ellipse(target.x, target.y, 20,20)
-   this.targetInHerd(target);
-   this.targetInBounds(target);
    this.outOfHerd(target);
+   this.targetInBounds(target);
+   this.targetInHerd(target);
    this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
@@ -231,9 +231,9 @@ MultiGPSShepherd.prototype.collectAnimals = function (herd) {
    return steer;
  } else if (this.movingUp == true) {
    var target = createVector(pzp2.x,pzp2.y);
-   this.targetInHerd(target);
-   this.targetInBounds(target);
    this.outOfHerd(target);
+   this.targetInBounds(target);
+   this.targetInHerd(target);
    this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
@@ -545,11 +545,14 @@ if(this.switchingActions == true) {
 MultiGPSShepherd.prototype.targetInBounds = function (target) {
   if (target.x < 15) {
     target.x = 15;
-  } else if (target.y < 15) {
+  }
+  if (target.y < 15) {
     target.y = 15;
-  } else if (target.x > width - 15) {
+  }
+  if (target.x > width - 15) {
     target.x = width - 15;
-  } else if (target.y > height - 15) {
+  }
+  if (target.y > height - 15) {
     target.y = height - 15;
   }
   return target;
@@ -558,11 +561,14 @@ MultiGPSShepherd.prototype.targetInBounds = function (target) {
 MultiGPSShepherd.prototype.targetInHerd = function (target) {
   if (target.x < this.topLeft.x - 100) {
     target.x = this.topLeft - 20;
-  } else if (target.y < this.topLeft.y - 100) {
+  }
+  if (target.y < this.topLeft.y - 100) {
     target.y = this.topLeft.y - 20;
-  } else if (target.x > this.topRight.x + 100) {
+  }
+  if (target.x > this.topRight.x + 100) {
     target.x = this.topRight.x + 20;
-  } else if (target.y > this.bottomRight.y + 100) {
+  }
+  if (target.y > this.bottomRight.y + 100) {
     target.y = this.bottomRight.y + 20;
   }
   return target;

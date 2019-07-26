@@ -352,7 +352,7 @@ ManageEnvironment.prototype.singleGPSHerd = function () {
 }
 
 function oracle() {
-  environment.addOracle(new Oracle(shepStartPos, oracleSearch));
+  environment.addOracle(new Oracle(shepStartPos, oracleSearch, shepGoals));
   environment.addOracleShepherd(new OracleShepherd(shepStartPos, shepGoals));
 }
 

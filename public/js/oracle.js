@@ -1,6 +1,6 @@
 // Oracle class
 // Create Oracle attributes
-function Oracle (startPos, os) { // Passing through starting co-ords, goal co-ords, **Num animals**
+function Oracle (startPos, os, shepGoals) { // Passing through starting co-ords, goal co-ords, **Num animals**
   // General Attributes
   this.acceleration = createVector(0,0); // Starting acceleration of 0
   this.velocity = createVector(0,0);     // Starting acceleration of 0
@@ -28,6 +28,15 @@ function Oracle (startPos, os) { // Passing through starting co-ords, goal co-or
   this.usingSec = os.dir;
   this.start = os;
   this.lol = createVector(0,0);
+  this.shepGoals = shepGoals; // ----- Goal variables
+  this.goalCounter = 0;
+  this.timestep = 0;
+  this.goodMovement = 0;
+  this.correctHeading = 0;
+  this.isForShep = {
+    position: createVector(0,0),
+    id: createVector(0,0)
+  }
 }
 
 // Call methods for each shepherd
@@ -42,6 +51,10 @@ Oracle.prototype.run = function (herd) { // Called when oracle created, passing 
     this.drawSectors();
   }
   this.runTheShow(herd); // Manages action selection
+  if (herd.length > 0) { // Count time steps
+    this.timestep++;
+  }
+
 }
 
 Oracle.prototype.runTheShow = function (herd) { // Function which determines action selection based on a whole lotta things
@@ -56,13 +69,18 @@ Oracle.prototype.runTheShow = function (herd) { // Function which determines act
   }
 
   if (this.firstRun == false && bun == true) {
-    this.maxspeed = environment.avgSpeed();
+    if (environment.avgSpeed() > 0.20) {
+      this.maxspeed = environment.avgSpeed();
+    } else {
+      this.maxspeed = 0.20;
+    }
+
     // console.log("I.. I.. I.. Follow")  // If animals are bunched, move to centre of herd
     this.following = true;
     var follow = this.followHerd(herd);                // and keep passing positions to oracle shepherd
     this.applyForce(follow);
   } else if (this.firstRun == true && this.start.dir == 'start') {  // Runs on initial search for animals when searching entire enclosure
-    this.maxspeed = oracleSpeedSlider.value();
+    this.maxspeed = 1.5;
     this.following = false;
     var search = this.searchForAnimals(herd);
     this.applyForce(search);
@@ -77,7 +95,6 @@ Oracle.prototype.runTheShow = function (herd) { // Function which determines act
     this.applyForce(keep);                          // and keep searching
   }
 }
-
 
 Oracle.prototype.applyForce = function(force) { // Apply movement force to Oracle
   this.acceleration.add(force);
@@ -130,7 +147,7 @@ Oracle.prototype.searchForAnimals = function (herd) {
       this.firstSearch = false;
     }
   } else if (this.moving == false) {
-    console.log("from search");
+    // console.log("from search");
       this.currentTarget = this.calculateTarget();
       this.moving = true;
   } else if (this.moving == true) {
@@ -190,25 +207,25 @@ Oracle.prototype.locateFirstTarget = function () { // Function to find first tar
 Oracle.prototype.calculateTarget = function (minSec, maxSec) {
 
   if (this.firstRun == true) {
-    console.log("First is running")
+    // console.log("First is running")
     topR = this.topRow;
     bottomR = this.bottomRow;
     leftC = this.leftCol;
     rightC = this.rightCol
   } else if (this.firstRun == false) {
-    console.log(maxSec)
-    console.log("First is not running")
+    // console.log(maxSec)
+    // console.log("First is not running")
     rightC = minSec.id.x;
     leftC = maxSec.id.x;
-    console.log("From if: "+ leftC)
+    // console.log("From if: "+ leftC)
     topR = minSec.id.y;
     bottomR = maxSec.id.y;
-    console.log("From if: "+ bottomR)
+    // console.log("From if: "+ bottomR)
   }
 
-  console.log("TOP -- moving: " + this.movingUp)
-  console.log("TOP -- y/b/t: " + this.currentTarget.id.y + ", " + bottomR + ", " + topR)
-  console.log("TOP -- x/left: " + this.currentTarget.id.x + ", " + leftC + ", " + rightC)
+  // console.log("TOP -- moving: " + this.movingUp)
+  // console.log("TOP -- y/b/t: " + this.currentTarget.id.y + ", " + bottomR + ", " + topR)
+  // console.log("TOP -- x/left: " + this.currentTarget.id.x + ", " + leftC + ", " + rightC)
 
   if (this.startPos == "br") {
     if (this.movingUp == true && this.currentTarget.id.y > topR) {
@@ -228,13 +245,13 @@ Oracle.prototype.calculateTarget = function (minSec, maxSec) {
         }
       this.movingUp = !this.movingUp;
     } else {
-      console.log("Why you do this br")
+      // console.log("Why you do this br")
     }
   } else if (this.startPos == "tr") {
-
-    console.log("moving: " + this.movingUp)
-    console.log("y/b/t: " + this.currentTarget.id.y + ", " + bottomR + ", " + topR)
-    console.log("x/left: " + this.currentTarget.id.x + ", " + leftC)
+    //
+    // console.log("moving: " + this.movingUp)
+    // console.log("y/b/t: " + this.currentTarget.id.y + ", " + bottomR + ", " + topR)
+    // console.log("x/left: " + this.currentTarget.id.x + ", " + leftC)
 
     if (this.movingUp == false && this.currentTarget.id.y < bottomR) {
       var newTarget = {
@@ -253,7 +270,7 @@ Oracle.prototype.calculateTarget = function (minSec, maxSec) {
       }
       this.movingUp = !this.movingUp;
     } else {
-      console.log("Why you do this tr")
+      // console.log("Why you do this tr")
     }
   } else if (this.startPos == "bl") {
     if (this.movingUp == true && this.currentTarget.id.y > topR) {
@@ -273,7 +290,7 @@ Oracle.prototype.calculateTarget = function (minSec, maxSec) {
         }
       this.movingUp = !this.movingUp;
     } else {
-      console.log("Why you do this bl")
+      // console.log("Why you do this bl")
     }
   } else if (this.startPos == "tl") {
     if (this.movingUp == false && this.currentTarget.id.y < bottomR) {
@@ -293,10 +310,11 @@ Oracle.prototype.calculateTarget = function (minSec, maxSec) {
       }
       this.movingUp = !this.movingUp;
     } else {
-      console.log("Why you do this tl")
+      // console.log("Why you do this tl")
     }
   }
   this.lol = newTarget.id;
+  this.isForShep = newTarget;
   return newTarget;
 }
 
@@ -374,7 +392,7 @@ Oracle.prototype.keepSearching = function (herd) {
     }
 
     if (this.animals.length < herd.length) {
-      console.log("I run yo")
+      // console.log("I run yo")
       if (this.lCol >= 2) {
         this.lCol = this.lCol - 1;
       }
@@ -435,18 +453,18 @@ Oracle.prototype.keepSearching = function (herd) {
     if (dist(this.position.x, this.position.y,this.currentTarget.position.x, this.currentTarget.position.y) < 2){
       this.firstSearch = false;
       this.targetNum = 0;
-      console.log("rcol: ", this.rCol)
-      console.log("row: ", this.bRow - (this.tRow - 1))
+      // console.log("rcol: ", this.rCol)
+      // console.log("row: ", this.bRow - (this.tRow - 1))
       this.numSectors = ((this.rCol - (this.lCol - 1))*(this.bRow - (this.tRow - 1))); // <---- -_-
-      console.log("Num Sectors: ", this.numSectors)
+      // console.log("Num Sectors: ", this.numSectors)
       this.animals.length = 0;
       this.start.diffStart = false;
-      console.log("My current target is : ", this.currentTarget)
+      // console.log("My current target is : ", this.currentTarget)
       // this.usingMinSec = !this.usingMinSec;
     }
   } else if (this.moving == false) {
-      console.log("this.tRight: " + this.tRight.id.x + ", " + this.tRight.id.y)
-      console.log("this.bLeft: " + this.bLeft.id.x + ", " + this.bLeft.id.y)
+      // console.log("this.tRight: " + this.tRight.id.x + ", " + this.tRight.id.y)
+      // console.log("this.bLeft: " + this.bLeft.id.x + ", " + this.bLeft.id.y)
       this.currentTarget = this.calculateTarget(this.tRight, this.bLeft);
       this.moving = true;
   } else if (this.moving == true) {
@@ -473,11 +491,18 @@ Oracle.prototype.followHerd = function (herd) { // When herd is bunched
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
   var center = createVector(herdX, herdY);          // Centre co-ords of herd
+  var goal = this.shepGoals[this.goalCounter];
+  this.checkGoal(center, goal);
   // When over the centre of the herd
   if (dist(this.position.x, this.position.y, center.x, center.y) < 2) {
     this.animals.length = 0;  // Clear saved animals array
     this.saveAnimalPos(herd); // Save new positions and pass to Oracle Shepherd
     // console.log("Animal positions saved")
+  }
+  herdHeading = this.checkHeading(herd);
+  this.correctHeading = this.getGoodHeading(center, goal);
+  if (environment.avgSpeed() > 0.30 && Math.abs(this.correctHeading - herdHeading) < 0.50) {
+    this.goodMovement += 1;
   }
   // ***--- Fix speeds for this funciton ---***//
   var target = createVector(herdX,herdY); // Create target as herd centre
@@ -606,4 +631,29 @@ Oracle.prototype.findClosest = function () {
     return "bl"
   }
 
+}
+
+Oracle.prototype.checkGoal = function (hc, g) {
+  if (dist(hc.x, hc.y, g.x, g.y) < 50 && this.goalCounter < this.shepGoals.length -1) {
+    this.goalCounter++;
+  }
+}
+
+Oracle.prototype.getGoodHeading = function (hc, g) {
+
+  let v0 = createVector(hc.x, hc.y);
+  let v1 = createVector(g.x - hc.x, g.y - hc.y);
+
+  let myHeading = v1.heading();
+
+  return myHeading;
+}
+
+Oracle.prototype.checkHeading = function (herd) {
+  totalHeading = 0;
+  for (var i = 0; i < herd.length; i++) {
+    totalHeading += herd[i].velocity.heading();
+  }
+  averageHeading = totalHeading/herd.length;
+  return averageHeading;
 }
