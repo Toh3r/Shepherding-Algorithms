@@ -21,7 +21,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
     animalGoals = [goal1];
 
     oracleSearch = {
-      dir: "start"
+      dir: "start",
+      startSwitcher: false
     }
 
     for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
@@ -52,7 +53,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
     animalGoals = [goal1];
 
     oracleSearch = {
-      dir: "start"
+      dir: "start",
+      startSwitcher: false
     }
 
     for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
@@ -166,7 +168,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
       dir: "tl",
       diffStart: true,
       startSec: createVector(1,3),
-      endSec: createVector(5,4)
+      endSec: createVector(5,4),
+      startSwitcher: true
     }
 
     //Create starting animals in random positions
@@ -225,7 +228,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
       dir: "tr",
       diffStart: true,
       startSec: createVector(1,1),
-      endSec: createVector(5,3)
+      endSec: createVector(5,3),
+      startSwitcher: true
     }
 
     for (var i = 0; i < numAnimalsSlider.value(); i++) {   //Create starting animals in random positions

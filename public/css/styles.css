@@ -87,6 +87,16 @@ canvas {
 	text-align: left;
 }
 
+/* #chartsRow {
+	background-color: white;
+} */
+
+#chartsRow canvas{
+	background-color: white;
+	border-color: white;
+	border-width: 3px;
+}
+
 .navbar-toggler {
 	background-color: rgb(36, 188, 25);
 }
@@ -95,7 +105,12 @@ canvas {
 	color: white;
 }
 
-
+.sideChart {
+	background-image: url('./images/greenNeon.jpg');  /* Unsplash */
+	/* background-image: url('./images/graffiti.jpg');  /* Unsplash */
+  background-size: cover;
+  background-position: center;
+}
 
 input[type=range] {
   -webkit-appearance: none;

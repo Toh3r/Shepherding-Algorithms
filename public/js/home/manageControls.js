@@ -66,9 +66,9 @@ ManageControls.prototype.createControls = function () {
   createMulti.mouseClicked(multiDrone);
 
   // -------- START Multi-Drones --------
-  createMulti = createButton('Multi-Oracle');
-  createMulti.parent('multiOracleBtn');
-  createMulti.mouseClicked(multiDrone);
+  createMultiOracle = createButton('Multi-Oracle');
+  createMultiOracle.parent('multiOracleBtn');
+  createMultiOracle.mouseClicked(multiOracle);
 
   // -------- RESET BUTTON --------
   resetBtn = createButton('Reset');
@@ -164,17 +164,6 @@ ManageControls.prototype.createControls = function () {
   bunchedDisplay = createP("Bunched: " + isBunched);
   bunchedDisplay.parent("animalInfoDiv");
 
-  var numSectors = environment.getSectors();
-  numSectorDisplay = createP("Number of Sectors: " + numSectors);
-  numSectorDisplay.parent("oracleInfoDiv");
-
-  var currentTarget = environment.getOracleTarget();
-  currentTargetDisplay = createP("Current Target: " + currentTarget);
-  currentTargetDisplay.parent("oracleInfoDiv");
-
-  var currentSearchArea = environment.getOracleSearchArea();
-  currentSearchAreaDisplay = createP("Searching: " + currentSearchArea + " -> X");
-  currentSearchAreaDisplay.parent("oracleInfoDiv");
 
   var isCollecting = environment.shepCollect();
   collectingDisplay = createP("Collecting: " + isCollecting);
@@ -195,6 +184,19 @@ ManageControls.prototype.createControls = function () {
   var goodHeading = environment.theCorrectHeading().toFixed(2);
   goodHeadingDisplay = createP("Desired Heading: " + goodHeading);
   goodHeadingDisplay.parent("gpsInfoDiv");
+
+  var numSectors = environment.getSectors();
+  numSectorDisplay = createP("Number of Sectors: " + numSectors);
+  numSectorDisplay.parent("oracleInfoDiv");
+
+  var currentTarget = environment.getOracleTarget();
+  currentTargetDisplay = createP("Current Sector: " + currentTarget);
+  currentTargetDisplay.parent("oracleInfoDiv");
+
+  var currentSearchArea = environment.getOracleSearchArea();
+  currentSearchAreaDisplay = createP("Searching: " + currentSearchArea + " -> X");
+  currentSearchAreaDisplay.parent("oracleInfoDiv");
+
 
 }
 
@@ -266,7 +268,7 @@ ManageControls.prototype.updateSimInfo = function () {
   numSectorDisplay.parent("oracleInfoDiv");
 
   var currentTarget = environment.getOracleTarget();
-  currentTargetDisplay = createP("Current Target: " + currentTarget);
+  currentTargetDisplay = createP("Current Sector: " + currentTarget);
   currentTargetDisplay.parent("oracleInfoDiv");
 
   var currentSearchArea = environment.getOracleSearchArea();
@@ -346,4 +348,112 @@ ManageControls.prototype.addTestResult = function () {
         test.parent("test" + 4);
       }
     }
+}
+
+ManageControls.prototype.addAverageResults = function () {
+    let numTests = createP("Tests Complete: " + environment.testNumStatic);
+    let avgTime = createP("Average TimeSteps: " + environment.totalTime.toFixed(0));
+    let avgMove = createP("Average Good Movement: " + environment.totalMoves.toFixed(0));
+    let avgAdverse = createP("Average Adverse Conditions: " + environment.totalAccStress.toFixed(2));
+
+    numTests.parent("avgTestsDiv");
+    avgTime.parent("avgTestsDiv");
+    avgMove.parent("avgTestsDiv");
+    avgAdverse.parent("avgTestsDiv");
+}
+
+ManageControls.prototype.createChart = function () {
+  var ctx = document.getElementById('myChart').getContext('2d');
+  this.chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'Timesteps',
+            borderColor: 'rgb(36, 188, 25)',
+            data: []
+        },
+        {
+            label: 'GoodMovement',
+            borderColor: 'rgb(36, 25, 188)',
+            data: []
+        },
+        {
+            label: 'Adverse',
+            borderColor: 'rgb(188, 36, 25)',
+            data: []
+        }
+      ]
+    },
+
+    // Configuration options go here
+    options: {
+      title: {
+        display: true,
+        text: 'Wait For It...'
+          },
+        elements: {
+          line: {
+              tension: 0 // disables bezier curves
+          }
+        },
+        plugins: {
+            // Change options for ALL labels of THIS CHART
+            datalabels: {
+                color: 'rgb(0,0,0)',
+                align: 'top'
+            }
+        },
+        scales: {
+        xAxes: [{
+            ticks: {
+                callback: function(tick, index, array) {
+                    return (index % 5) ? "" : tick;
+                }
+            }
+        }],
+        yAxes: [{
+            ticks: {
+                padding: 20
+            }
+        }]
+      },
+      // layout: {
+      //       padding: {
+      //           left: 40,
+      //           right: 40,
+      //           top: 0,
+      //           bottom: 0
+      //       }
+      //   }
+    }
+  });
+}
+
+// function addData(chart, label, data) {
+//     manageFE.updateMyChart(chart, label, data);
+// }
+
+ManageControls.prototype.updateMyChart = function () {
+  var results = environment.testResults;
+  this.chart.data.labels.push(results[results.length-1].num);
+  if (results[results.length-1].num % 5 != 0) {
+
+  }
+  this.chart.data.datasets[0].data.push(results[results.length-1].time);
+  this.chart.data.datasets[1].data.push(results[results.length-1].move);
+  this.chart.data.datasets[2].data.push(results[results.length-1].adverse.toFixed(2));
+  this.chart.update();
+}
+
+// function updateConfigByMutating(chart) {
+//     manageFE.updateChartTitle(chart);
+// }
+
+ManageControls.prototype.updateChartTitle = function () {
+  this.chart.options.title.text = manageEnv.uavForChart + ":- Env: " + envRadio.value() + ":- Animal Number: " + manageEnv.anNumberForChart;
+  this.chart.update();
 }

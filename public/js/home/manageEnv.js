@@ -7,10 +7,13 @@ ManageEnvironment.prototype.createNewEnv = function () {
   let animalNumber;
   if(anNumRadio.value() == 1) {
     animalNumber = 10;
+    this.anNumberForChart = "10"
   } else if(anNumRadio.value() == 2) {
     animalNumber = 25;
+    this.anNumberForChart = "25"
   } else if(anNumRadio.value() == 3) {
     animalNumber = 50;
+    this.anNumberForChart = "50"
   }
 
 
@@ -31,7 +34,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
     animalGoals = [goal1];
 
     oracleSearch = {
-      dir: "start"
+      dir: "start",
+      startSwitcher: false
     }
 
     for (var i = 0; i < animalNumber; i++) { //Create starting animals in random positions
@@ -67,7 +71,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
     animalGoals = [aGoal1];
 
     oracleSearch = {
-      dir: "start"
+      dir: "start",
+      startSwitcher: false
     }
 
     for (var i = 0; i < animalNumber; i++) { //Create starting animals in random positions
@@ -188,7 +193,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
       dir: "tl",
       diffStart: true,
       startSec: createVector(1,3),
-      endSec: createVector(5,4)
+      endSec: createVector(5,4),
+      startSwitcher: true
     }
 
     //Create starting animals in random positions
@@ -255,7 +261,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
       dir: "tr",
       diffStart: true,
       startSec: createVector(1,1),
-      endSec: createVector(5,3)
+      endSec: createVector(5,3),
+      startSwitcher: true
     }
 
     for (var i = 0; i < animalNumber; i++) {   //Create starting animals in random positions
@@ -347,23 +354,48 @@ function herd() {
 
 ManageEnvironment.prototype.singleGPSHerd = function () {
   this.uavType = "SingleGPS";
-  console.log("Goin' Herding");
+  this.uavForChart = "Single GPS UAV";
+  manageFE.updateChartTitle();
+  console.log("Single GPS lifting off...");
   environment.addAutoShepherd(new AutoShepherd(shepStartPos,shepGoals));
 }
 
 function oracle() {
+  manageEnv.oracleHerd()
+}
+
+ManageEnvironment.prototype.oracleHerd = function () {
+  this.uavType = "oracleHerd";
+  this.uavForChart = "Single Oracle UAV";
+  manageFE.updateChartTitle();
+  console.log("Oracle lifting off...");
   environment.addOracle(new Oracle(shepStartPos, oracleSearch, shepGoals));
   environment.addOracleShepherd(new OracleShepherd(shepStartPos, shepGoals));
 }
 
 function multiDrone() {
-  console.log("Well");
   manageEnv.multiGPSHerd()
 }
 
 ManageEnvironment.prototype.multiGPSHerd = function () {
   this.uavType = "multiGPS";
-  console.log("Goin' Herding");
+  this.uavForChart = "Multiple GPS UAV";
+  manageFE.updateChartTitle();
+  console.log("Multi GPS lifting off...");
   environment.addMultiGPS(new MultiGPSShepherd(shepStartPos, false, 1, shepGoals))
   environment.addMultiGPS(new MultiGPSShepherd(shepStartPos, true, 2, shepGoals))
+}
+
+function multiOracle() {
+  manageEnv.multiOracleHerd()
+}
+
+ManageEnvironment.prototype.multiOracleHerd = function () {
+  this.uavType = "multiOracle";
+  this.uavForChart = "Multiple Oracle UAV";
+  manageFE.updateChartTitle();
+  console.log("Multi Oracle lifting off...");
+  environment.addOracle(new Oracle(shepStartPos, oracleSearch, shepGoals));
+  environment.addMultiOracleShepherd(new MultiOracleShepherd(shepStartPos, false, 1, shepGoals))
+  environment.addMultiOracleShepherd(new MultiOracleShepherd(shepStartPos, true, 2, shepGoals))
 }

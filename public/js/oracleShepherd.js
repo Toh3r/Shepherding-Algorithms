@@ -56,6 +56,7 @@ OracleShepherd.prototype.run = function(oracles) {
     }
   }
   else if (this.oldAnimals.length == 0) {
+    this.maxspeed = 1.2;
     var pat = this.patrol(oracles[0]);
     this.applyForce(pat);
   }
@@ -190,28 +191,30 @@ OracleShepherd.prototype.bunched = function (animals) {
 }
 
 OracleShepherd.prototype.patrol = function (oracle) {
-  var orTarXString = oracle.isForShep.id.x.toString();
-  var orTarPosX = oracle.isForShep.position.x.toString();
-  console.log("the string or, this.old: " + orTarXString + ", " + this.oldTarX)
-  console.log(" POSES the string or, this.old: " + orTarPosX + ", " + this.oldTarPos)
-  // console.log("Old vs this.old: " + orTar.x + ", " + this.oldTar.x)
+  var orTarXString = oracle.isForShep.id.x;
+  var orTarPosX = oracle.isForShep.position.x;
+  var orTarPosY = oracle.isForShep.position.y;
   if (orTarXString != this.oldTarX && oracle.animals.length == 0) {
-    this.patroling = true;
+    this.goToEmpty = true;
     this.pPos = Number(this.oldTarPos);
-    console.log("pPos: " + this.pPos)
   }
-  if (this.patroling == true) {
-    var target = createVector(this.pPos, height/2);
+  if (this.goToEmpty == true) {
+    var target = createVector(orTarPosX, orTarPosY);
   } else {
     var target = createVector(this.position.x, this.position.y);
   }
+  // if (this.goToEmpty == false && oracle.) {
+  //   var target = createVector(orTarPosX, orTarPosY);
+  // } else {
+  //   var target = createVector(this.position.x, this.position.y);
+  // }
   var desired = p5.Vector.sub(target, this.position);
   desired.normalize();
   desired.mult(this.maxspeed);
   var steer = p5.Vector.sub(desired, this.velocity);
   steer.limit(this.maxforce);
-  if (dist(this.position.x, this.position.y, target.x, target.y) < 2){
-    this.patroling = false;
+  if (dist(this.position.x, this.position.y, target.x, target.y) < 2 || oracle.animals.length > 0){
+    this.goToEmpty = false;
   }
   this.oldTarX = orTarXString;
   this.oldTarPos = orTarPosX;
@@ -260,10 +263,11 @@ OracleShepherd.prototype.collectAnimals = function (animals) {
 
  if (this.movingUp == false) {
    var target = createVector(pzp1.x,pzp1.y);
+   this.targetInBounds(target);
    this.outOfHerd(target);
-   this.targetInBounds(target);
+   // this.targetInBounds(target);
    this.targetInHerd(target);
-   this.targetInBounds(target);
+   // this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
@@ -275,10 +279,11 @@ OracleShepherd.prototype.collectAnimals = function (animals) {
    return steer;
  } else if (this.movingUp == true) {
    var target = createVector(pzp2.x,pzp2.y);
+   this.targetInBounds(target);
    this.outOfHerd(target);
-   this.targetInBounds(target);
+   // this.targetInBounds(target);
    this.targetInHerd(target);
-   this.targetInBounds(target);
+   // this.targetInBounds(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);

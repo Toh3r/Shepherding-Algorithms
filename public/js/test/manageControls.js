@@ -86,7 +86,7 @@ ManageControls.prototype.createControls = function () {
   cohWanOut = createElement("h6", cohWanSlider.value());
   cohWanOut.parent('cohWan');
 
-  cohPreSlider = createSlider(0, 5, 1, 0.1);
+  cohPreSlider = createSlider(0, 5, 1.5, 0.1);
   cohPreSlider.parent('cohPre');
   cohPreOut = createElement("h6", cohPreSlider.value());
   cohPreOut.parent('cohPre');

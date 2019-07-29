@@ -7,6 +7,7 @@ function Environment() {
   this.oracles = [];
   this.oracleShepherds = [];
   this.multiGPSShepherds = [];
+  this.multiOracleShepherds = [];
   this.novelObjects = [];
   this.gates = [];
   this.obstacles = [];
@@ -33,7 +34,7 @@ function Environment() {
 // ------------ CREATES AGENTS/OBJECTS WHEN PASSED INFO FROM SKETCH ------------
 Environment.prototype.run = function() {
   for (var i = 0; i < this.herd.length; i++) {
-    this.herd[i].run(this.herd, this.shepherds, this.novelObjects, this.autoShepherds, this.multiGPSShepherds, this.obstacles, this.oracleShepherds);  // Passing all arrays to each animal
+    this.herd[i].run(this.herd, this.shepherds, this.novelObjects, this.autoShepherds, this.multiGPSShepherds, this.obstacles, this.oracleShepherds, this.multiOracleShepherds);  // Passing all arrays to each animal
   }
 
   for (var i = 0; i < this.shepherds.length; i++) {
@@ -54,6 +55,10 @@ Environment.prototype.run = function() {
 
   for(var i = 0; i < this.multiGPSShepherds.length; i++) {
     this.multiGPSShepherds[i].run(this.herd);
+  }
+
+  for(var i = 0; i < this.multiOracleShepherds.length; i++) {
+    this.multiOracleShepherds[i].run(this.oracles);
   }
 
   for(var i = 0; i < this.oracles.length; i++) {
@@ -87,7 +92,7 @@ Environment.prototype.run = function() {
     }
     this.testResults.push(myNumbers);
     manageFE.addTestResult();
-
+    manageFE.updateMyChart();
     this.totalTime += this.oldTime;
     this.totalMoves += this.oldMoves;
     this.totalTime = this.totalTime / this.testNumStatic;
@@ -95,11 +100,11 @@ Environment.prototype.run = function() {
     this.totalMoves = this.totalMoves / this.testNumStatic;
     this.totalAccStress = this.totalAccStress / this.testNumStatic;
     this.testNum--;
-    alert("Tests Complete: " + this.testNumStatic +
-          "\n Average TimeSteps: " + this.totalTime.toFixed(0) +
-          "\n Average Good Movement: " + this.totalMoves.toFixed(0) +
-          "\n Average Adverse Conditions: " + this.totalAccStress.toFixed(2));
-
+    // alert("Tests Complete: " + this.testNumStatic +
+    //       "\n Average TimeSteps: " + this.totalTime.toFixed(0) +
+    //       "\n Average Good Movement: " + this.totalMoves.toFixed(0) +
+    //       "\n Average Adverse Conditions: " + this.totalAccStress.toFixed(2));
+    manageFE.addAverageResults();
     this.totalTime = 0;
     this.totalMoves = 0;
     this.totalAccStress = 0;
@@ -123,6 +128,10 @@ Environment.prototype.addAutoShepherd = function(as) {
 
 Environment.prototype.addMultiGPS = function(ms) {
   this.multiGPSShepherds.push(ms);
+}
+
+Environment.prototype.addMultiOracleShepherd = function(mos) {
+  this.multiOracleShepherds.push(mos);
 }
 
 Environment.prototype.addOracle = function(o) {
@@ -235,8 +244,9 @@ Environment.prototype.theCorrectHeading = function() {
 }
 
 Environment.prototype.shepCollect = function () {
-  if(this.autoShepherds.length > 0) {
-    return this.autoShepherds[0].collectBool;
+  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracleShepherds);
+  if(this.allShepherds.length > 0) {
+    return this.allShepherds[0].collectBool;
   } else {
     return false;
   }
@@ -269,8 +279,9 @@ Environment.prototype.getOracleSearchArea = function () {
 }
 
 Environment.prototype.shepMove = function () {
-  if(this.autoShepherds.length > 0) {
-    return this.autoShepherds[0].moveBool;
+  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracleShepherds);
+  if(this.allShepherds.length > 0) {
+    return this.allShepherds[0].moveBool;
   } else {
     return false;
   }
@@ -293,8 +304,9 @@ Environment.prototype.oShepCol = function () {
 }
 
 Environment.prototype.shepAvoidHerd = function () {
-  if(this.autoShepherds.length > 0) {
-    return this.autoShepherds[0].avoidHerdBool;
+  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracleShepherds);
+  if(this.allShepherds.length > 0) {
+    return this.allShepherds[0].avoidHerdBool;
   } else {
     return false;
   }
@@ -341,6 +353,7 @@ Environment.prototype.removeAll = function() {
   this.shepherds.length = 0;
   this.autoShepherds.length = 0;
   this.multiGPSShepherds.length = 0;
+  this.multiOracleShepherds.length = 0;
   this.oracles.length = 0;
   this.oracleShepherds.length = 0;
   this.novelObjects.length = 0;
@@ -411,6 +424,7 @@ Environment.prototype.runItBack = function () {
   }
   this.testResults.push(myNumbers);
   manageFE.addTestResult();
+  manageFE.updateMyChart();
   this.testCounter++;
 
   this.totalTime += this.oldTime;
@@ -426,6 +440,10 @@ Environment.prototype.runItBack = function () {
     manageEnv.singleGPSHerd();
   } else if (manageEnv.uavType == "multiGPS") {
     manageEnv.multiGPSHerd();
+  } else if (manageEnv.uavType == "oracleHerd") {
+    manageEnv.oracleHerd();
+  } else if (manageEnv.uavType == "multiOracle") {
+    manageEnv.multiOracle();
   }
 }
 

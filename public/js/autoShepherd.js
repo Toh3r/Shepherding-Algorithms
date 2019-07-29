@@ -78,7 +78,6 @@ AutoShepherd.prototype.herdAnimals = function (herd) {
   }
 
   if(too == true) {
-    console.log("trueee")
     this.maxspeed = 0.2;
   }
 
@@ -217,31 +216,37 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
 
  if (this.movingUp == false) {
    var target = createVector(pzp1.x,pzp1.y);
+   this.targetInBounds(target);
    this.outOfHerd(target);
-   this.targetInBounds(target);
+   // this.targetInBounds(target);
+   // console.log("Target after OOH: " + target);
    this.targetInHerd(target);
-   this.targetInBounds(target);
+   // this.targetInBounds(target);
+   // console.log("Target after TIH: " + target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
-   if (dist(this.position.x, this.position.y, target.x, target.y) < 5){
+   if (dist(this.position.x, this.position.y, target.x, target.y) < 1){
      this.movingUp = true;
    }
    return steer;
  } else if (this.movingUp == true) {
    var target = createVector(pzp2.x,pzp2.y);
+   this.targetInBounds(target);
    this.outOfHerd(target);
-   this.targetInBounds(target);
+   // this.targetInBounds(target);
+   // console.log("Target after OOH: " + target);
    this.targetInHerd(target);
-   this.targetInBounds(target);
+   // this.targetInBounds(target);
+   // console.log("Target after TIH: " + target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
    var steer = p5.Vector.sub(desired, this.velocity);
    steer.limit(this.maxforce);
-   if (dist(this.position.x, this.position.y, target.x, target.y) < 5) {
+   if (dist(this.position.x, this.position.y, target.x, target.y) < 1) {
      this.movingUp = false;
    }
    return steer;
@@ -495,17 +500,24 @@ AutoShepherd.prototype.targetInBounds = function (target) {
 }
 
 AutoShepherd.prototype.targetInHerd = function (target) {
+  if (target.x > this.topLeft.x && target.x < this.topRight.x && target.y > this.topLeft.y && target.y < this.bottomRight.y) {
+    console.log("This is not good")
+  }
   if (target.x < this.topLeft.x - 100) {
     target.x = this.topLeft - 20;
+    // console.log("tl.x running")
   }
   if (target.y < this.topLeft.y - 100) {
     target.y = this.topLeft.y - 20;
+    // console.log("tl.y running");
   }
   if (target.x > this.topRight.x + 100) {
     target.x = this.topRight.x + 20;
+    // console.log("tr.x running");
   }
   if (target.y > this.bottomRight.y + 100) {
     target.y = this.bottomRight.y + 20;
+    // console.log("br.y running");
   }
   return target;
 }

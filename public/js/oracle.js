@@ -5,7 +5,7 @@ function Oracle (startPos, os, shepGoals) { // Passing through starting co-ords,
   this.acceleration = createVector(0,0); // Starting acceleration of 0
   this.velocity = createVector(0,0);     // Starting acceleration of 0
   this.position = createVector(startPos.x, startPos.y);    // Starting position
-  this.maxspeed = 1.5;    // Starting Maxspeed
+  this.maxspeed = 2;    // Starting Maxspeed
   this.maxForce = 1;  // Max strength of forces
 
   // Searching/managing attributes
@@ -69,17 +69,12 @@ Oracle.prototype.runTheShow = function (herd) { // Function which determines act
   }
 
   if (this.firstRun == false && bun == true) {
-    if (environment.avgSpeed() > 0.20) {
-      this.maxspeed = environment.avgSpeed();
-    } else {
-      this.maxspeed = 0.20;
-    }
-
+    this.maxspeed = 0.5;
     // console.log("I.. I.. I.. Follow")  // If animals are bunched, move to centre of herd
     this.following = true;
     var follow = this.followHerd(herd);                // and keep passing positions to oracle shepherd
     this.applyForce(follow);
-  } else if (this.firstRun == true && this.start.dir == 'start') {  // Runs on initial search for animals when searching entire enclosure
+    } else if (this.firstRun == true && this.start.dir == 'start') {  // Runs on initial search for animals when searching entire enclosure
     this.maxspeed = 1.5;
     this.following = false;
     var search = this.searchForAnimals(herd);
@@ -314,7 +309,10 @@ Oracle.prototype.calculateTarget = function (minSec, maxSec) {
     }
   }
   this.lol = newTarget.id;
-  this.isForShep = newTarget;
+  this.isForShep = {
+    position: createVector(this.oldTarget.x, this.oldTarget.y),
+    id: createVector(newTarget.id.x, newTarget.id.y)
+  }
   return newTarget;
 }
 
@@ -391,8 +389,7 @@ Oracle.prototype.keepSearching = function (herd) {
       this.rCol = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
     }
 
-    if (this.animals.length < herd.length) {
-      // console.log("I run yo")
+    if (this.animals.length < herd.length && this.start.startSwitcher == false) {
       if (this.lCol >= 2) {
         this.lCol = this.lCol - 1;
       }
@@ -477,11 +474,12 @@ Oracle.prototype.keepSearching = function (herd) {
   var steer = p5.Vector.sub(desired, this.velocity);
   steer.limit(this.maxforce);
   if (dist(this.position.x, this.position.y, this.currentTarget.position.x, this.currentTarget.position.y) < 2){
+    if (this.start.startSwitcher == true && this.targetNum == this.numSectors) {
+      this.start.startSwitcher == false;
+    }
     this.moving = false;
     this.targetNum ++;
-    // console.log("Hit Target Number: ", this.targetNum);
     this.saveAnimalPos(herd);
-    // console.log("Saved co-ords");
   }
   return steer;
 }

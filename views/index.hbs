@@ -29,6 +29,7 @@
     <script src="js/shepherdManual.js"></script>
     <script src="js/autoShepherd.js"></script>
     <script src="js/multiGPS.js"></script>
+    <script src="js/multiOracleShepherd.js"></script>
     <script src="js/novelty.js"></script>
     <script src="js/obstacle.js"></script>
     <script src="js/gate.js"></script>
@@ -50,11 +51,11 @@
               <h6><strong><u>Run It...</u></strong></h6>
               <div id="droneHerd">
               </div>
-              <div id="oracleBtn" class="orange">
+              <div id="oracleBtn">
               </div>
               <div id="multiBtn">
               </div>
-              <div id="multiOracleBtn" class="orange">
+              <div id="multiOracleBtn">
               </div>
 
               <br><br>
@@ -101,7 +102,7 @@
             <h5><b>Herd Info</b></h5>
           </div>
           <div class="col-lg-2 borderRight infoHeader">
-            <h5><b>GPS UAV</b></h5>
+            <h5><b>Shepherd</b></h5>
           </div>
           <div class="col-lg-2 borderRight infoHeader">
             <h5><b>Oracle UAV</b></h5>
@@ -131,27 +132,18 @@
 
         <!-- CheckBox xontorls -->
         <div class="col-lg-2 con" id="control3">
-          <h6><strong><u>GPS Shep</u></strong></h6>
           <br>
           <div id="gpsInfoDiv">
 
           </div>
-          <p>Desired Speed: .35 - .6</p>
         </div>
 
         <!-- CheckBox xontorls -->
-        <div class="col-lg-2 con orangeLetters" id="control4">
-          <h6><strong><u>Oracle</u></strong></h6>
+        <div class="col-lg-2 con" id="control4">
+          <br>
           <div id="oracleInfoDiv">
 
           </div>
-          <br>
-          <h6><strong><u>Oracle Shep</u></strong></h6>
-          <p>Collecting: X</p>
-          <p>Moving: X</p>
-          <p>Avoiding: X</p>
-          <p>Desired Speed: X</p>
-          <p>Desired Heading: X</p>
         </div>
 
         <!-- CheckBox xontorls -->
@@ -186,7 +178,7 @@
             <h5><b>Test 41-50</b></h5>
           </div>
           <div class="col-lg-2 infoHeader">
-            <h5><b>Stats</b></h5>
+            <h5><b>Averages</b></h5>
           </div>
       </div>
 
@@ -208,14 +200,43 @@
         <div class="col-lg-2 con2" id="test4">
           <br>
         </div>
-        <div class="col-lg-2 con2" id="control12">
+        <div class="col-lg-2 con2" id="avgTestsDiv">
           <br>
         </div>
-
+      </div>
+      <div class="row simHeader">
+          <div class="col-lg-1 borderRight infoHeader">
+          </div>
+          <div class="col-lg-10 borderRight infoHeader sideChart">
+            <h5><b>Charts</b></h5>
+          </div>
+          <div class="col-lg-1 borderRight infoHeader">
+          </div>
+      </div>
+      <div class="row" id="chartsRow">
+        <div class="col-lg-1 borderRight infoHeader sideChart">
+        </div>
+        <div class="col-lg-10 con2" id="chartDiv">
+          <br>
+          <canvas id="myChart"></canvas>
+        </div>
+        <div class="col-lg-1 borderRight infoHeader sideChart">
+        </div>
+      </div>
+      <div class="row simHeader">
+          <div class="col-lg-1 borderRight infoHeader">
+          </div>
+          <div class="col-lg-10 borderRight infoHeader sideChart">
+            <h5><b>...</b></h5>
+          </div>
+          <div class="col-lg-1 borderRight infoHeader">
+          </div>
       </div>
     </div> <!-- Close container -->
 
     <!-- More scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.5.0"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

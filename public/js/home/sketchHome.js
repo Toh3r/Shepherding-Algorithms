@@ -1,9 +1,10 @@
-var environment, manageFE, manageEnv; // Declare
+var environment, manageFE, manageEnv, reChart; // Declare
 var isPlaying = false; // Create boolean for pause/running simulation
 // Create page elements using p5.js, called on page load (p5.js)
 function setup() {
   manageFE = new ManageControls();
   manageFE.createControls(); // Call function to set up sim test controls
+  manageFE.createChart();
 }
 
 // Call to run simulation -> (p5)
