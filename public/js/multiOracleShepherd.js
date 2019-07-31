@@ -65,7 +65,7 @@ MultiOracleShepherd.prototype.run = function(oracles) {
     this.applyForce(pat);
   }
 
-  if (oracles.length > 0) { // Count time steps
+  if (oracles.length > 0 && herd.length > 0 && this.uavNum == 1) { // Count time steps
     this.timestep++;
   }
 

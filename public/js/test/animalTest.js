@@ -69,6 +69,7 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
   var bun = this.bunched(herd);         // Bunched
   var obs = this.avoidObstacle(obstacles);
   var bre = this.breakUp(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds)
+  // var alo = this.alone(herd);
   var moveChance = int(random(1,20));
 
   if (bre == true) {
@@ -99,7 +100,10 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
   }
 
   // WHEN SHEPHERD IN PRESSURE ZONE
-  if (pre > 0 && bre == false) {
+  // if (pre > 0 && bre == false && alo == true) {
+  //   this.maxspeed = 0;
+  // } else
+  if (pre > 0 && bre == false) { //  && alo == false
     this.inFlightZone = 0;
     if (bun == false) {
       this.maxspeed = pSpeedSlider.value();
@@ -596,7 +600,7 @@ Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, or
 Animal.prototype.goal = function () {
     var gate = createVector(this.goals[this.goalCounter].x, this.goals[this.goalCounter].y);
     this.checkGoal(gate);
-    if (this.goalCounter == this.goals.length -1 && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 20) {
+    if (this.goalCounter == this.goals.length -1 && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 40) {
       console.log("Name of animal leaving: " + this.name);
       environment.hitTheGap(this);
     }
@@ -723,5 +727,21 @@ Animal.prototype.breakUp = function (shep, auto, multi, oShep) {
     return true;
   } else {
     return false;
+  }
+}
+
+Animal.prototype.alone = function (herd) {
+  var neighbordist = 200;
+  var count = 0;
+  for (var i = 0; i < herd.length; i++) {
+    var d = p5.Vector.dist(this.position,herd[i].position);
+    if ((d > 0) && (d < neighbordist)) {
+      count++;
+    }
+  }
+  if (count > 0) {
+    return false;
+  } else {
+    return true;
   }
 }

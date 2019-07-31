@@ -66,7 +66,8 @@ AutoShepherd.prototype.herdAnimals = function (herd) {
 
   if (bun == false) { // If false, call collecting function
     var avgDist = this.checkDist(herd)
-    if (avgDist > 150) { // FFHC Collect
+    var non = this.nonMover(herd);
+    if (avgDist > 120 || non == true) { // FFHC Collect
       var col = this.advanceCollect(herd);
     } else { // ZZ Collect
       var col = this.collectAnimals(herd);
@@ -78,7 +79,7 @@ AutoShepherd.prototype.herdAnimals = function (herd) {
   }
 
   if(too == true) {
-    this.maxspeed = 0.2;
+    this.maxspeed = 0.1;
   }
 
 }
@@ -165,7 +166,7 @@ AutoShepherd.prototype.bunched = function (herd) {
   }
   // Return if herd is bunched or not
   herdDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
-  if (herdDist < 150) {
+  if (herdDist < 250) {
     return true;
   } else {
     return false;
@@ -219,10 +220,10 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
    this.targetInBounds(target);
    this.outOfHerd(target);
    // this.targetInBounds(target);
-   // console.log("Target after OOH: " + target);
+   console.log("Target after OOH: " + target);
    this.targetInHerd(target);
    // this.targetInBounds(target);
-   // console.log("Target after TIH: " + target);
+   console.log("Target after TIH: " + target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
@@ -237,10 +238,10 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
    this.targetInBounds(target);
    this.outOfHerd(target);
    // this.targetInBounds(target);
-   // console.log("Target after OOH: " + target);
+   console.log("Target after OOH: " + target);
    this.targetInHerd(target);
    // this.targetInBounds(target);
-   // console.log("Target after TIH: " + target);
+   console.log("Target after TIH: " + target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
@@ -369,7 +370,6 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     goal = this.avoidObstacle(center, goal, herd);
     this.maxspeed = 0.5;
   } else if (environment.vocalizing() == false && herd.length > 0) {
-    this.oldMovement = 'moving'
     if(this.avoiding == true) {
       this.switchingActions = true;
       this.avoiding = false;
@@ -431,6 +431,11 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     }
   }
 
+  let slo = this.slowForGoal(center, herd);
+  if (slo == true) {
+    this.maxspeed = 0.2;
+  }
+
   let statues = this.checkForStatues(herd, center);
   if (this.movingUp == false) {
       if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50) || statues == true) {
@@ -443,8 +448,8 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
       this.outOfHerd(target);
     }
     stroke(255)
-    fill(0,255,0)
-    ellipse(target.x, target.y, 15,15)
+    // fill(0,255,0)
+    // ellipse(target.x, target.y, 15,15)
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -454,6 +459,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
       this.movingUp = !this.movingUp;
       this.firstAvoid = false;
       this.switchingActions = false;
+      this.oldMovement = 'moving';
     }
     return steer;
   } else if (this.movingUp == true) {
@@ -466,9 +472,9 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     if (this.oldMovement != "moving") {
       this.outOfHerd(target);
     }
-    stroke(255)
-    fill(0,255,0)
-    ellipse(target.x, target.y, 15,15)
+    // stroke(255)
+    // fill(0,255,0)
+    // ellipse(target.x, target.y, 15,15)
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -478,6 +484,7 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
       this.movingUp = !this.movingUp;
       this.firstAvoid = false;
       this.switchingActions = false;
+      this.oldMovement = 'moving';
     }
     return steer;
   }
@@ -875,6 +882,15 @@ AutoShepherd.prototype.drawShepGoals = function () {
 AutoShepherd.prototype.checkGoal = function (hc, g) {
   if (dist(hc.x, hc.y, g.x, g.y) < 50 && this.goalCounter < this.shepGoals.length -1) {
     this.goalCounter++;
+    this.oldMovement = "switchGoals";
+  }
+}
+
+AutoShepherd.prototype.slowForGoal = function (hc, g) {
+  if (dist(hc.x, hc.y, g.x, g.y) < 120) {
+    return true;
+  } else {
+    return false;
   }
 }
 
@@ -925,7 +941,7 @@ AutoShepherd.prototype.checkDist = function (herd) {
 AutoShepherd.prototype.tooClose = function (herd) {
   let count = 0;
   for (var i = 0; i < herd.length; i++) {
-    if(dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y) < 20) {
+    if(dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y) < 30) {
       count++;
     }
   }
@@ -968,6 +984,32 @@ AutoShepherd.prototype.checkForStatues = function (herd, center) {
   }
   if (count > 0) {
     console.log("I run")
+    return true;
+  } else {
+    return false;
+  }
+}
+
+AutoShepherd.prototype.nonMover = function (herd) {
+  let count = 0;
+  closest = 40000;
+  closest2 = 40000;
+  for (var i = 0; i < herd.length; i++) {
+    shep2Animal = Math.abs(dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y)); // Find distance to each animal
+    if (shep2Animal < closest) {
+      closest = shep2Animal;
+    }
+  }
+  var nextClosest = 0;
+  for(var i = 0; i < herd.length; i++) {
+    for(var j = 0; j < herd.length; j++) {
+      nextClosest = dist(herd[i].position.x, herd[i].position.y, herd[j].position.x, herd[j].position.y);
+      if (nextClosest < closest2) {
+        closest2 = nextClosest;
+      }
+    }
+  }
+  if (closest2 > 180) {
     return true;
   } else {
     return false;

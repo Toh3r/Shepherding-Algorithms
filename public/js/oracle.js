@@ -128,7 +128,7 @@ Oracle.prototype.render = function() { // Render Oracle each frame
   beginShape();
   ellipse(-5, 0, 5,5); // 2
   ellipse(0, 0, 5,5); // 4
-  fill(0,0,255);
+  fill(255,0,0);
   ellipse(-5,-5, 5,5); // 1
   ellipse(0,-5, 5,5); // 3
   endShape(CLOSE);
@@ -381,12 +381,19 @@ Oracle.prototype.keepSearching = function (herd) {
       this.tRow = this.start.startSec.y;
       this.lCol = this.start.startSec.x;
       this.rCol = this.start.endSec.x;
-    } else {
+    } else  {
       this.start.diffStart = false;
       this.bRow = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
       this.tRow = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
       this.lCol = Math.min.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
       this.rCol = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
+    }
+    if (this.animals.length == 0) {
+      console.log("I'm a jackass")
+      this.bRow = this.oldbRow;
+      this.tRow = this.oldtRow;
+      this.lCol = this.oldlCol;
+      this.rCol = this.oldrCol;
     }
 
     if (this.animals.length < herd.length && this.start.startSwitcher == false) {
@@ -417,6 +424,11 @@ Oracle.prototype.keepSearching = function (herd) {
     if (this.start.diffStart == false) {
       this.usingSec = this.findClosest();
     }
+
+    this.oldbRow = this.bRow;
+    this.oldtRow = this.tRow;
+    this.oldlCol = this.lCol;
+    this.oldrCol = this.rCol;
   }
 
   if (this.firstSearch == true && this.targetNum >= this.numSectors) {

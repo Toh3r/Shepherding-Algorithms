@@ -82,7 +82,7 @@ MultiGPSShepherd.prototype.herdAnimals = function (herd) {
   }
   //
   if(too == true) {
-    this.maxspeed = 0.2;
+    this.maxspeed = 0.1;
   }
 }
 
@@ -163,7 +163,7 @@ MultiGPSShepherd.prototype.bunched = function (herd) {
   }
 
   herDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
-  if (herDist < 100) {
+  if (herDist < 250) {
     return true;
   } else {
     return false;
@@ -982,7 +982,7 @@ MultiGPSShepherd.prototype.checkDist = function (herd) {
 MultiGPSShepherd.prototype.tooClose = function (herd) {
   let count = 0;
   for (var i = 0; i < herd.length; i++) {
-    if(dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y) < 20) {
+    if(dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y) < 30) {
       count++;
     }
   }

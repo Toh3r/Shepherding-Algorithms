@@ -373,11 +373,13 @@ ManageControls.prototype.createChart = function () {
         labels: [],
         datasets: [{
             label: 'Timesteps',
+
             borderColor: 'rgb(36, 188, 25)',
             data: []
         },
         {
             label: 'GoodMovement',
+
             borderColor: 'rgb(36, 25, 188)',
             data: []
         },
@@ -393,6 +395,7 @@ ManageControls.prototype.createChart = function () {
     options: {
       title: {
         display: true,
+        fontColor: 'black',
         text: 'Wait For It...'
           },
         elements: {
@@ -404,31 +407,36 @@ ManageControls.prototype.createChart = function () {
             // Change options for ALL labels of THIS CHART
             datalabels: {
                 color: 'rgb(0,0,0)',
+                fontColor: 'black',
                 align: 'top'
             }
         },
         scales: {
         xAxes: [{
             ticks: {
-                callback: function(tick, index, array) {
-                    return (index % 5) ? "" : tick;
+              fontColor: 'black',
+              callback: function(tick, index, array) {
+                if(index % 4 == 0 || index == 0) {
+                  return tick;
+                } else {
+                  return "";
                 }
+                  // return (index % 5 = 0 || index = 1) ? "" : tick;
+              }
             }
         }],
         yAxes: [{
-            ticks: {
-                padding: 20
-            }
+          ticks: {
+              padding: 20,
+              fontColor: 'black'
+          }
         }]
       },
-      // layout: {
-      //       padding: {
-      //           left: 40,
-      //           right: 40,
-      //           top: 0,
-      //           bottom: 0
-      //       }
-      //   }
+      legend: {
+          labels: {
+              fontColor: 'black'
+          }
+      }
     }
   });
 }
