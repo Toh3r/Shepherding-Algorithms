@@ -220,10 +220,10 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
    this.targetInBounds(target);
    this.outOfHerd(target);
    // this.targetInBounds(target);
-   console.log("Target after OOH: " + target);
+   // console.log("Target after OOH: " + target);
    this.targetInHerd(target);
    // this.targetInBounds(target);
-   console.log("Target after TIH: " + target);
+   // console.log("Target after TIH: " + target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
@@ -238,10 +238,10 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
    this.targetInBounds(target);
    this.outOfHerd(target);
    // this.targetInBounds(target);
-   console.log("Target after OOH: " + target);
+   // console.log("Target after OOH: " + target);
    this.targetInHerd(target);
    // this.targetInBounds(target);
-   console.log("Target after TIH: " + target);
+   // console.log("Target after TIH: " + target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);

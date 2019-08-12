@@ -99,7 +99,7 @@ ManageControls.prototype.createControls = function () {
   anNumRadio = createRadio();
   anNumRadio.parent("anNumRadio");
   anNumRadio.option('10', 1);
-  anNumRadio.option('25', 2);
+  anNumRadio.option('20', 2);
   anNumRadio.option('50', 3);
 
   anTypeRadio = createRadio();
@@ -111,15 +111,15 @@ ManageControls.prototype.createControls = function () {
   testNumRadio.parent("testNumRadio");
   testNumRadio.option('1', 1);
   testNumRadio.option('5', 5);
-  testNumRadio.option('25', 25);
+  testNumRadio.option('20', 20);
   testNumRadio.option('50', 50);
 
   //  Select starting environment
   envRadio._getInputChildrenArray()[0].checked = true;
   pathRadio._getInputChildrenArray()[0].checked = true;
-  anNumRadio._getInputChildrenArray()[0].checked = true;
+  anNumRadio._getInputChildrenArray()[1].checked = true;
   anTypeRadio._getInputChildrenArray()[0].checked = true;
-  testNumRadio._getInputChildrenArray()[0].checked = true;
+  testNumRadio._getInputChildrenArray()[2].checked = true;
 
   // Initialize new environment
   environment = new Environment();
@@ -334,15 +334,15 @@ function keyPressed() {
 ManageControls.prototype.addTestResult = function () {
   var results = environment.testResults;
     for(var i = results.length-1; i < results.length; i++) {
-      test = createP("Test: " + results[results.length-1].num + " Time: " + results[results.length-1].time + " Move: " + results[results.length-1].move +
-                          " Adverse: " + results[i].adverse.toFixed(2));
-      if(i < 10) {
+      test = createP("Test: " + results[results.length-1].num + " UAV Type: " + manageEnv.uavType + " Time: " + results[results.length-1].time + " Move: " + results[results.length-1].move +
+                     " Adverse: " + results[i].adverse.toFixed(2));
+      if(i < 4) {
         test.parent("test" + 0);
-      } else if (i < 20) {
+      } else if (i < 8) {
         test.parent("test" + 1);
-      } else if (i < 30) {
+      } else if (i < 12) {
         test.parent("test" + 2);
-      } else if (i < 40) {
+      } else if (i < 16) {
         test.parent("test" + 3);
       } else if (i < 50) {
         test.parent("test" + 4);
@@ -352,11 +352,13 @@ ManageControls.prototype.addTestResult = function () {
 
 ManageControls.prototype.addAverageResults = function () {
     let numTests = createP("Tests Complete: " + environment.testNumStatic);
+    let shepType = createP("UAV Type: " + manageEnv.uavType);
     let avgTime = createP("Average TimeSteps: " + environment.totalTime.toFixed(0));
     let avgMove = createP("Average Good Movement: " + environment.totalMoves.toFixed(0));
     let avgAdverse = createP("Average Adverse Conditions: " + environment.totalAccStress.toFixed(2));
 
     numTests.parent("avgTestsDiv");
+    shepType.parent("avgTestDiv");
     avgTime.parent("avgTestsDiv");
     avgMove.parent("avgTestsDiv");
     avgAdverse.parent("avgTestsDiv");
@@ -372,20 +374,54 @@ ManageControls.prototype.createChart = function () {
     data: {
         labels: [],
         datasets: [{
-            label: 'Timesteps',
-
+            label: '',
             borderColor: 'rgb(36, 188, 25)',
             data: []
-        },
-        {
-            label: 'GoodMovement',
-
+        },{
+            label: '',
+            borderColor: 'rgb(36, 188, 25)',
+            data: []
+        },{
+            label: 'Single GPS',
+            borderColor: 'rgb(36, 188, 25)',
+            data: []
+        },{
+            label: '',
+            borderColor: 'rgb(36, 25, 188)',
+            data: []
+        },{
+            label: '',
+            borderColor: 'rgb(36, 25, 188)',
+            data: []
+        },{
+            label: 'Multi-GPS',
             borderColor: 'rgb(36, 25, 188)',
             data: []
         },
         {
-            label: 'Adverse',
+            label: '',
             borderColor: 'rgb(188, 36, 25)',
+            data: []
+        },{
+            label: '',
+            borderColor: 'rgb(188, 36, 25)',
+            data: []
+        },{
+            label: 'Single Oracle',
+            borderColor: 'rgb(188, 36, 25)',
+            data: []
+        },
+        {
+            label: '',
+            borderColor: 'rgb(0, 0, 0)',
+            data: []
+        },{
+            label: '',
+            borderColor: 'rgb(0, 0, 0)',
+            data: []
+        },{
+            label: 'Multi-Oracle',
+            borderColor: 'rgb(0, 0, 0)',
             data: []
         }
       ]
@@ -446,22 +482,41 @@ ManageControls.prototype.createChart = function () {
 // }
 
 ManageControls.prototype.updateMyChart = function () {
-  var results = environment.testResults;
-  this.chart.data.labels.push(results[results.length-1].num);
-  if (results[results.length-1].num % 5 != 0) {
 
+  if (manageEnv.uavType == 'SingleGPS') {
+    console.log("Update charts has run...")
+    var results = environment.testResults;
+    this.chart.data.labels.push(results[results.length-1].num);
+    this.chart.data.datasets[0].data.push(results[results.length-1].time);
+    this.chart.data.datasets[1].data.push(results[results.length-1].move);
+    this.chart.data.datasets[2].data.push(results[results.length-1].adverse.toFixed(2));
+    this.chart.update();
+  } else if (manageEnv.uavType == 'multiGPS') {
+    var results = environment.testResults;
+    this.chart.data.labels.push(results[results.length-1].num);
+    this.chart.data.datasets[3].data.push(results[results.length-1].time);
+    this.chart.data.datasets[4].data.push(results[results.length-1].move);
+    this.chart.data.datasets[5].data.push(results[results.length-1].adverse.toFixed(2));
+    this.chart.update();
+  } else if (manageEnv.uavType == 'oracleHerd') {
+    var results = environment.testResults;
+    this.chart.data.labels.push(results[results.length-1].num);
+    this.chart.data.datasets[6].data.push(results[results.length-1].time);
+    this.chart.data.datasets[7].data.push(results[results.length-1].move);
+    this.chart.data.datasets[8].data.push(results[results.length-1].adverse.toFixed(2));
+    this.chart.update();
+  } else if (manageEnv.uavType == 'multiOracle') {
+    var results = environment.testResults;
+    this.chart.data.labels.push(results[results.length-1].num);
+    this.chart.data.datasets[9].data.push(results[results.length-1].time);
+    this.chart.data.datasets[10].data.push(results[results.length-1].move);
+    this.chart.data.datasets[11].data.push(results[results.length-1].adverse.toFixed(2));
+    this.chart.update();
   }
-  this.chart.data.datasets[0].data.push(results[results.length-1].time);
-  this.chart.data.datasets[1].data.push(results[results.length-1].move);
-  this.chart.data.datasets[2].data.push(results[results.length-1].adverse.toFixed(2));
-  this.chart.update();
+
 }
 
-// function updateConfigByMutating(chart) {
-//     manageFE.updateChartTitle(chart);
-// }
-
 ManageControls.prototype.updateChartTitle = function () {
-  this.chart.options.title.text = manageEnv.uavForChart + ":- Env: " + envRadio.value() + ":- Animal Number: " + manageEnv.anNumberForChart;
+  this.chart.options.title.text ="Env: " + envRadio.value() + ":- Animal Number: " + manageEnv.anNumberForChart;
   this.chart.update();
 }

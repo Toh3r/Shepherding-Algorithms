@@ -9,8 +9,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
     animalNumber = 10;
     this.anNumberForChart = "10"
   } else if(anNumRadio.value() == 2) {
-    animalNumber = 25;
-    this.anNumberForChart = "25"
+    animalNumber = 20;
+    this.anNumberForChart = "20"
   } else if(anNumRadio.value() == 3) {
     animalNumber = 50;
     this.anNumberForChart = "50"
