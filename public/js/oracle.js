@@ -68,13 +68,21 @@ Oracle.prototype.runTheShow = function (herd) { // Function which determines act
     this.firstRun = false;
   }
 
-  if (this.firstRun == false && bun == true) {
+  let allInView = this.checkViewBox(herd);
+
+  if (allInView == true) {
     this.maxspeed = 0.5;
     // console.log("I.. I.. I.. Follow")  // If animals are bunched, move to centre of herd
     this.following = true;
     var follow = this.followHerd(herd);                // and keep passing positions to oracle shepherd
     this.applyForce(follow);
-    } else if (this.firstRun == true && this.start.dir == 'start') {  // Runs on initial search for animals when searching entire enclosure
+  } else if (this.firstRun == false && bun == true) {
+    this.maxspeed = 0.5;
+    // console.log("I.. I.. I.. Follow")  // If animals are bunched, move to centre of herd
+    this.following = true;
+    var follow = this.followHerd(herd);                // and keep passing positions to oracle shepherd
+    this.applyForce(follow);
+  } else if (this.firstRun == true && this.start.dir == 'start') {  // Runs on initial search for animals when searching entire enclosure
     this.maxspeed = 1.5;
     this.following = false;
     var search = this.searchForAnimals(herd);
@@ -666,4 +674,19 @@ Oracle.prototype.checkHeading = function (herd) {
   }
   averageHeading = totalHeading/herd.length;
   return averageHeading;
+}
+
+Oracle.prototype.checkViewBox = function (herd) {
+  let numAnimals = 0;
+  for (var i = 0; i < herd.length; i++) {
+    if (Math.abs(this.position.x - herd[i].position.x) < this.secWidth/2 && Math.abs(this.position.y - herd[i].position.y) < this.secHeight/2) {
+      numAnimals ++;
+    }
+  }
+
+  if (numAnimals == herd.length) {
+    return true;
+  } else {
+    return false;
+  }
 }

@@ -111,15 +111,15 @@ ManageControls.prototype.createControls = function () {
   testNumRadio.parent("testNumRadio");
   testNumRadio.option('1', 1);
   testNumRadio.option('5', 5);
+  testNumRadio.option('10', 10);
   testNumRadio.option('20', 20);
-  testNumRadio.option('50', 50);
 
   //  Select starting environment
   envRadio._getInputChildrenArray()[0].checked = true;
   pathRadio._getInputChildrenArray()[0].checked = true;
   anNumRadio._getInputChildrenArray()[1].checked = true;
   anTypeRadio._getInputChildrenArray()[0].checked = true;
-  testNumRadio._getInputChildrenArray()[2].checked = true;
+  testNumRadio._getInputChildrenArray()[1].checked = true;
 
   // Initialize new environment
   environment = new Environment();
@@ -358,7 +358,7 @@ ManageControls.prototype.addAverageResults = function () {
     let avgAdverse = createP("Average Adverse Conditions: " + environment.totalAccStress.toFixed(2));
 
     numTests.parent("avgTestsDiv");
-    shepType.parent("avgTestDiv");
+    shepType.parent("avgTestsDiv");
     avgTime.parent("avgTestsDiv");
     avgMove.parent("avgTestsDiv");
     avgAdverse.parent("avgTestsDiv");
@@ -439,20 +439,20 @@ ManageControls.prototype.createChart = function () {
               tension: 0 // disables bezier curves
           }
         },
-        plugins: {
-            // Change options for ALL labels of THIS CHART
-            datalabels: {
-                color: 'rgb(0,0,0)',
-                fontColor: 'black',
-                align: 'top'
-            }
-        },
+        // plugins: {
+        //     // Change options for ALL labels of THIS CHART
+        //     datalabels: {
+        //         color: 'rgb(0,0,0)',
+        //         fontColor: 'black',
+        //         align: 'top'
+        //     }
+        // },
         scales: {
         xAxes: [{
             ticks: {
               fontColor: 'black',
               callback: function(tick, index, array) {
-                if(index % 4 == 0 || index == 0) {
+                if(index % 5 == 0 || index == 0) {
                   return tick;
                 } else {
                   return "";
@@ -467,12 +467,13 @@ ManageControls.prototype.createChart = function () {
               fontColor: 'black'
           }
         }]
-      },
-      legend: {
-          labels: {
-              fontColor: 'black'
-          }
       }
+      // ,
+      // legend: {
+      //     labels: {
+      //         fontColor: 'black'
+      //     }
+      // }
     }
   });
 }

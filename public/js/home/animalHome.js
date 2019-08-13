@@ -166,6 +166,10 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
     goa.mult(0.5);
     this.timeCount = 4;
   }
+
+  if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goals.length-1].x, this.goals[this.goals.length-1].y) < 120) {
+    goa.mult(0.8);
+  }
   avo.mult(1);
 
   // Add the force vectors to acceleration

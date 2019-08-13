@@ -442,8 +442,8 @@ Environment.prototype.runItBack = function () {
     manageEnv.multiGPSHerd();
   } else if (manageEnv.uavType == "oracleHerd") {
     manageEnv.oracleHerd();
-  } else if (manageEnv.uavType == "multiOracleHerd") {
-    manageEnv.multiOracle();
+  } else if (manageEnv.uavType == "multiOracle") {
+    manageEnv.multiOracleHerd();
   }
 }
 
