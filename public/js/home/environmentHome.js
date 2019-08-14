@@ -84,6 +84,7 @@ Environment.prototype.run = function() {
       this.runItBack();
     }
   } else if (this.testNum == 0) {
+    console.log("TESTNUM 0")
     let myNumbers = {
       num: this.testCounter,
       time: this.oldTime,

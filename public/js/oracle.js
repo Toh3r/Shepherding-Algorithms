@@ -70,13 +70,7 @@ Oracle.prototype.runTheShow = function (herd) { // Function which determines act
 
   let allInView = this.checkViewBox(herd);
 
-  if (allInView == true) {
-    this.maxspeed = 0.5;
-    // console.log("I.. I.. I.. Follow")  // If animals are bunched, move to centre of herd
-    this.following = true;
-    var follow = this.followHerd(herd);                // and keep passing positions to oracle shepherd
-    this.applyForce(follow);
-  } else if (this.firstRun == false && bun == true) {
+  if (allInView == true || bun == true) {
     this.maxspeed = 0.5;
     // console.log("I.. I.. I.. Follow")  // If animals are bunched, move to centre of herd
     this.following = true;
@@ -91,11 +85,11 @@ Oracle.prototype.runTheShow = function (herd) { // Function which determines act
       this.firstRun = false; // Finish initial searxh
       this.movingUp = false; // Defualt for now
     }
-  } else if (this.firstRun == false && bun == false || this.start.dir != "start") { // Once initial search finishes,if animals are not bunched
+  } else if (this.firstRun == false && bun == false && allInView == false || this.start.dir != "start") { // Once initial search finishes,if animals are not bunched
     this.following = false;
     // this.maxspeed = oracleSpeedSlider.value();
     var keep = this.keepSearching(herd);               // calculate new search based on their positions
-    this.applyForce(keep);                          // and keep searching
+    this.applyForce(keep);                        // and keep searching
   }
 }
 
@@ -505,9 +499,13 @@ Oracle.prototype.keepSearching = function (herd) {
 }
 
 Oracle.prototype.followHerd = function (herd) { // When herd is bunched
+  let herdBottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
+  let herdTop = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
+  let herdLeft = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
+  let herdRight = Math.max.apply(Math, herd.map(function(o) { return o.position.x; }));
   // Find centre position of herd
-  var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
-  var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
+  var herdX = (herdRight + herdLeft) / 2; // X co-ord of herd centre
+  var herdY = (herdTop + herdBottom) / 2; // Y co-ord of herd centre
   var center = createVector(herdX, herdY);          // Centre co-ords of herd
   var goal = this.shepGoals[this.goalCounter];
   this.checkGoal(center, goal);
@@ -530,6 +528,9 @@ Oracle.prototype.followHerd = function (herd) { // When herd is bunched
   desired.mult(this.maxspeed);
   var steer = p5.Vector.sub(desired, this.velocity);
   steer.limit(this.maxforce);
+  // console.log("Target for Oracle: " + target)
+  // fill(0)
+  // ellipse(target.x, target.y, 15,15)
   return steer;
 }
 

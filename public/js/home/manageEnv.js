@@ -63,7 +63,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
       goal1 = createVector(975, 580);
       shepGoals = [goal1];
     } else if (pathRadio.value() == 2) {
-      goal1 = createVector(925, 280), goal2 = createVector(975, 580);
+      goal1 = createVector(925, 380), goal2 = createVector(975, 580);
       shepGoals = [goal1, goal2];
     }
 

@@ -79,14 +79,12 @@ OracleShepherd.prototype.herdAnimals = function (animals, oracle) {
   var bun = this.bunched(animals);
   var too = this.tooClose(animals);
 
-  if (bun == true) {  	        // If bunched, call move function
+  if (oracle.following == true) {  	        // If bunched, call move function
     var mov = this.moveAnimals(animals);
     this.applyForce(mov);
     this.collectBool = false;  // Booleans for UI output
     this.moveBool = true;
-  }
-
-  if (bun == false) { // If false, call collecting function
+  } else { // If false, call collecting function
   // var avgDist = this.checkDist(animals)
   // if (avgDist > 150) { // FFHC Collect
     var col = this.advanceCollect(animals, oracle);
