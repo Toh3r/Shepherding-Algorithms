@@ -1,6 +1,6 @@
 // Shepherd Class
 // Create shepherd attributes
-function AutoShepherd(startPos, shepGoals) { // Pass through starting position and goal points/exit point
+function SingleGPSUAV (startPos, shepGoals) { // Pass through starting position and goal points/exit point
   this.acceleration = createVector(0,0);     // Creating starting variables
   this.velocity = createVector(0,0);
   this.position = createVector(startPos.x, startPos.y);
@@ -26,10 +26,11 @@ function AutoShepherd(startPos, shepGoals) { // Pass through starting position a
   this.timestep = 0; // ----- Counters
   this.goodMovement = 0;
   this.correctHeading = 0;
+  // this.moveOutofFli = false;
 }
 
 // Call methods for each shepherd
-AutoShepherd.prototype.run = function(herd) {
+SingleGPSUAV.prototype.run = function(herd) {
   this.update();
   this.borders();
   this.render();
@@ -46,11 +47,11 @@ AutoShepherd.prototype.run = function(herd) {
 }
 
 // Apply each behavioural rule to each animal
-AutoShepherd.prototype.applyForce = function(force) {
+SingleGPSUAV.prototype.applyForce = function(force) {
   this.acceleration.add(force);
 }
 
-AutoShepherd.prototype.herdAnimals = function (herd) {
+SingleGPSUAV.prototype.herdAnimals = function (herd) {
   if (herd.length == 0) { // When no animals, stop UAV movement
     this.maxspeed = 0;
   }
@@ -85,7 +86,7 @@ AutoShepherd.prototype.herdAnimals = function (herd) {
 }
 
 // Method to update location
-AutoShepherd.prototype.update = function() {
+SingleGPSUAV.prototype.update = function() {
   this.velocity.add(this.acceleration); // Update velocity
   this.velocity.limit(this.maxspeed);   // Limit speed
   this.position.add(this.velocity);     // Update position
@@ -94,7 +95,7 @@ AutoShepherd.prototype.update = function() {
 
 // Method to prevent shepherd from leaving enclosure
 // Keep position just inside edge
-AutoShepherd.prototype.borders = function () {
+SingleGPSUAV.prototype.borders = function () {
   if (this.position.x < 10) {
     this.position.x = 10;
   } else if (this.position.y < 10) {
@@ -107,7 +108,7 @@ AutoShepherd.prototype.borders = function () {
 }
 
 // Draw shepherd
-AutoShepherd.prototype.render = function() {
+SingleGPSUAV.prototype.render = function() {
   // Draw a triangle rotated in the direction of velocity
   var theta = this.velocity.heading() + radians(90);
   fill(255);
@@ -126,7 +127,7 @@ AutoShepherd.prototype.render = function() {
 }
 
 // Fubction to calculate if herd is bunched and create secter used for herd avoidance
-AutoShepherd.prototype.bunched = function (herd) {
+SingleGPSUAV.prototype.bunched = function (herd) {
   // Find positions furthest animals in each direction
   this.herdBottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
   this.herdTop = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
@@ -175,7 +176,7 @@ AutoShepherd.prototype.bunched = function (herd) {
 }
 
 // ----------- ZIG-ZAG COLLECTING -----------
-AutoShepherd.prototype.collectAnimals = function (herd) {
+SingleGPSUAV.prototype.collectAnimals = function (herd) {
   this.oldMovement = "collecting"; // Set current movement
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
@@ -254,7 +255,7 @@ AutoShepherd.prototype.collectAnimals = function (herd) {
  }
 }
 
-AutoShepherd.prototype.advanceCollect = function (herd) {
+SingleGPSUAV.prototype.advanceCollect = function (herd) {
   this.oldMovement = "collecting"; // Set movement type to collecting
   this.avoidHerdBool = false;
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
@@ -323,9 +324,14 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
   }
 
   this.oldTargetAnimal = this.targetAnimal; //
+  herdHeading = this.checkHeading(herd);
 
  if (this.movingUp == false) {
-   var target = createVector(fzp10.x,fzp10.y);
+   if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50)) {
+     var target = createVector(fzp10.x,fzp10.y);
+   } else {
+     var target = createVector(pzp10.x,pzp10.y);
+   }
    this.targetInBounds(target);
    this.outOfHerd(target);
    var desired = p5.Vector.sub(target, this.position);
@@ -338,7 +344,11 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
    }
    return steer;
  } else if (this.movingUp == true) {
-   var target = createVector(fzp20.x,fzp20.y);
+   if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50)) {
+     var target = createVector(fzp20.x,fzp20.y);
+   } else {
+     var target = createVector(pzp20.x,pzp20.y);
+   }
    this.targetInBounds(target);
    this.outOfHerd(target);
    var desired = p5.Vector.sub(target, this.position);
@@ -353,7 +363,7 @@ AutoShepherd.prototype.advanceCollect = function (herd) {
  }
 }
 
-AutoShepherd.prototype.moveAnimals = function (herd) {
+SingleGPSUAV.prototype.moveAnimals = function (herd) {
   this.avoidHerdBool = false;
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
@@ -414,9 +424,11 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
     if (dist(fzp1.x, fzp1.y, this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y) > dist(fzp2.x, fzp2.y, this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y)) {
       this.movingUp = false;
       this.firstAvoid = false;
+      // this.moveOutofFli = true;
     } else if (dist(fzp2.x, fzp2.y, this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y) > dist(fzp1.x, fzp1.y, this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y)) {
       this.movingUp = true;
       this.firstAvoid = false;
+      // this.moveOutofFli = true;
     }
   }
 
@@ -438,11 +450,17 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
 
   let statues = this.checkForStatues(herd, center);
   if (this.movingUp == false) {
-      if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50) || statues == true) {
-        var target = createVector(fzp1.x,fzp1.y);
-      } else {
-        var target = createVector(pzp1.x,pzp1.y);
-      }
+    if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50)) {
+      var target = createVector(fzp1.x,fzp1.y);
+    } else {
+      var target = createVector(pzp1.x,pzp1.y);
+    }
+    if (statues == true) {
+      var target = createVector(this.nudge.x, this.nudge.y);
+    }
+    // if (this.moveOutofFli == true) {
+    //   var target = createVector(pzp1.x,pzp1.y);
+    // }
     this.targetInBounds(target);
     if (this.oldMovement != "moving") {
       this.outOfHerd(target);
@@ -460,13 +478,17 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
       this.firstAvoid = false;
       this.switchingActions = false;
       this.oldMovement = 'moving';
+      // this.moveOutofFli = false;
     }
     return steer;
   } else if (this.movingUp == true) {
-      if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50) || statues == true) {
+      if (environment.avgSpeed() < 0.30 || !(-0.50 < herdHeading && herdHeading < 0.50)) {
         var target = createVector(fzp2.x,fzp2.y);
       } else {
         var target = createVector(pzp2.x,pzp2.y);
+      }
+      if (statues == true) {
+        var target = createVector(this.nudge.x, this.nudge.y);
       }
     this.targetInBounds(target);
     if (this.oldMovement != "moving") {
@@ -485,12 +507,13 @@ AutoShepherd.prototype.moveAnimals = function (herd) {
       this.firstAvoid = false;
       this.switchingActions = false;
       this.oldMovement = 'moving';
+      // this.moveOutofFli = false;
     }
     return steer;
   }
 }
 
-AutoShepherd.prototype.targetInBounds = function (target) {
+SingleGPSUAV.prototype.targetInBounds = function (target) {
   if (target.x < 15) {
     target.x = 15;
   }
@@ -506,7 +529,7 @@ AutoShepherd.prototype.targetInBounds = function (target) {
   return target;
 }
 
-AutoShepherd.prototype.targetInHerd = function (target) {
+SingleGPSUAV.prototype.targetInHerd = function (target) {
   if (target.x > this.topLeft.x && target.x < this.topRight.x && target.y > this.topLeft.y && target.y < this.bottomRight.y) {
     console.log("This is not good")
   }
@@ -529,7 +552,7 @@ AutoShepherd.prototype.targetInHerd = function (target) {
   return target;
 }
 
-AutoShepherd.prototype.outOfHerd = function (target) { //In herd
+SingleGPSUAV.prototype.outOfHerd = function (target) { //In herd
   fill(241, 244, 66, 100);
   stroke(66, 66, 244);
   if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y && this.position.y < this.bottomLeft.y) {
@@ -573,7 +596,7 @@ AutoShepherd.prototype.outOfHerd = function (target) { //In herd
 }
 
 
-AutoShepherd.prototype.avoidHerdTop = function (target, c1, c2, c3, c4) {
+SingleGPSUAV.prototype.avoidHerdTop = function (target, c1, c2, c3, c4) {
   if (target.x > c1.tl.x && target.x < c2.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
     target = target;
   } else if (target.x > c4.tl.x && target.x < c4.tr.x && target.y > c1.bl.y && target.y < c4.bl.y) {
@@ -597,7 +620,7 @@ AutoShepherd.prototype.avoidHerdTop = function (target, c1, c2, c3, c4) {
   return target;
 }
 
-AutoShepherd.prototype.avoidHerdRight = function (target, c1, c2, c3, c4) {
+SingleGPSUAV.prototype.avoidHerdRight = function (target, c1, c2, c3, c4) {
   if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c2.bl.y) {
     target = target;
   } else if (target.x > c4.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
@@ -621,7 +644,7 @@ AutoShepherd.prototype.avoidHerdRight = function (target, c1, c2, c3, c4) {
   return target;
 }
 
-AutoShepherd.prototype.avoidHerdBottom = function (target, c1, c2, c3, c4) {
+SingleGPSUAV.prototype.avoidHerdBottom = function (target, c1, c2, c3, c4) {
   if (target.x > c2.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
     target = target;
   } else if (target.x > c2.tl.x && target.x < c2.tr.x && target.y > c3.tl.y && target.y < c2.tl.y) {
@@ -645,7 +668,7 @@ AutoShepherd.prototype.avoidHerdBottom = function (target, c1, c2, c3, c4) {
   return target;
 }
 
-AutoShepherd.prototype.avoidHerdLeft = function (target, c1, c2, c3, c4) {
+SingleGPSUAV.prototype.avoidHerdLeft = function (target, c1, c2, c3, c4) {
   if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c2.tl.y && target.y < c1.bl.y) {
     target = target;
   } else if (target.x > c2.tr.x && target.x < c3.tr.x && target.y > c2.tl.y && target.y < c2.bl.y) {
@@ -669,7 +692,7 @@ AutoShepherd.prototype.avoidHerdLeft = function (target, c1, c2, c3, c4) {
   return target;
 }
 
-AutoShepherd.prototype.avoidHerdTopLeft = function (target, c1, c2, c3) {
+SingleGPSUAV.prototype.avoidHerdTopLeft = function (target, c1, c2, c3) {
   if (target.x > c1.tl.x && target.x < c2.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
     target = target;
   } else if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c1.bl.y && target.y < c3.bl.y) {
@@ -689,7 +712,7 @@ AutoShepherd.prototype.avoidHerdTopLeft = function (target, c1, c2, c3) {
   return target;
 }
 
-AutoShepherd.prototype.avoidHerdTopRight = function (target, c1, c2, c3) {
+SingleGPSUAV.prototype.avoidHerdTopRight = function (target, c1, c2, c3) {
   if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c2.bl.y) {
     target = target;
   } else if (target.x > c3.tl.x && target.x < c1.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
@@ -709,7 +732,7 @@ AutoShepherd.prototype.avoidHerdTopRight = function (target, c1, c2, c3) {
   return target;
 }
 
-AutoShepherd.prototype.avoidHerdBottomRight = function (target, c1, c2, c3) {
+SingleGPSUAV.prototype.avoidHerdBottomRight = function (target, c1, c2, c3) {
   if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c2.tl.y && target.y < c1.bl.y) {
     target = target;
   } else if (target.x > c3.tl.x && target.x < c1.tl.x && target.y > c1.tl.y && target.y < c1.bl.y) {
@@ -729,7 +752,7 @@ AutoShepherd.prototype.avoidHerdBottomRight = function (target, c1, c2, c3) {
   return target;
 }
 
-AutoShepherd.prototype.avoidHerdBottomLeft = function (target, c1, c2, c3) {
+SingleGPSUAV.prototype.avoidHerdBottomLeft = function (target, c1, c2, c3) {
   if (target.x > c1.tl.x && target.x < c1.tr.x && target.y > c2.tl.y && target.y < c1.bl.y) {
     target = target;
   } else if (target.x > c1.tl.x && target.x < c3.tr.x && target.y > c1.tl.y && target.y < c1.bl.y) {
@@ -749,7 +772,7 @@ AutoShepherd.prototype.avoidHerdBottomLeft = function (target, c1, c2, c3) {
   return target;
 }
 
-AutoShepherd.prototype.displayShepLines = function (herd) {
+SingleGPSUAV.prototype.displayShepLines = function (herd) {
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
 
@@ -806,13 +829,21 @@ AutoShepherd.prototype.displayShepLines = function (herd) {
 
 }
 
-AutoShepherd.prototype.avoidObstacle = function (center, goal, herd) {
+SingleGPSUAV.prototype.avoidObstacle = function (center, goal, herd) {
   this.oldMovement = "avoiding";
+
   herdHeading = this.checkHeading(herd);
-  // console.log(herdHeading)
   fill(0,255,0);
   stroke(0);
-  if (herdHeading >= -0.75 && herdHeading <= 0.75) {
+  if (Math.abs(width - center.x) < 150 && dist(goal.x, goal.y, center.x, center.y) > 200) { // herd is beside right side of enclosure
+    goal = createVector(0, (this.herdTop + this.herdBottom) / 2); // So move left
+  } else if (center.x < 150 && dist(goal.x, goal.y, center.x, center.y) > 200) { // herd centre is beside right left of enclosure
+    goal = createVector(width, (this.herdTop + this.herdBottom) / 2); // so move right
+  } else if (height - center.y < 150 && dist(goal.x, goal.y, center.x, center.y) > 200) { // herd at bottom of enclosure
+    goal = createVector((this.herdRight + this.herdLeft) / 2, 0); // Move up
+  } else if (center.y < 150 && dist(goal.x, goal.y, center.x, center.y) > 200) { // at top
+    goal = createVector((this.herdRight + this.herdLeft) / 2, height);
+  }else if (herdHeading >= -0.75 && herdHeading <= 0.75) {
     text("Move Right", 50, 50);
     ellipse(width, (this.herdTop + this.herdBottom) / 2, 50,50);
     goal = createVector(width, (this.herdTop + this.herdBottom) / 2);
@@ -834,7 +865,7 @@ AutoShepherd.prototype.avoidObstacle = function (center, goal, herd) {
   return goal;
 }
 
-AutoShepherd.prototype.createPCo1 = function (x1,y1,x2,y2) {
+SingleGPSUAV.prototype.createPCo1 = function (x1,y1,x2,y2) {
   xDiff = x1 - x2;
   yDiff = y1 - y2;
   px1 = x1 - yDiff;
@@ -844,7 +875,7 @@ AutoShepherd.prototype.createPCo1 = function (x1,y1,x2,y2) {
 }
 
 // Create point b for perpindicular lines
-AutoShepherd.prototype.createPCo2 = function (x1,y1,x2,y2) {
+SingleGPSUAV.prototype.createPCo2 = function (x1,y1,x2,y2) {
   xDiff = x1 - x2;
   yDiff = y1 - y2;
   px2 = x1 + yDiff;
@@ -853,7 +884,7 @@ AutoShepherd.prototype.createPCo2 = function (x1,y1,x2,y2) {
   return point;
 }
 
-AutoShepherd.prototype.adjustLineLen = function (p1,p2,d) {
+SingleGPSUAV.prototype.adjustLineLen = function (p1,p2,d) {
   // extend line from goal to herd centre to fz and pre zone
   let originalDist = int(dist(p1.x, p1.y, p2.x,p2.y));
   lp1 = p1.x + (p1.x - p2.x) / originalDist * (d);
@@ -862,7 +893,7 @@ AutoShepherd.prototype.adjustLineLen = function (p1,p2,d) {
   return point;
 }
 
-AutoShepherd.prototype.checkHeading = function (herd) {
+SingleGPSUAV.prototype.checkHeading = function (herd) {
   totalHeading = 0;
   for (var i = 0; i < herd.length; i++) {
     totalHeading += herd[i].velocity.heading();
@@ -871,7 +902,7 @@ AutoShepherd.prototype.checkHeading = function (herd) {
   return averageHeading;
 }
 
-AutoShepherd.prototype.drawShepGoals = function () {
+SingleGPSUAV.prototype.drawShepGoals = function () {
   fill(255,30,30)
   stroke(0);
   for(var i = 0; i < this.shepGoals.length; i++) {
@@ -879,14 +910,14 @@ AutoShepherd.prototype.drawShepGoals = function () {
   }
 }
 
-AutoShepherd.prototype.checkGoal = function (hc, g) {
+SingleGPSUAV.prototype.checkGoal = function (hc, g) {
   if (dist(hc.x, hc.y, g.x, g.y) < 50 && this.goalCounter < this.shepGoals.length -1) {
     this.goalCounter++;
     this.oldMovement = "switchGoals";
   }
 }
 
-AutoShepherd.prototype.slowForGoal = function (hc, g) {
+SingleGPSUAV.prototype.slowForGoal = function (hc, g) {
   if (dist(hc.x, hc.y, g.x, g.y) < 120) {
     return true;
   } else {
@@ -894,7 +925,7 @@ AutoShepherd.prototype.slowForGoal = function (hc, g) {
   }
 }
 
-AutoShepherd.prototype.findClosestAnimal = function (herd, c) {
+SingleGPSUAV.prototype.findClosestAnimal = function (herd, c) {
   closest = 40000;
   for (var i = 0; i < herd.length; i++) {
     shep2Animal = Math.abs(dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y)); // Find distance to each animal
@@ -907,7 +938,20 @@ AutoShepherd.prototype.findClosestAnimal = function (herd, c) {
   return closestDist;
 }
 
-AutoShepherd.prototype.getGoodHeading = function (hc, g) {
+SingleGPSUAV.prototype.findClosestAnimalToUAV = function (herd, c) {
+  closest = 40000;
+  for (var i = 0; i < herd.length; i++) {
+    shep2Animal = Math.abs(dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y)); // Find distance to each animal
+    if (shep2Animal < closest) { // if this is the shortest distance
+      // closestAnimal = herd[i];
+      closest = shep2Animal;     // distance is saved as closest
+      closestDist = Math.abs(dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y));
+    }
+  }
+  return closestDist;
+}
+
+SingleGPSUAV.prototype.getGoodHeading = function (hc, g) {
 
   let v0 = createVector(hc.x, hc.y);
   let v1 = createVector(g.x - hc.x, g.y - hc.y);
@@ -923,7 +967,7 @@ AutoShepherd.prototype.getGoodHeading = function (hc, g) {
   return myHeading;
 }
 
-AutoShepherd.prototype.checkDist = function (herd) {
+SingleGPSUAV.prototype.checkDist = function (herd) {
   var totalAvgDist = 0;
   var avgDist = 0;
   for(var i = 0; i < herd.length; i++) {
@@ -938,7 +982,7 @@ AutoShepherd.prototype.checkDist = function (herd) {
   return totalAvgDist;
 }
 
-AutoShepherd.prototype.tooClose = function (herd) {
+SingleGPSUAV.prototype.tooClose = function (herd) {
   let count = 0;
   for (var i = 0; i < herd.length; i++) {
     if(dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y) < 30) {
@@ -952,7 +996,7 @@ AutoShepherd.prototype.tooClose = function (herd) {
   }
 }
 
-AutoShepherd.prototype.redAlert = function (target) {
+SingleGPSUAV.prototype.redAlert = function (target) {
   // console.log("RED")
   let tl = dist(this.position.x, this.position.y, this.topLeft.x, this.topLeft.y);
   let tr = dist(this.position.x, this.position.y, this.topRight.x, this.topRight.y);
@@ -972,25 +1016,27 @@ AutoShepherd.prototype.redAlert = function (target) {
   return target;
 }
 
-AutoShepherd.prototype.checkForStatues = function (herd, center) {
+SingleGPSUAV.prototype.checkForStatues = function (herd, center) {
   let count = 0;
-  let n = this.findClosestAnimal(herd, center);
+  let n = this.findClosestAnimalToUAV(herd, center);
   for (var i = 0; i < herd.length; i++) {
-    if(herd[i].velocity.mag() < 1.1 && dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y) == n) {
+    if(herd[i].velocity.mag() < 0.15 && dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y) == n) {
       count++;
       fill(30,30,30,30)
       ellipse(herd[i].position.x, herd[i].position.y, 30, 30)
+      this.nudge = createVector(herd[i].position.x, herd[i].position.y);
     }
   }
   if (count > 0) {
     console.log("I run")
+
     return true;
   } else {
     return false;
   }
 }
 
-AutoShepherd.prototype.nonMover = function (herd) {
+SingleGPSUAV.prototype.nonMover = function (herd) {
   let count = 0;
   closest = 40000;
   closest2 = 40000;

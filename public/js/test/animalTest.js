@@ -1,41 +1,43 @@
 // Animal class
 // Set Animal attributes
-function Animal(x, y, goals) {
-  this.acceleration = createVector(0,0); // Starting accelertion
-  this.velocity = createVector(random(-1,1),random(-1,1)); // Create starting velocity direction
-  this.position = createVector(x,y); // Starting position
-  this.r = 2.5;         // Animal size
-  this.maxspeed = .1;   // Maximum speed
-  this.maxforce = 0.03; // Maximum steering force
-  this.velocity.setMag(0.1);   // Create starting velocity speed
-  this.name = chance.first();  // Give every animal a random name
-  this.stressLevel = 0;        // Starting stress level of animal
-  this.stressLevel.toFixed(2); // Starting stress level
-  this.oldPre = 0;             // Starting num of shepherds in pressure zone
-  this.oldFli = 0;             // Starting num of shepherds in flight zone
-  this.red = random(255);      // Set colours for name
-  this.green = random(255);
-  this.blue = random(255);
-  this.timeCount = 5;          // Set starting timecount for speed reduce function
-  this.reducingSpeed = false;  // Set boolean for setInterval
-  // ----- FOR WANDER BEHAVIOUR
-  this.wanderRadius = 10;      // Set wander rule variables
-  this.wanderDistance = 1;
-  this.wanderCenter = 0;
-  this.wanderAngle = random(50);
-  this.wanderForce = createVector(0,0);
-  // -------- ENVIRONMENT INTERACTION
-  this.vocalizing = false;
-  this.oldheading = 0;
-  this.goals = goals;    // Holds all goal points
-  this.goalCounter = 0;  // Holds current goal point
-  this.inFlightZone = 0;
+class TesterAnimal extends Animal {
+  constructor(x, y, goals) {
+    super(x, y, goals);
+    this.acceleration = createVector(0,0); // Starting accelertion
+    this.velocity = createVector(random(-1,1),random(-1,1)); // Create starting velocity direction
+    this.position = createVector(x,y); // Starting position
+    this.r = 2.5;         // Animal size
+    this.maxspeed = .1;   // Maximum speed
+    this.maxforce = 0.03; // Maximum steering force
+    this.velocity.setMag(0.1);   // Create starting velocity speed
+    this.name = chance.first();  // Give every animal a random name
+    this.stressLevel = 0;        // Starting stress level of animal
+    this.stressLevel.toFixed(2); // Starting stress level
+    this.oldPre = 0;             // Starting num of shepherds in pressure zone
+    this.oldFli = 0;             // Starting num of shepherds in flight zone
+    this.red = random(255);      // Set colours for name
+    this.green = random(255);
+    this.blue = random(255);
+    this.timeCount = 5;          // Set starting timecount for speed reduce function
+    this.reducingSpeed = false;  // Set boolean for setInterval
+    // ----- FOR WANDER BEHAVIOUR
+    this.wanderRadius = 10;      // Set wander rule variables
+    this.wanderDistance = 1;
+    this.wanderCenter = 0;
+    this.wanderAngle = random(50);
+    this.wanderForce = createVector(0,0);
+    // -------- ENVIRONMENT INTERACTION
+    this.vocalizing = false;
+    this.oldheading = 0;
+    this.goals = goals;    // Holds all goal points
+    this.goalCounter = 0;  // Holds current goal point
+    this.inFlightZone = 0;
+  }
 }
 
 // ----- ANIMAL UPDATE FUNCTIONS
-
 // Call functions for each animal each time step
-Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds) {
+TesterAnimal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds) {
   this.accumulateMovevmentForces(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds); // Apply forces
   this.updatePosition(); // Update position based on forces
   this.borders();   // Keep animal in enclosure
@@ -49,16 +51,15 @@ Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, mu
   if(forceCheck.checked() == true) {
     this.renderForces(); // Render force zones
   }
-
 }
 
 // Apply each behavioural rule to each animal
-Animal.prototype.applyForce = function(force) {
+TesterAnimal.prototype.applyForce = function(force) {
   this.acceleration.add(force);
 }
 
 // Accumulate a new acceleration each time based on all rules
-Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds) {
+TesterAnimal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds) {
   var sep = this.separate(herd);      // Separation
   var ali = this.align(herd);         // Alignment
   var coh = this.cohesion(herd);      // Cohesion
@@ -69,7 +70,6 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
   var bun = this.bunched(herd);         // Bunched
   var obs = this.avoidObstacle(obstacles);
   var bre = this.breakUp(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds)
-  // var alo = this.alone(herd);
   var moveChance = int(random(1,20));
 
   if (bre == true) {
@@ -184,7 +184,7 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
 }
 
 // Method to update location
-Animal.prototype.updatePosition = function() {
+TesterAnimal.prototype.updatePosition = function() {
   // Update velocity
   this.velocity.add(this.acceleration);
   // Limit speed
@@ -196,7 +196,7 @@ Animal.prototype.updatePosition = function() {
 
 // A method that calculates and applies a steering force towards a target
 // STEER = DESIRED MINUS VELOCITY
-Animal.prototype.seek = function(target) {
+TesterAnimal.prototype.seek = function(target) {
   var desired = p5.Vector.sub(target,this.position);  // A vector pointing from the location to the target
   // Normalize desired and scale to maximum speed
   desired.normalize();
@@ -210,7 +210,7 @@ Animal.prototype.seek = function(target) {
 // ----- ANIMAL RENDER FUNCTIONS
 
 // Method to draw animal
-Animal.prototype.render = function () {
+TesterAnimal.prototype.render = function () {
   // Draw a triangle rotated in the direction of velocity
   var theta = this.velocity.heading() + radians(90);
   fill(0, 0, 0);
@@ -225,7 +225,7 @@ Animal.prototype.render = function () {
   pop();
 }
 
-Animal.prototype.showName = function () {
+TesterAnimal.prototype.showName = function () {
   var stressFixed = this.stressLevel.toFixed(2);
 
   // Render Animal Name
@@ -249,7 +249,7 @@ Animal.prototype.showName = function () {
 }
 
 // Method to render animals flight and pressure zone
-Animal.prototype.renderZones = function () {
+TesterAnimal.prototype.renderZones = function () {
   // Draw flight zone
   fill(0,0,0,0.0)
   stroke(255, 0, 0);
@@ -265,7 +265,7 @@ Animal.prototype.renderZones = function () {
   // text("Zone", this.position.x + preSizeSlider.value(), this.position.y + 15);
 };
 
-Animal.prototype.renderForces = function () {
+TesterAnimal.prototype.renderForces = function () {
   fill(0,0,0,0.0)
   stroke(255, 0, 0);
   ellipse(this.position.x,this.position.y, sepSizeSlider.value() * 2, sepSizeSlider.value() * 2);
@@ -297,7 +297,7 @@ Animal.prototype.renderForces = function () {
 }
 
 // Method to keep animal in enclosure
-Animal.prototype.borders = function () {
+TesterAnimal.prototype.borders = function () {
   if (this.position.x < 15) {
     this.velocity.x *= -1;
     this.position.x = 15;
@@ -317,7 +317,7 @@ Animal.prototype.borders = function () {
 
 // Separation
 // Method checks for nearby animals and steers away
-Animal.prototype.separate = function(herd) {
+TesterAnimal.prototype.separate = function(herd) {
   var desiredseparation = sepSizeSlider.value();
   var steer = createVector(0,0);
   var count = 0;
@@ -352,7 +352,7 @@ Animal.prototype.separate = function(herd) {
 
 // Alignment
 // For every nearby animal in the system, calculate the average velocity
-Animal.prototype.align = function(herd) {
+TesterAnimal.prototype.align = function(herd) {
   var neighbordist = aliSizeSlider.value();
   var sum = createVector(0,0);
   var count = 0;
@@ -377,7 +377,7 @@ Animal.prototype.align = function(herd) {
 
 // Cohesion
 // For the average location (i.e. center) of all nearby animals, calculate steering vector towards that location
-Animal.prototype.cohesion = function(herd) {
+TesterAnimal.prototype.cohesion = function(herd) {
   var neighbordist = cohSizeSlider.value();
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
@@ -399,7 +399,7 @@ Animal.prototype.cohesion = function(herd) {
 // ----- ANIMAL BEHAVIOURAL RULES WITH DRONE
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
-Animal.prototype.pressure = function(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds) {
+TesterAnimal.prototype.pressure = function(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds) {
   var neighbordistMax = preSizeSlider.value();
   var neighbordistMin = fliSizeSlider.value();
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
@@ -438,7 +438,7 @@ Animal.prototype.pressure = function(herd, shepherds, autoShepherds, multiGPSShe
 }
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
-Animal.prototype.flightZone = function(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds) {
+TesterAnimal.prototype.flightZone = function(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds) {
   var neighbordistMax = fliSizeSlider.value();
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
@@ -475,7 +475,7 @@ Animal.prototype.flightZone = function(herd, shepherds, autoShepherds, multiGPSS
   return count; // Return number of shepherds in pressure zone
 }
 
-Animal.prototype.bunched = function (herd) {
+TesterAnimal.prototype.bunched = function (herd) {
   this.bottom = Math.max.apply(Math, herd.map(function(o) { return o.position.y; }));
   this.top = Math.min.apply(Math, herd.map(function(o) { return o.position.y; }));
   this.left = Math.min.apply(Math, herd.map(function(o) { return o.position.x; }));
@@ -489,12 +489,12 @@ Animal.prototype.bunched = function (herd) {
   }
 }
 
-Animal.prototype.setAngle = function(vec, value) {
+TesterAnimal.prototype.setAngle = function(vec, value) {
     vec.x = cos(value) * vec.mag();
     vec.y = sin(value) * vec.mag();
 }
 
-Animal.prototype.wander = function() {
+TesterAnimal.prototype.wander = function() {
 
     //create future position to base wander displacement off of
     this.wanderCenter = this.velocity.copy();
@@ -524,7 +524,7 @@ Animal.prototype.wander = function() {
 }
 
 // When shepherd enters flight zone, move in opposite direction
-Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds) {
+TesterAnimal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds) {
   var desiredseparation = dSepSizeSlider.value();
   var steer = createVector(0,0);
   var count = 0;
@@ -597,7 +597,7 @@ Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, or
 }
 
 // setting behaviour when animal comes within certain area of a gate
-Animal.prototype.goal = function () {
+TesterAnimal.prototype.goal = function () {
     var gate = createVector(this.goals[this.goalCounter].x, this.goals[this.goalCounter].y);
     this.checkGoal(gate);
     if (this.goalCounter == this.goals.length -1 && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 40) {
@@ -613,7 +613,7 @@ Animal.prototype.goal = function () {
 }
 
 // Try to avoid novel objects -- ** Code needs to be put out on the line **
-Animal.prototype.avoid = function (novelObjects) {
+TesterAnimal.prototype.avoid = function (novelObjects) {
   var desiredseparation = 0;
   var steer = createVector(0,0);
   var count = 0;
@@ -664,7 +664,7 @@ Animal.prototype.avoid = function (novelObjects) {
 // ----- ANIMAL SPEED FUNCTIONS
 
 // ---- Funtion to reduce speed ----
-Animal.prototype.speedRed = function() {
+TesterAnimal.prototype.speedRed = function() {
   if (this.reducingSpeed == false) {
     this.reducingSpeed = true;
     // console.log(this);
@@ -686,7 +686,7 @@ Animal.prototype.speedRed = function() {
   }
 }
 
-Animal.prototype.avoidObstacle = function (obstacles) {
+TesterAnimal.prototype.avoidObstacle = function (obstacles) {
 
   for (var i = 0; i < obstacles.length; i++) {
     var obs = obstacles[i];
@@ -708,13 +708,13 @@ Animal.prototype.avoidObstacle = function (obstacles) {
   }
 }
 
-Animal.prototype.checkGoal = function (g) {
+TesterAnimal.prototype.checkGoal = function (g) {
   if (dist(this.position.x, this.position.y, g.x, g.y) < 50 && this.goalCounter < this.goals.length -1) {
     this.goalCounter++;
   }
 }
 
-Animal.prototype.breakUp = function (shep, auto, multi, oShep) {
+TesterAnimal.prototype.breakUp = function (shep, auto, multi, oShep) {
   var allSheps = shep.concat(auto, multi, oShep);
   var count = 0;
   for(let i = 0; i < allSheps.length; i++) {
@@ -730,7 +730,7 @@ Animal.prototype.breakUp = function (shep, auto, multi, oShep) {
   }
 }
 
-Animal.prototype.alone = function (herd) {
+TesterAnimal.prototype.alone = function (herd) {
   var neighbordist = 200;
   var count = 0;
   for (var i = 0; i < herd.length; i++) {

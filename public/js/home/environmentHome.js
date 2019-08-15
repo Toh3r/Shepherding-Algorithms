@@ -2,43 +2,50 @@
 function Environment() {
   // Initialize arrays to store agents/objects
   this.herd = []; // Stores animal agents
-  this.shepherds = [];
+  this.manualShepherds = [];
   this.autoShepherds = [];
   this.oracles = [];
   this.oracleShepherds = [];
   this.multiGPSShepherds = [];
   this.multiOracleShepherds = [];
+  this.allShepherds = [];
   this.novelObjects = [];
   this.gates = [];
   this.obstacles = [];
   this.allShepherds = [];
 
-  // Create environmental variables
-  this.accumulatedStress = 0;
+  // Create environmental variables for agents
+  this.accumulatedStress = 0; // **Sort out stress variables
   this.accumulatedStress.toFixed(2);
-  this.stress = 0; // **Delete when fixed in animal class**
+  this.stress = 0;
   this.averageSpeed = 0;
   this.vocal = false;
   this.oldTime = 0; // Used for displaying timesteps, timestep variable currently held by shepherd **change to here**
   this.oldMoves = 0;
+
+  // Create variables for tests
   this.testNum = testNumRadio.value();
   this.testNumStatic = testNumRadio.value();
   this.testCounter = 1;
+  this.testResults = [];
+
+  // Create variables used for outputs/test results
   this.totalTime = 0;
   this.totalMoves = 0;
   this.totalAccStress = 0;
-  this.testResults = [];
-
 }
 
 // ------------ CREATES AGENTS/OBJECTS WHEN PASSED INFO FROM SKETCH ------------
+// ------------ UPDATES EVERY TIMESTEP ------------
 Environment.prototype.run = function() {
+  // Create array holding all shepherds to be passed to animal agents
+  this.allShepherds = this.autoShepherds.concat(this.manualShepherds, this.autoShepherds, this.multiGPSShepherds, this.oracleShepherds, this.multiOracleShepherds)
   for (var i = 0; i < this.herd.length; i++) {
-    this.herd[i].run(this.herd, this.shepherds, this.novelObjects, this.autoShepherds, this.multiGPSShepherds, this.obstacles, this.oracleShepherds, this.multiOracleShepherds);  // Passing all arrays to each animal
+    this.herd[i].run(this.herd, this.allShepherds, this.novelObjects, this.obstacles);  // Passing all arrays to each animal
   }
 
-  for (var i = 0; i < this.shepherds.length; i++) {
-    this.shepherds[i].run(this.herd);
+  for (var i = 0; i < this.manualShepherds.length; i++) {
+    this.manualShepherds[i].run(this.herd);
   }
 
   for (var i = 0; i < this.novelObjects.length; i++) {
@@ -78,19 +85,21 @@ Environment.prototype.run = function() {
     this.displayHerd(); // Render herd zone
   }
 
+  // --------------- TESTS ---------------
+  // When herd has exited enclosure, check if need to run more tests
   if(this.herd.length == 0 && this.testNum >= 1) {
     this.testNum--;
     if(this.testNum >= 1) {
-      this.runItBack();
+      this.runItBack(); // Run another test
     }
   } else if (this.testNum == 0) {
-    console.log("TESTNUM 0")
     let myNumbers = {
       num: this.testCounter,
       time: this.oldTime,
       move: this.oldMoves,
       adverse: this.accumulatedStress
     }
+    // Test numbers
     this.testResults.push(myNumbers);
     manageFE.addTestResult();
     manageFE.updateMyChart();
@@ -101,26 +110,20 @@ Environment.prototype.run = function() {
     this.totalMoves = this.totalMoves / this.testNumStatic;
     this.totalAccStress = this.totalAccStress / this.testNumStatic;
     this.testNum--;
-    // alert("Tests Complete: " + this.testNumStatic +
-    //       "\n Average TimeSteps: " + this.totalTime.toFixed(0) +
-    //       "\n Average Good Movement: " + this.totalMoves.toFixed(0) +
-    //       "\n Average Adverse Conditions: " + this.totalAccStress.toFixed(2));
     manageFE.addAverageResults();
     this.totalTime = 0;
     this.totalMoves = 0;
     this.totalAccStress = 0;
   }
-
-
 }
- // + "\n Adverse Conditions: " + this.accumulatedStress
+
 // ------------ FUNCTIONS TO ADD AGENTS/OBJECTS ------------
 Environment.prototype.addAnimal = function(a) {
   this.herd.push(a);
 }
 
 Environment.prototype.addShepherd = function(s) {
-  this.shepherds.push(s);
+this.manualShepherds.push(s);
 }
 
 Environment.prototype.addAutoShepherd = function(as) {
@@ -155,17 +158,13 @@ Environment.prototype.addGate = function(g) {
   this.gates.push(g);
 }
 
-Environment.prototype.removeGate = function () {
-  this.gates.pop();
-}
-
 // ------------ FUNCTIONS TO REMOVE AGENTS/OBJECTS ------------
 Environment.prototype.deleteAnimal = function() {
   this.herd.pop();
 }
 
 Environment.prototype.deleteShepherd = function() {
-  this.shepherds.length = 0;
+  this.manualShepherds.length = 0;
 }
 
 Environment.prototype.deleteNovelty = function() {
@@ -176,7 +175,26 @@ Environment.prototype.deleteObstacle = function() {
   this.obstacles.pop();
 }
 
+Environment.prototype.removeGate = function () {
+  this.gates.pop();
+}
+
+// ------------ FUNCTIONS TO CLEAR ALL AGENTS/OBJECTS FROM CANVAS ------------
+Environment.prototype.removeAll = function() {
+  this.herd.length = 0;
+  this.manualShepherds.length = 0;
+  this.autoShepherds.length = 0;
+  this.multiGPSShepherds.length = 0;
+  this.multiOracleShepherds.length = 0;
+  this.oracles.length = 0;
+  this.oracleShepherds.length = 0;
+  this.novelObjects.length = 0;
+  this.obstacles.length = 0;
+  this.accumulatedStress = 0;
+}
+
 // ------------ FUNCTIONS TO MANAGE ENV VARIABLES ------------
+// Used for tests results and updating front-end
 Environment.prototype.displayNums = function () {
   return this.herd.length;
 }
@@ -208,10 +226,10 @@ Environment.prototype.totalStress = function() {
 }
 
 Environment.prototype.timeSteps = function() {
-  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
+  let recordedShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
   this.time = 0;
-  for (var i = 0; i < this.allShepherds.length; i++) {
-    this.time += this.allShepherds[i].timestep;
+  for (var i = 0; i < recordedShepherds.length; i++) {
+    this.time += recordedShepherds[i].timestep;
   }
   if (this.time % 50 == 0){
     this.oldTime = this.time;
@@ -222,10 +240,10 @@ Environment.prototype.timeSteps = function() {
 }
 
 Environment.prototype.goodMovementTime = function() {
-  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
+  let recordedShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
   this.goodMoves = 0;
-  for (var i = 0; i < this.allShepherds.length; i++) {
-    this.goodMoves += this.allShepherds[i].goodMovement;
+  for (var i = 0; i < recordedShepherds.length; i++) {
+    this.goodMoves += recordedShepherds[i].goodMovement;
   }
   if (this.goodMoves % 50 == 0){
     this.oldMoves = this.goodMoves;
@@ -236,18 +254,18 @@ Environment.prototype.goodMovementTime = function() {
 }
 
 Environment.prototype.theCorrectHeading = function() {
-  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
-  if(this.allShepherds.length > 0) {
-    return this.allShepherds[0].correctHeading;
+  let recordedShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
+  if(recordedShepherds.length > 0) {
+    return recordedShepherds[0].correctHeading;
   } else {
     return 0;
   }
 }
 
 Environment.prototype.shepCollect = function () {
-  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracleShepherds);
-  if(this.allShepherds.length > 0) {
-    return this.allShepherds[0].collectBool;
+  let recordedShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracleShepherds);
+  if(recordedShepherds.length > 0) {
+    return recordedShepherds[0].collectBool;
   } else {
     return false;
   }
@@ -280,9 +298,9 @@ Environment.prototype.getOracleSearchArea = function () {
 }
 
 Environment.prototype.shepMove = function () {
-  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracleShepherds);
-  if(this.allShepherds.length > 0) {
-    return this.allShepherds[0].moveBool;
+  let recordedShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracleShepherds);
+  if(recordedShepherds.length > 0) {
+    return recordedShepherds[0].moveBool;
   } else {
     return false;
   }
@@ -305,9 +323,9 @@ Environment.prototype.oShepCol = function () {
 }
 
 Environment.prototype.shepAvoidHerd = function () {
-  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracleShepherds);
-  if(this.allShepherds.length > 0) {
-    return this.allShepherds[0].avoidHerdBool;
+  let recordedShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracleShepherds);
+  if(recordedShepherds > 0) {
+    return recordedShepherds[0].avoidHerdBool;
   } else {
     return false;
   }
@@ -324,12 +342,8 @@ Environment.prototype.vocalizing = function () {
 }
 
 Environment.prototype.checkBunched = function () {
-  herdBottom = Math.max.apply(Math, this.herd.map(function(o) { return o.position.y; }));
-  herdTop = Math.min.apply(Math, this.herd.map(function(o) { return o.position.y; }));
-  herdLeft = Math.min.apply(Math, this.herd.map(function(o) { return o.position.x; }));
-  herdRight = Math.max.apply(Math, this.herd.map(function(o) { return o.position.x; }));
-  herDist = dist(herdLeft, herdTop, herdRight, herdBottom);
-  if (herDist < 200) {
+  let herdDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
+  if (herdDist < 200) {
     return true;
   } else {
     return false;
@@ -344,22 +358,7 @@ Environment.prototype.hitTheGap = function(animal) {
   var index = this.herd.map(function (item) { // Find index of animal using 'name' property
     return item.name;
   }).indexOf(animal.name);
-
   this.herd.splice(index, 1); // Remove selected animal after they have left field
-}
-
-// ------------ FUNCTIONS TO CLEAR ALL AGENTS/OBJECTS FROM CANVAS ------------
-Environment.prototype.removeAll = function() {
-  this.herd.length = 0;
-  this.shepherds.length = 0;
-  this.autoShepherds.length = 0;
-  this.multiGPSShepherds.length = 0;
-  this.multiOracleShepherds.length = 0;
-  this.oracles.length = 0;
-  this.oracleShepherds.length = 0;
-  this.novelObjects.length = 0;
-  this.obstacles.length = 0;
-  this.accumulatedStress = 0;
 }
 
 // ------------ FUNCTIONS TO DISPLAY HERD RADIUS ------------
@@ -394,29 +393,16 @@ Environment.prototype.displayHerd = function() {
     xlen = rightDist;
   }
 
-  // Display Herd Flight Zone
   rectMode(CENTER);
   fill(0,0,0,0.0);
-  stroke(0, 0, 255);
-  rect(xPos, yPos, xlen*2 + 100, ylen*2 + 100, 55);
-
-  // Display Herd Pressure Zone
-  rectMode(CENTER);
-  fill(0,0,0,0.0);
-  stroke(238, 248, 52);
-  rect(xPos, yPos, xlen*2 + 225, ylen*2 + 225, 90);
-
-  // Draw pressure zone
-  fill(0);
+  rect(xPos, yPos, xlen*2 + 100, ylen*2 + 100, 55); // Flight zone
   stroke(0);
-  ellipse(this.herdLeft,this.herdTop, 10, 10);
-
-  fill(0);
-  stroke(0);
-  ellipse(this.herdRight,this.herdBottom, 10, 10);
+  rect(xPos, yPos, xlen*2 + 225, ylen*2 + 225, 90); // Pressure zone
 }
 
+// Function to restart tests when necessary
 Environment.prototype.runItBack = function () {
+  // Save all test numbers in an object and push into results array
   let myNumbers = {
     num: this.testCounter,
     time: this.oldTime,
@@ -424,18 +410,24 @@ Environment.prototype.runItBack = function () {
     adverse: this.accumulatedStress
   }
   this.testResults.push(myNumbers);
+  // Update chart and text output on front-end
   manageFE.addTestResult();
   manageFE.updateMyChart();
-  this.testCounter++;
 
+  // Add numbers for final average
+  this.testCounter++;
   this.totalTime += this.oldTime;
   this.totalMoves += this.oldMoves;
+
+  // remove all numebers to start again
   this.time = 0;
   this.oldTime = 0;
   this.accumulatedStress = 0;
   this.goodMoves = 0;
   this.oldMoves = 0;
   this.removeAll();
+
+  // Select correct uav type and start again
   manageEnv.createNewEnv();
   if(manageEnv.uavType == "SingleGPS") {
     manageEnv.singleGPSHerd();
@@ -447,13 +439,3 @@ Environment.prototype.runItBack = function () {
     manageEnv.multiOracleHerd();
   }
 }
-
-
-
-// // Method to allow for class extensions
-// function extend (base, constructor) {
-//   var prototype = new Function();
-//   prototype.prototype = base.prototype;
-//   constructor.prototype = new prototype();
-//   constructor.prototype.constructor = constructor;
-// }

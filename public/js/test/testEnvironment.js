@@ -396,13 +396,3 @@ Environment.prototype.sectors = function () {
   stroke(0);
   ellipse(980, 570, 20);
 }
-
-
-
-// // Method to allow for class extensions
-// function extend (base, constructor) {
-//   var prototype = new Function();
-//   prototype.prototype = base.prototype;
-//   constructor.prototype = new prototype();
-//   constructor.prototype.constructor = constructor;
-// }

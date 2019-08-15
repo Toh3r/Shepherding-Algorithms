@@ -27,7 +27,7 @@
     <script src="js/home/environmentHome.js"></script>
     <script src="js/home/animalHome.js"></script>
     <script src="js/shepherdManual.js"></script>
-    <script src="js/autoShepherd.js"></script>
+    <script src="js/singleGPSUAV.js"></script>
     <script src="js/multiGPS.js"></script>
     <script src="js/multiOracleShepherd.js"></script>
     <script src="js/novelty.js"></script>
@@ -44,56 +44,58 @@
     <!-- Canvas div -->
     <div class="container-fluid" align:'center'>
       <div class="row" id="simRow">
-
-        <div class="col-lg-2" id="moreControls">
+        <!-- Buttons div -->
+        <div class="col-lg-2" id="startingParamsDiv">
           <div>
             <div>
+              <!-- Buttons to initialize UAV's/ start simulation-->
               <h6><strong><u>Run It...</u></strong></h6>
-              <div id="droneHerd">
+              <!-- Intilize UAV Buttons -->
+              <div id="singleGPSBtn">
               </div>
-              <div id="oracleBtn">
+              <div id="singleOracleBtn">
               </div>
-              <div id="multiBtn">
+              <div id="multiGPSBtn">
               </div>
               <div id="multiOracleBtn">
               </div>
-
               <br><br>
+
+              <!-- Radio buttons to start with differnt starting parameters -->
               <h6><strong><u>Select Env</u></strong></h6>
-              <div id="envRadio">
+              <div id="envRadio">   <!-- Radio Button to select environment -->
               </div>
               <h6><strong><u>Select Path</u></strong></h6>
-              <div class="path label" id="pathRadio">
+              <div class="path label" id="pathRadio"> <!-- Reactiive Avoidance vs Path Planning -->
               </div>
               <br>
               <h6><strong><u>Animals</u></strong></h6>
-              <div id="anNumRadio">
+              <div id="anNumRadio"> <!-- Number of Animals -->
               </div>
               <h6><strong><u>Animal Type</u></strong></h6>
-              <div class="path label" id="anTypeRadio">
+              <div class="path label" id="anTypeRadio"> <!-- Tame vs Flighty animals -->
               </div>
               <br>
               <h6><strong><u>Number of tests</u></strong></h6>
-              <div class="hmmm label" id="testNumRadio">
+              <div class="hmmm label" id="testNumRadio"> <!-- Number of tests -->
               </div>
               <br>
+              <!-- Pause/reset buttons -->
               <div id="pauseBtn">
               </div>
               <div id="resetBtn">
               </div>
-
             </div>
           </div>
           <br>
 
         </div> <!-- Close moreControls col -->
-
         <div class="col-lg-10">
-          <div id="myCanvas"></div>
+          <div id="myCanvas"></div>   <!-- Canvas -->
         </div>
-
       </div> <!-- Close Simrow -->
 
+      <!-- Info Row Titles -->
       <div class="row simHeader">
           <div class="col-lg-2 borderRight infoHeader" >
             <h5><b>Env Info</b></h5>
@@ -115,44 +117,40 @@
           </div>
       </div>
 
-      <!-- Behaviour Sliders -->
+      <!-- Simulation Info display div -->
       <div class="row" id="controls">
         <div class="col-lg-2 con" id='control1'>
           <div id="envInfoDiv">
-
           </div>
         </div>
 
-        <!-- Add/Delete Buttons -->
+        <!-- Animal agent info display div -->
         <div class="col-lg-2 con" id="control2" align="center">
           <div id="animalInfoDiv">
-
           </div>
         </div>
 
-        <!-- CheckBox xontorls -->
+        <!-- Gps UAV display div -->
         <div class="col-lg-2 con" id="control3">
           <br>
           <div id="gpsInfoDiv">
-
           </div>
         </div>
 
-        <!-- CheckBox xontorls -->
+        <!-- Oracle Info display div -->
         <div class="col-lg-2 con" id="control4">
           <br>
           <div id="oracleInfoDiv">
-
           </div>
         </div>
 
-        <!-- CheckBox xontorls -->
+        <!-- Animal Canvas Display Sliders Div -->
         <div class="col-lg-2 con" id="control5">
           <div id="zoneDiv">
           </div>
         </div>
 
-        <!-- CheckBox xontorls -->
+        <!-- UAV Canvas Display Sliders Div -->
         <div class="col-lg-2 con" id="control6">
           <div id="uavStuff">
           </div>
@@ -161,6 +159,7 @@
         </div>
       </div> <!-- Close controls row -->
 
+      <!-- Test Results Title Row -->
       <div class="row simHeader">
           <div class="col-lg-2 borderRight infoHeader">
             <h5><b>Test 1-4</b></h5>
@@ -182,8 +181,8 @@
           </div>
       </div>
 
+      <!-- Test Results Print Out Div -->
       <div class="row" id="controlsRow2">
-
         <div class="col-lg-2 con2" id="test0">
           <br>
         </div>
@@ -204,6 +203,8 @@
           <br>
         </div>
       </div>
+
+      <!-- Chart Title Div -->
       <div class="row simHeader">
           <div class="col-lg-1 borderRight infoHeader">
           </div>
@@ -213,6 +214,8 @@
           <div class="col-lg-1 borderRight infoHeader">
           </div>
       </div>
+
+      <!-- Chart Display Div -->
       <div class="row" id="chartsRow">
         <div class="col-lg-1 borderRight infoHeader sideChart">
         </div>
@@ -223,6 +226,8 @@
         <div class="col-lg-1 borderRight infoHeader sideChart">
         </div>
       </div>
+
+      <!-- Empty Bottom Border Div -->
       <div class="row simHeader">
           <div class="col-lg-1 borderRight infoHeader">
           </div>

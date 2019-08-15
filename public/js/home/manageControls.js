@@ -1,22 +1,24 @@
-let testNames = [];
+// Create variable for display output
+let animalDisplay, timeSteps, vocalDisplay, fixedStress, goodMoves,
+    manualUAVDisplay, totalUAVDisplay, fixedSpeed, avgHeading, isBunched,
+    isMoving, isCollecting, isAvoidingOBS, isAvoidingHerd, goodHeading,
+    numSectors, currentTarget, currentSearchArea;
 
-// Class to manage front-end control creation and updates
-function ManageControls () {}
+function ManageControls () {
+  // Class to manage front-end control creation and updates
+  // Using prototype for this because it makes it real easy to
+  // pass information outta here
+}
 
-// Function run at start up, creates all starting controls
+// Function run at start up, creates canvas and all starting controls
 ManageControls.prototype.createControls = function () {
-
   // ---------- CREATE CANVAS ----------
-  // Have to create canvas here for buttons to be able to manipulate it
-  var canvas = createCanvas(1000,600);
+  var canvas = createCanvas(1000,600);          // Have to create canvas here for buttons to be able to manipulate it
   img1 = loadImage('./css/images/Field1B.jpg'); // Load background images
   img2 = loadImage('./css/images/Field_1.jpg'); // Image to be used is selected in draw function
   img3 = loadImage('./css/images/Field_2.jpg'); // in sketchTest Image by Gerd Altmann from Pixabay
   img4 = loadImage('./css/images/Field_3.jpg');
-  img5 = loadImage('./css/images/fence.jpg');
   canvas.parent('myCanvas'); // .parent allows item to manipulated on html page
-
-  // frameRate(30); // Set Frame Rate
 
   // ---------- CHECKBOXES TO TURN ON/OFF SIM INFO ON CANVAS ----------
   zoneCheck = createCheckbox("Display Each Zone");
@@ -50,25 +52,22 @@ ManageControls.prototype.createControls = function () {
   sectorCheck = createCheckbox("Show Sectors", true);
   sectorCheck.parent("oracleStuff");
 
-  // -------- START AUTO SHEPHERD --------
-  droneHerd = createButton('GPS UAV');
-  droneHerd.parent('droneHerd');
-  droneHerd.mouseClicked(herd);
+  // -------- INITIATE UAV BUTTONS --------
+  singleGPSBtn = createButton('GPS UAV'); // SINGLE GPS
+  singleGPSBtn.parent('singleGPSBtn');
+  singleGPSBtn.mouseClicked(singleGPS);
 
-  // -------- START ORCALE --------
-  createOracle = createButton('Oracle UAV');
-  createOracle.parent('oracleBtn');
-  createOracle.mouseClicked(oracle);
+  singleOracleBtn = createButton('Oracle UAV'); // SINGLE ORACLE
+  singleOracleBtn.parent('singleOracleBtn');
+  singleOracleBtn.mouseClicked(singleOracle);
 
-  // -------- START Multi-Drones --------
-  createMulti = createButton('Multi-GPS');
-  createMulti.parent('multiBtn');
-  createMulti.mouseClicked(multiDrone);
+  multiGPSBtn = createButton('Multi-GPS'); // MULTI-GPS
+  multiGPSBtn.parent('multiGPSBtn');
+  multiGPSBtn.mouseClicked(multiDrone);
 
-  // -------- START Multi-Drones --------
-  createMultiOracle = createButton('Multi-Oracle');
-  createMultiOracle.parent('multiOracleBtn');
-  createMultiOracle.mouseClicked(multiOracle);
+  multiOracleBtn = createButton('Multi-Oracle'); // MULT-ORACLE
+  multiOracleBtn.parent('multiOracleBtn');
+  multiOracleBtn.mouseClicked(multiOracle);
 
   // -------- RESET BUTTON --------
   resetBtn = createButton('Reset');
@@ -80,16 +79,13 @@ ManageControls.prototype.createControls = function () {
   pauseBtn.parent('pauseBtn');
   pauseBtn.mouseClicked(togglePlay);
 
-  // -------- SELECT ENVIRONMENT RADIO BUTTONS --------
+  // -------- SELECT STARTING PARAMETER RADIO BUTTONS --------
   envRadio = createRadio();
   envRadio.parent("envRadio");
   envRadio.option('1', 1);
   envRadio.option('2', 2);
-  envRadio.option('3', 4);
-  envRadio.option('4', 5);
-  // envRadio.style('width', '100px');
-  // textAlign(CENTER);
-  // fill(255, 0, 0);
+  envRadio.option('3', 3);
+  envRadio.option('4', 4);
 
   pathRadio = createRadio();
   pathRadio.parent("pathRadio");
@@ -114,7 +110,7 @@ ManageControls.prototype.createControls = function () {
   testNumRadio.option('10', 10);
   testNumRadio.option('20', 20);
 
-  //  Select starting environment
+  //  SET STARTING PARAMETERS
   envRadio._getInputChildrenArray()[0].checked = true;
   pathRadio._getInputChildrenArray()[0].checked = true;
   anNumRadio._getInputChildrenArray()[1].checked = true;
@@ -126,85 +122,11 @@ ManageControls.prototype.createControls = function () {
   // Function which initilises starting agents and obstecles
   // Needs to be called before information paragraphs or they will through errord from recieving null arguements
   createNewEnv();
-
-  // ---------- CREATE PARAGRAPHS TO DISPLAY INFO ----------
-  var timeSteps = environment.timeSteps();
-  timeDisplay = createP("Timesteps: " + timeSteps);
-  timeDisplay.parent("envInfoDiv");
-
-  animalDisplay = createP("Number of Animals: " + environment.herd.length);
-  animalDisplay.parent("envInfoDiv");
-
-  vocalDisplay = createP("Vocalizing: false");
-  vocalDisplay.parent("animalInfoDiv");
-
-  var fixedStress = environment.totalStress().toFixed(2);
-  stressDisplay = createP("Adverse Conditions: " + fixedStress);
-  stressDisplay.parent("envInfoDiv");
-
-  var goodMoves = environment.goodMovementTime();
-  movementDisplay = createP("Good Movement Steps: " + goodMoves);
-  movementDisplay.parent("envInfoDiv");
-
-  manualUAVDisplay = createP("Manual UAV: " + "No");
-  manualUAVDisplay.parent("envInfoDiv");
-
-  totalUAVDisplay = createP("Total UAV's: " + "0");
-  totalUAVDisplay.parent("envInfoDiv");
-
-  var fixedSpeed = environment.avgSpeed().toFixed(2);
-  speedDisplay = createP("Average Speed: " + fixedSpeed);
-  speedDisplay.parent("animalInfoDiv");
-
-  var avgHeading = environment.avgHeading().toFixed(2);
-  headingDisplay = createP("Average Heading: " + avgHeading);
-  headingDisplay.parent("animalInfoDiv");
-
-  var isBunched = environment.checkBunched();
-  bunchedDisplay = createP("Bunched: " + isBunched);
-  bunchedDisplay.parent("animalInfoDiv");
-
-
-  var isCollecting = environment.shepCollect();
-  collectingDisplay = createP("Collecting: " + isCollecting);
-  collectingDisplay.parent("gpsInfoDiv");
-
-  var isMoving = environment.shepMove();
-  moveDisplay = createP("Moving: " + isMoving);
-  moveDisplay.parent("gpsInfoDiv");
-
-  var isAvoidingOBS = environment.shepAvoidHerd();
-  avoOBSDisplay = createP("Avoid Obstacle: " + isAvoidingOBS);
-  avoOBSDisplay.parent("gpsInfoDiv");
-
-  var isAvoidingHerd = environment.shepAvoidHerd();
-  avoherdDisplay = createP("Avoid herd: " + isAvoidingHerd);
-  avoherdDisplay.parent("gpsInfoDiv");
-
-  var goodHeading = environment.theCorrectHeading().toFixed(2);
-  goodHeadingDisplay = createP("Desired Heading: " + goodHeading);
-  goodHeadingDisplay.parent("gpsInfoDiv");
-
-  var numSectors = environment.getSectors();
-  numSectorDisplay = createP("Number of Sectors: " + numSectors);
-  numSectorDisplay.parent("oracleInfoDiv");
-
-  var currentTarget = environment.getOracleTarget();
-  currentTargetDisplay = createP("Current Sector: " + currentTarget);
-  currentTargetDisplay.parent("oracleInfoDiv");
-
-  var currentSearchArea = environment.getOracleSearchArea();
-  currentSearchAreaDisplay = createP("Searching: " + currentSearchArea + " -> X");
-  currentSearchAreaDisplay.parent("oracleInfoDiv");
-
-
+  updateDisplayInfo();
 }
 
 // Function to update simulation info each frame
 ManageControls.prototype.updateSimInfo = function () {
-  manShep = ((environment.shepherds.length > 0) ? 'True' : 'False');
-  totalUAVs = environment.shepherds.length + environment.autoShepherds.length + environment.oracles.length +
-  environment.oracleShepherds.length + environment.multiGPSShepherds.length;
 
   // Destroy all info outputs from previous frame
   animalDisplay.remove();
@@ -227,7 +149,17 @@ ManageControls.prototype.updateSimInfo = function () {
   goodHeadingDisplay.remove();
 
   // Update with sim info from current frame
-  var timeSteps = environment.timeSteps();
+  updateDisplayInfo();
+}
+
+// Function to create paragrahs to display environment information on front-end
+function updateDisplayInfo () {
+  // Variables for UAV information
+  manShep = ((environment.manualShepherds.length > 0) ? 'True' : 'False');
+  totalUAVs = environment.allShepherds.length;
+
+  // ---------- CREATE PARAGRAPHS TO DISPLAY INFO ON FRONT-END ----------
+  timeSteps = environment.timeSteps();
   timeDisplay = createP("Timesteps: " + timeSteps);
   timeDisplay.parent("envInfoDiv");
 
@@ -237,287 +169,204 @@ ManageControls.prototype.updateSimInfo = function () {
   vocalDisplay = createP("Vocalizing: false");
   vocalDisplay.parent("animalInfoDiv");
 
-  var fixedStress = environment.totalStress().toFixed(2);
+  fixedStress = environment.totalStress().toFixed(2);
   stressDisplay = createP("Adverse Conditions: " + fixedStress);
   stressDisplay.parent("envInfoDiv");
 
-  var goodMoves = environment.goodMovementTime();
+  goodMoves = environment.goodMovementTime();
   movementDisplay = createP("Good Movement Steps: " + goodMoves);
   movementDisplay.parent("envInfoDiv");
 
-  manualUAVDisplay = createP("Manual UAV: " + manShep);
+  manualUAVDisplay = createP("Manual UAV: " + "No");
   manualUAVDisplay.parent("envInfoDiv");
 
-  totalUAVDisplay = createP("Total UAV's: " + totalUAVs);
+  totalUAVDisplay = createP("Total UAV's: " + "0");
   totalUAVDisplay.parent("envInfoDiv");
 
-  var fixedSpeed = environment.avgSpeed().toFixed(2);
+  fixedSpeed = environment.avgSpeed().toFixed(2);
   speedDisplay = createP("Average Speed: " + fixedSpeed);
   speedDisplay.parent("animalInfoDiv");
 
-  var avgHeading = environment.avgHeading().toFixed(2);
+  avgHeading = environment.avgHeading().toFixed(2);
   headingDisplay = createP("Average Heading: " + avgHeading);
   headingDisplay.parent("animalInfoDiv");
 
-  var isBunched = environment.checkBunched();
+  isBunched = environment.checkBunched();
   bunchedDisplay = createP("Bunched: " + isBunched);
   bunchedDisplay.parent("animalInfoDiv");
 
-  var numSectors = environment.getSectors();
-  numSectorDisplay = createP("Number of Sectors: " + numSectors);
-  numSectorDisplay.parent("oracleInfoDiv");
-
-  var currentTarget = environment.getOracleTarget();
-  currentTargetDisplay = createP("Current Sector: " + currentTarget);
-  currentTargetDisplay.parent("oracleInfoDiv");
-
-  var currentSearchArea = environment.getOracleSearchArea();
-  currentSearchAreaDisplay = createP("Searching: " + currentSearchArea + " -> X");
-  currentSearchAreaDisplay.parent("oracleInfoDiv");
-
-  var isCollecting = environment.shepCollect();
+  isCollecting = environment.shepCollect();
   collectingDisplay = createP("Collecting: " + isCollecting);
   collectingDisplay.parent("gpsInfoDiv");
 
-  var isMoving = environment.shepMove();
+  isMoving = environment.shepMove();
   moveDisplay = createP("Moving: " + isMoving);
   moveDisplay.parent("gpsInfoDiv");
 
-  var isAvoidingOBS = environment.vocalizing();
+  isAvoidingOBS = environment.shepAvoidHerd();
   avoOBSDisplay = createP("Avoid Obstacle: " + isAvoidingOBS);
   avoOBSDisplay.parent("gpsInfoDiv");
 
-  var isAvoidingHerd = environment.shepAvoidHerd();
+  isAvoidingHerd = environment.shepAvoidHerd();
   avoherdDisplay = createP("Avoid herd: " + isAvoidingHerd);
   avoherdDisplay.parent("gpsInfoDiv");
 
-  var goodHeading = environment.theCorrectHeading().toFixed(2);
+  goodHeading = environment.theCorrectHeading().toFixed(2);
   goodHeadingDisplay = createP("Desired Heading: " + goodHeading);
   goodHeadingDisplay.parent("gpsInfoDiv");
+
+  numSectors = environment.getSectors();
+  numSectorDisplay = createP("Number of Sectors: " + numSectors);
+  numSectorDisplay.parent("oracleInfoDiv");
+
+  currentTarget = environment.getOracleTarget();
+  currentTargetDisplay = createP("Current Sector: " + currentTarget);
+  currentTargetDisplay.parent("oracleInfoDiv");
+
+  currentSearchArea = environment.getOracleSearchArea();
+  currentSearchAreaDisplay = createP("Searching: " + currentSearchArea + " -> X");
+  currentSearchAreaDisplay.parent("oracleInfoDiv");
 }
 
-// Pause function for simulation -> when pause button clicked, boolean switches stopping canvas update
-function togglePlay() {
-  if (isPlaying == true) {
-     loop();  // Lets canvas update
-     pauseBtn.html('Pause'); // Change wording on button
-     isPlaying = false;
+function togglePlay() {       // Pause function for simulation
+  if (isPlaying == true) {    // On pause/play button press
+     loop();                  // Lets canvas update
+     pauseBtn.html('Pause');  // Change wording on button
+     isPlaying = !isPlaying;  // Switch boolean
   } else if (isPlaying == false) {
-     noLoop(); // Stops canvas from updating
+     noLoop();                // Stops canvas from updating
      pauseBtn.html('Play');
-     isPlaying = true;
+     isPlaying = !isPlaying;
   }
 }
 
+// Pause function when "p" is pressed
 function keyPressed() {
   if (keyCode == 80) {
-    if (isPlaying == true) {
-       loop();  // Lets canvas update
-       pauseBtn.html('Pause'); // Change wording on button
-       isPlaying = false;
-    } else if (isPlaying == false) {
-       noLoop(); // Stops canvas from updating
-       pauseBtn.html('Play');
-       isPlaying = true;
-    }
-}
+    togglePlay();
+  }
 }
 
-// function mouseClicked() {
-//   addAnAnimal();
-// }
-//
-// function addAnAnimal () {
-//   envronment.addAnimal(new Animal(mouseX, mouseY, animalGoals));
-// }
-
+// Function to add/display written test results
 ManageControls.prototype.addTestResult = function () {
-  var results = environment.testResults;
-    for(var i = results.length-1; i < results.length; i++) {
-      test = createP("Test: " + results[results.length-1].num + " UAV Type: " + manageEnv.uavType + " Time: " + results[results.length-1].time + " Move: " + results[results.length-1].move +
+  var results = environment.testResults; // Get test results from environment
+
+  // Create paragraph to be displayed
+  for(var i = results.length-1; i < results.length; i++) {
+    test = createP("Test: " + results[results.length-1].num + " UAV Type: " + manageEnv.uavType + " Time: " + results[results.length-1].time + " Move: " + results[results.length-1].move +
                      " Adverse: " + results[i].adverse.toFixed(2));
-      if(i < 4) {
-        test.parent("test" + 0);
-      } else if (i < 8) {
-        test.parent("test" + 1);
-      } else if (i < 12) {
-        test.parent("test" + 2);
-      } else if (i < 16) {
-        test.parent("test" + 3);
-      } else if (i < 50) {
-        test.parent("test" + 4);
-      }
+
+    // Dislay result in different column depending on test number
+    if(i < 4) {
+      test.parent("test" + 0);
+    } else if (i < 8) {
+      test.parent("test" + 1);
+    } else if (i < 12) {
+      test.parent("test" + 2);
+    } else if (i < 16) {
+      test.parent("test" + 3);
+    } else if (i < 50) {
+      test.parent("test" + 4);
     }
+  }
 }
 
 ManageControls.prototype.addAverageResults = function () {
-    let numTests = createP("Tests Complete: " + environment.testNumStatic);
-    let shepType = createP("UAV Type: " + manageEnv.uavType);
-    let avgTime = createP("Average TimeSteps: " + environment.totalTime.toFixed(0));
-    let avgMove = createP("Average Good Movement: " + environment.totalMoves.toFixed(0));
-    let avgAdverse = createP("Average Adverse Conditions: " + environment.totalAccStress.toFixed(2));
+  let numTests = createP("Tests Complete: " + environment.testNumStatic);
+  let shepType = createP("UAV Type: " + manageEnv.uavType);
+  let avgTime = createP("Average TimeSteps: " + environment.totalTime.toFixed(0));
+  let avgMove = createP("Average Good Movement: " + environment.totalMoves.toFixed(0));
+  let avgAdverse = createP("Average Adverse Conditions: " + environment.totalAccStress.toFixed(2));
 
-    numTests.parent("avgTestsDiv");
-    shepType.parent("avgTestsDiv");
-    avgTime.parent("avgTestsDiv");
-    avgMove.parent("avgTestsDiv");
-    avgAdverse.parent("avgTestsDiv");
+  numTests.parent("avgTestsDiv");
+  shepType.parent("avgTestsDiv");
+  avgTime.parent("avgTestsDiv");
+  avgMove.parent("avgTestsDiv");
+  avgAdverse.parent("avgTestsDiv");
 }
 
+// --------------- CHARTS---------------
 ManageControls.prototype.createChart = function () {
+  // Create empty line chart at page load
   var ctx = document.getElementById('myChart').getContext('2d');
   this.chart = new Chart(ctx, {
-    // The type of chart we want to create
     type: 'line',
-
-    // The data for our dataset
     data: {
-        labels: [],
-        datasets: [{
-            label: '',
-            borderColor: 'rgb(36, 188, 25)',
-            data: []
+      labels: [],
+      datasets: [{
+          label: 'Time Steps',
+          borderColor: 'rgb(36, 188, 25)',
+          data: []
         },{
-            label: '',
-            borderColor: 'rgb(36, 188, 25)',
-            data: []
+          label: 'Adverse Hanling',
+          borderColor: 'rgb(188, 36, 25)',
+          data: []
         },{
-            label: 'Single GPS',
-            borderColor: 'rgb(36, 188, 25)',
-            data: []
-        },{
-            label: '',
-            borderColor: 'rgb(36, 25, 188)',
-            data: []
-        },{
-            label: '',
-            borderColor: 'rgb(36, 25, 188)',
-            data: []
-        },{
-            label: 'Multi-GPS',
-            borderColor: 'rgb(36, 25, 188)',
-            data: []
-        },
-        {
-            label: '',
-            borderColor: 'rgb(188, 36, 25)',
-            data: []
-        },{
-            label: '',
-            borderColor: 'rgb(188, 36, 25)',
-            data: []
-        },{
-            label: 'Single Oracle',
-            borderColor: 'rgb(188, 36, 25)',
-            data: []
-        },
-        {
-            label: '',
-            borderColor: 'rgb(0, 0, 0)',
-            data: []
-        },{
-            label: '',
-            borderColor: 'rgb(0, 0, 0)',
-            data: []
-        },{
-            label: 'Multi-Oracle',
-            borderColor: 'rgb(0, 0, 0)',
-            data: []
-        }
-      ]
+          label: 'Good Movement',
+          borderColor: 'rgb(36, 25, 188)',
+          data: []
+        }]
     },
-
-    // Configuration options go here
-    options: {
-      title: {
+    options: { // Configure chart
+      title: { // Starting title on page load
         display: true,
         fontColor: 'black',
         text: 'Wait For It...'
           },
         elements: {
           line: {
-              tension: 0 // disables bezier curves
+            tension: 0 // disables curved lines
           }
         },
-        // plugins: {
-        //     // Change options for ALL labels of THIS CHART
-        //     datalabels: {
-        //         color: 'rgb(0,0,0)',
-        //         fontColor: 'black',
-        //         align: 'top'
-        //     }
-        // },
-        scales: {
-        xAxes: [{
+        plugins: { // Display/Change labels
+          datalabels: {
+            color: 'rgb(0,0,0)',
+            fontColor: 'black',
+            align: 'top'
+          }
+        },
+        scales: { // Mess with scales
+          xAxes: [{
             ticks: {
               fontColor: 'black',
               callback: function(tick, index, array) {
+                // Only print every 5 numbers on bottom scale
                 if(index % 5 == 0 || index == 0) {
                   return tick;
                 } else {
                   return "";
                 }
-                  // return (index % 5 = 0 || index = 1) ? "" : tick;
               }
             }
-        }],
-        yAxes: [{
-          ticks: {
+          }],
+          yAxes: [{
+            ticks: {
               padding: 20,
               fontColor: 'black'
+            }
+          }]
+        },
+        legend: { // Legend Colours
+          labels: {
+            fontColor: 'black'
           }
-        }]
+        }
       }
-      // ,
-      // legend: {
-      //     labels: {
-      //         fontColor: 'black'
-      //     }
-      // }
-    }
   });
 }
 
-// function addData(chart, label, data) {
-//     manageFE.updateMyChart(chart, label, data);
-// }
-
-ManageControls.prototype.updateMyChart = function () {
-
-  if (manageEnv.uavType == 'SingleGPS') {
-    console.log("Update charts has run...")
-    var results = environment.testResults;
-    this.chart.data.labels.push(results[results.length-1].num);
-    this.chart.data.datasets[0].data.push(results[results.length-1].time);
-    this.chart.data.datasets[1].data.push(results[results.length-1].move);
-    this.chart.data.datasets[2].data.push(results[results.length-1].adverse.toFixed(2));
-    this.chart.update();
-  } else if (manageEnv.uavType == 'multiGPS') {
-    var results = environment.testResults;
-    this.chart.data.labels.push(results[results.length-1].num);
-    this.chart.data.datasets[3].data.push(results[results.length-1].time);
-    this.chart.data.datasets[4].data.push(results[results.length-1].move);
-    this.chart.data.datasets[5].data.push(results[results.length-1].adverse.toFixed(2));
-    this.chart.update();
-  } else if (manageEnv.uavType == 'oracleHerd') {
-    var results = environment.testResults;
-    this.chart.data.labels.push(results[results.length-1].num);
-    this.chart.data.datasets[6].data.push(results[results.length-1].time);
-    this.chart.data.datasets[7].data.push(results[results.length-1].move);
-    this.chart.data.datasets[8].data.push(results[results.length-1].adverse.toFixed(2));
-    this.chart.update();
-  } else if (manageEnv.uavType == 'multiOracle') {
-    var results = environment.testResults;
-    this.chart.data.labels.push(results[results.length-1].num);
-    this.chart.data.datasets[9].data.push(results[results.length-1].time);
-    this.chart.data.datasets[10].data.push(results[results.length-1].move);
-    this.chart.data.datasets[11].data.push(results[results.length-1].adverse.toFixed(2));
-    this.chart.update();
-  }
-
+// Update Chart title when simulation begins
+ManageControls.prototype.updateChartTitle = function () {
+  this.chart.options.title.text = "UAV Type:- " + manageEnv.uavType + "Env:- " + envRadio.value() + ":- Animal Number: " + manageEnv.anNumberForChart;
+  this.chart.update();
 }
 
-ManageControls.prototype.updateChartTitle = function () {
-  this.chart.options.title.text ="Env: " + envRadio.value() + ":- Animal Number: " + manageEnv.anNumberForChart;
-  this.chart.update();
+// Update chart each time simulation has been completed
+ManageControls.prototype.updateMyChart = function () {
+  var results = environment.testResults;  // Get all results from environment
+  this.chart.data.labels.push(results[results.length-1].num);
+  this.chart.data.datasets[0].data.push(results[results.length-1].time);
+  this.chart.data.datasets[1].data.push(results[results.length-1].move);
+  this.chart.data.datasets[2].data.push(results[results.length-1].adverse.toFixed(2));
+  this.chart.update(); // Updates chart
 }

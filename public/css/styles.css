@@ -51,7 +51,7 @@ canvas {
   color: rgb(36, 188, 25);
 }
 
-#moreControls {
+#startingParamsDiv {
 	background:black;
 	border-right: 5px solid white;
 	padding: 2px;
@@ -86,10 +86,6 @@ canvas {
 #midName {
 	text-align: left;
 }
-
-/* #chartsRow {
-	background-color: white;
-} */
 
 #chartsRow canvas{
 	background-color: white;
@@ -207,6 +203,7 @@ select:hover {
 	background-position: center;
 }
 
+/* Sliders Red to Green */
 [type="checkbox"]:not(:checked),
 [type="checkbox"]:checked {
   position: absolute;

@@ -3,7 +3,6 @@ function ManageEnvironment () {}
 
 // Function to create the different environments
 ManageEnvironment.prototype.createNewEnv = function () {
-
   // ------------ ENVIRONMENT 1 ------------
   // Create new environment depending on radio button
   if (envRadio.value() == 1) {
@@ -13,7 +12,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     img = img1;      // Use image one loaded in manageControl.js
     canvas.parent('myCanvas');
 
-    resetDropdown();
+    resetDropdown(); // For Dropdown menu or wont work after reset
 
     shepStartPos = createVector(990, 255); // Create shepherd starting co-ords
     goal1 = createVector(990, 255);
@@ -25,11 +24,12 @@ ManageEnvironment.prototype.createNewEnv = function () {
       startSwitcher: false
     }
 
+    // TesterAnimal.prototype = Object.create(Animal.prototype);
     for (var i = 0; i < numAnimalsSlider.value(); i++) { //Create starting animals in random positions
       x = random(xMinAnimalsSlider.value(), xMaxAnimalsSlider.value());
       y = random(yMinAnimalsSlider.value(), yMaxAnimalsSlider.value());
-      var a = new Animal(x, y, animalGoals); // Pass through staring position, position of goal and position of goalZone
-      environment.addAnimal(a); // Positions of goal and goalZone used for removalfunction and goal function in animal class
+      var tester = new TesterAnimal(x, y, animalGoals); // Pass through staring position, position of goal and position of goalZone
+      environment.addAnimal(tester); // Positions of goal and goalZone used for removalfunction and goal function in animal class
     }
 
     var g = new Gate(animalGoals); // Create gate
@@ -76,75 +76,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
     environment.addGate(g);
   }
 
-  // ------------ BROKEN ENVIRONMENT 3 BROKEN ------------
+  // ------------ ENVIRONMENT 3 ------------
   if (envRadio.value() == 3) {
-
-    canvas.remove(); // Canvas
-    canvas = createCanvas(1000,600);
-    img = img5;
-    canvas.parent('myCanvas');
-
-    sel.remove();
-    sel = createSelect();
-    sel.parent('addDrop');
-    sel.option('Add Animal');
-    sel.option('Add Shepherd');
-    sel.option('Add Novelty');
-    sel.option('Add Obstacle');
-    canvas.mouseClicked(addStuff);
-
-    shepX = 1030, shepY = 165; // Create various co-ordinates
-    goalX = 1100, goalY = 255;
-    gzX = createVector(1100, 1250), gzY = createVector(155, 305);
-
-    //Create starting animals in random positions
-    for (var i = 0; i < numAnimalsSlider.value(); i++) {
-      x = random(100,251);
-      y = random(50,351);
-      var a = new Animal(x, y, goalX, goalY, gzX, gzY);
-      environment.addAnimal(a);
-    }
-
-    // Create novelties passing througn position and dimensions
-    var n = new NovelObject(1050,50,300,90);
-    environment.addNovelty(n);
-    var n = new NovelObject(1400,265,45,90);
-    environment.addNovelty(n);
-
-    // Create obstacles passing through positions and dimensions
-    var ob = new Obstacle(0, 0, 1500, 20, 1.5);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1500, 40, 70, 120, 2);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1560, 155, 10, 70, -60);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1615, 185, 160, 90, 0);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1525, 275, 100, 50, 0);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1750, 270, 20, 220, 20);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1680, 475, 20, 550, 80);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1030, 400, 220, 20, 55);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(160, 400, 865, 20, 0);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(0, 240, 240, 20, 45);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1030, 180, 60, 170, 0);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1220, 180, 75, 170, 3);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1030, 350, 255, 20, 0);
-    environment.addObstacle(ob);
-
-    var g = new Gate(1090, 230); // Create gate
-    environment.addGate(g);
-  }
-
-  // ------------ ENVIRONMENT 4 ------------
-  if (envRadio.value() == 4) {
 
     canvas.remove(); // Create canvas
     canvas = createCanvas(2400,800);
@@ -204,8 +137,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
     environment.addGate(g);
   }
 
-  // ------------ ENVIRONMENT 5 -----------
-  if (envRadio.value() == 5) {
+  // ------------ ENVIRONMENT 4 -----------
+  if (envRadio.value() == 4) {
 
     canvas.remove(); // Canvas
     canvas = createCanvas(1800,600);
@@ -328,7 +261,7 @@ function resetDropdown() {
 // ---------- FUNCTIONS TO CREATE SHEPHERDS ON BUTTON CLICKS ----------
 function herd() {
   console.log("Goin' Herding");
-  environment.addAutoShepherd(new AutoShepherd(shepStartPos,shepGoals));
+  environment.addAutoShepherd(new SingleGPSUAV(shepStartPos,shepGoals));
 }
 
 function oracle() {

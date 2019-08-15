@@ -1,13 +1,18 @@
-// Class to manage environment -- add agents, reset env etc...
-function ManageEnvironment () {}
+let animalNumber; // Declare variable
+
+
+function ManageEnvironment () {
+  // Class to manage environment -- add agents, reset env etc...
+  // Once again is only a prototype because it makes it easier to
+  // pass inforamtion out
+}
 
 // Function to create the different environments
 ManageEnvironment.prototype.createNewEnv = function () {
-
-  let animalNumber;
+  // Change number of starting animals
   if(anNumRadio.value() == 1) {
     animalNumber = 10;
-    this.anNumberForChart = "10"
+    this.anNumberForChart = "10" // Used for chart title
   } else if(anNumRadio.value() == 2) {
     animalNumber = 20;
     this.anNumberForChart = "20"
@@ -16,23 +21,25 @@ ManageEnvironment.prototype.createNewEnv = function () {
     this.anNumberForChart = "50"
   }
 
-
-
   // ------------ ENVIRONMENT 1 ------------
   // Create new environment depending on radio button
   if (envRadio.value() == 1) {
 
-    environment.removeGate();
-    canvas.remove(); // Always destroy current canvas before creating new one
+    environment.removeGate(); // Always destroy gate exit or they will render over eachother
+    canvas.remove();          // Always destroy current canvas before creating new one
     canvas = createCanvas(1000,600);
-    img = img1;      // Use image one loaded in manageControl.js
+    img = img1;                // Use image one loaded in manageControl.js
     canvas.parent('myCanvas');
 
-    shepStartPos = createVector(990, 255); // Create shepherd starting co-ords
+    // Create starting parameters passed to shepherd
+    shepStartPos = createVector(990, 255);
     goal1 = createVector(990, 255);
     shepGoals = [goal1];
+
+    // Create starting paramters passed to animal agents
     animalGoals = [goal1];
 
+    // Starting parameters passed to oracle
     oracleSearch = {
       dir: "start",
       startSwitcher: false
@@ -45,7 +52,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
       environment.addAnimal(a); // Positions of goal and goalZone used for removalfunction and goal function in animal class
     }
 
-    var g = new Gate(animalGoals); // Create gate
+    var g = new Gate(animalGoals); // Create exit
     environment.addGate(g);
   }
 
@@ -71,8 +78,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
     animalGoals = [aGoal1];
 
     oracleSearch = {
-      dir: "start",
-      startSwitcher: false
+      dir: "start",         // When oracle is starting at exit/last goal point
+      startSwitcher: false  //
     }
 
     for (var i = 0; i < animalNumber; i++) { //Create starting animals in random positions
@@ -94,75 +101,8 @@ ManageEnvironment.prototype.createNewEnv = function () {
     environment.addGate(g);
   }
 
-  // ------------ BROKEN ENVIRONMENT 3 BROKEN ------------
-  if (envRadio.value() == 3) {
-
-    canvas.remove(); // Canvas
-    canvas = createCanvas(1000,600);
-    img = img5;
-    canvas.parent('myCanvas');
-
-    sel.remove();
-    sel = createSelect();
-    sel.parent('addDrop');
-    sel.option('Add Animal');
-    sel.option('Add Shepherd');
-    sel.option('Add Novelty');
-    sel.option('Add Obstacle');
-    canvas.mouseClicked(addStuff);
-
-    shepX = 1030, shepY = 165; // Create various co-ordinates
-    goalX = 1100, goalY = 255;
-    gzX = createVector(1100, 1250), gzY = createVector(155, 305);
-
-    //Create starting animals in random positions
-    for (var i = 0; i < animalNumber; i++) {
-      x = random(100,251);
-      y = random(50,351);
-      var a = new Animal(x, y, goalX, goalY, gzX, gzY);
-      environment.addAnimal(a);
-    }
-
-    // Create novelties passing througn position and dimensions
-    var n = new NovelObject(1050,50,300,90);
-    environment.addNovelty(n);
-    var n = new NovelObject(1400,265,45,90);
-    environment.addNovelty(n);
-
-    // Create obstacles passing through positions and dimensions
-    var ob = new Obstacle(0, 0, 1500, 20, 1.5);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1500, 40, 70, 120, 2);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1560, 155, 10, 70, -60);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1615, 185, 160, 90, 0);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1525, 275, 100, 50, 0);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1750, 270, 20, 220, 20);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1680, 475, 20, 550, 80);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1030, 400, 220, 20, 55);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(160, 400, 865, 20, 0);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(0, 240, 240, 20, 45);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1030, 180, 60, 170, 0);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1220, 180, 75, 170, 3);
-    environment.addObstacle(ob);
-    var ob = new Obstacle(1030, 350, 255, 20, 0);
-    environment.addObstacle(ob);
-
-    var g = new Gate(1090, 230); // Create gate
-    environment.addGate(g);
-  }
-
   // ------------ ENVIRONMENT 4 ------------
-  if (envRadio.value() == 4) {
+  if (envRadio.value() == 3) {
 
     environment.removeGate();
     canvas.remove(); // Create canvas
@@ -232,7 +172,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
   }
 
   // ------------ ENVIRONMENT 5 -----------
-  if (envRadio.value() == 5) {
+  if (envRadio.value() == 4) {
 
     environment.removeGate();
     canvas.remove(); // Canvas
@@ -314,55 +254,22 @@ ManageEnvironment.prototype.createNewEnv = function () {
 
 }
 
-// ---------- FUNCTION TO ADD AGENT/OBJECT ON MOUSE CO-ORDS ----------
-function addStuff() {
-  var dropSelect = sel.value();
-  if (dropSelect == "Add Animal") {
-    environment.addAnimal(new Animal(mouseX, mouseY, animalGoals));
-  }
-  if (dropSelect == "Add Shepherd") {
-    environment.addShepherd(new Shepherd(mouseX, mouseY));
-  }
-  if (dropSelect == "Add Novelty") {
-    environment.addNovelty(new NovelObject(mouseX, mouseY, 25.0,25.0, 0, 0));
-  }
-  if (dropSelect == "Add Obstacle") {
-    environment.addObstacle(new Obstacle(mouseX, mouseY, 25.0, 25.0, 0));
-  }
-}
-
-// ---------- DELETE FUNCTIONS FOR AGENTS/OBJECTS ----------
-// Calling functions directly from buttons is throwing errors
-function delAnimal() {
-  environment.deleteAnimal();
-}
-function delShepherd() {
-  environment.deleteShepherd();
-}
-function delNovelty() {
-  environment.deleteNovelty();
-}
-function delObstacle() {
-  environment.deleteObstacle();
-}
-function deleteAll() {
-  environment.removeAll();
-}
-
 // ---------- FUNCTIONS TO CREATE SHEPHERDS ON BUTTON CLICKS ----------
-function herd() {
+// Needs to be called through normal function or throws a fit
+function singleGPS() {
   manageEnv.singleGPSHerd()
 }
 
 ManageEnvironment.prototype.singleGPSHerd = function () {
-  this.uavType = "SingleGPS";
+  this.uavType = "SingleGPS"; // Used for charts and multiple tests
   this.uavForChart = "Single GPS UAV";
   manageFE.updateChartTitle();
   console.log("Single GPS lifting off...");
-  environment.addAutoShepherd(new AutoShepherd(shepStartPos,shepGoals));
+  // Pass starting parameters to environment to create UAV
+  environment.addAutoShepherd(new SingleGPSUAV(shepStartPos,shepGoals));
 }
 
-function oracle() {
+function singleOracle() {
   manageEnv.oracleHerd()
 }
 

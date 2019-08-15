@@ -310,7 +310,7 @@ Oracle.prototype.calculateTarget = function (minSec, maxSec) {
       // console.log("Why you do this tl")
     }
   }
-  this.lol = newTarget.id;
+  // this.lol = newTarget.id;
   this.isForShep = {
     position: createVector(this.oldTarget.x, this.oldTarget.y),
     id: createVector(newTarget.id.x, newTarget.id.y)
@@ -413,6 +413,14 @@ Oracle.prototype.keepSearching = function (herd) {
       }
     }
 
+
+    if (this.start.diffStart == true) {
+      this.bRow = this.start.endSec.y;
+      this.tRow = this.start.startSec.y;
+      this.lCol = this.start.startSec.x;
+      this.rCol = this.start.endSec.x;
+    }
+    
     topRight = createVector(this.rCol, this.tRow);   // Top right
     bottomLeft = createVector(this.lCol, this.bRow); // bottom left
     bottomRight = createVector(this.rCol, this.bRow) //bottom right

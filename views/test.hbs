@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
+    <!-- Add Page Title -->
     <title>Sherping Algorithms</title>
 
     <!-- Add styles -->
@@ -21,19 +22,20 @@
     <script	src="https://cdnjs.cloudflare.com/ajax/libs/chance/1.0.18/chance.min.js"></script>
 
     <!-- Add my .js scripts -->
-    <script src="js/test/sketchTest.js"></script>
     <script src="js/test/manageControls.js"></script>
     <script src="js/test/manageEnv.js"></script>
-    <script src="js/environment.js"></script>
+    <script src="js/test/testEnvironment.js"></script>
+    <script src="js/animalAgent.js"></script>
     <script src="js/test/animalTest.js"></script>
     <script src="js/shepherdManual.js"></script>
-    <script src="js/autoShepherd.js"></script>
+    <script src="js/singleGPSUAV.js"></script>
     <script src="js/multiGPS.js"></script>
     <script src="js/novelty.js"></script>
     <script src="js/obstacle.js"></script>
     <script src="js/gate.js"></script>
     <script src="js/oracle.js"></script>
     <script src="js/oracleShepherd.js"></script>
+    <script src="js/test/sketchTest.js"></script>
 
   </head>
   <body>
@@ -43,32 +45,33 @@
     <!-- Canvas div -->
     <div class="container-fluid" align:'center'>
       <div class="row" id="simRow">
-
-        <div class="col-lg-2" id="moreControls">
+        <!-- Buttons to initialize UAV's/ start simulation-->
+        <div class="col-lg-2" id="startingParamsDiv">
           <div>
             <div>
               <h6><strong><u>Run It...</u></strong></h6>
               <br>
-              <div id="droneHerd">
+              <!-- Intilize UAV Buttons -->
+              <div id="singleGPSBtn">
               </div>
               <br>
-              <div id="oracleBtn" class="orange">
+              <div id="singleOracleBtn">
               </div>
               <br>
-              <div id="multiBtn">
+              <div id="multiGPSBtn">
               </div>
               <br>
-              <div id="multiOracleBtn" class="orange">
+              <div id="multiOracleBtn">
               </div>
-              <br><br>
+              <br>
+
+              <!-- Buttons To Chane Starting Parameters -->
               <h6><strong><u>Simulation Controls</u></strong></h6>
-              <br>
-              <div id="pauseBtn">
-              </div>
               <br><br>
               <h6><strong><u>Select Env</u></strong></h6>
-              <div id="envRadio">
+              <div id="envRadio"><!-- Change Starting Environment -->
               </div>
+              <!-- Sliders For Number of Animals and Animal Starting Positions -->
               <div id="numAnimalsSli">
                 <label for="numAnimalsSlider">Animals: </label>
               </div>
@@ -84,21 +87,25 @@
               <div id="yMaxAnimalsSli">
                 <label for="yMaxAnimalsSlider">Y Max: </label>
               </div>
+              <br>
+              <!-- Pause/Reset Buttons -->
+              <div id="pauseBtn">
+              </div>
               <div id="resetBtn">
               </div>
-
             </div>
           </div>
           <br>
 
-        </div> <!-- Close moreControls col -->
+        </div> <!-- Close Starting Params Column -->
 
+        <!-- Canvas Column -->
         <div class="col-lg-10">
           <div id="myCanvas"></div>
         </div>
-
       </div> <!-- Close Simrow -->
 
+      <!-- Info Row Titles -->
       <div class="row simHeader">
           <div class="col-lg-2 borderRight infoHeader" >
             <h5><b>Env Info</b></h5>
@@ -120,41 +127,36 @@
           </div>
       </div>
 
-      <!-- Behaviour Sliders -->
+      <!-- Environment Info Display Div -->
       <div class="row" id="controls">
         <div class="col-lg-2 con" id='control1'>
           <div id="envInfoDiv">
-
           </div>
         </div>
 
-        <!-- Add/Delete Buttons -->
+        <!-- Animal Info Display Div -->
         <div class="col-lg-2 con" id="control2" align="center">
           <div id="animalInfoDiv">
-
           </div>
         </div>
 
-        <!-- CheckBox xontorls -->
+        <!-- GPS UAV Info Display Div -->
         <div class="col-lg-2 con" id="control3">
           <h6><strong><u>GPS Shep</u></strong></h6>
           <br>
           <div id="gpsInfoDiv">
-
           </div>
           <p>Desired Speed: .35 - .5</p>
         </div>
 
-        <!-- CheckBox xontorls -->
+        <!-- Oracle Info Display Div -->
         <div class="col-lg-2 con orangeLetters" id="control4">
           <h6><strong><u>Oracle</u></strong></h6>
           <div id="oracleInfoDiv">
-
           </div>
           <br>
           <h6><strong><u>Oracle Shep</u></strong></h6>
           <div id="oShepInfoDiv">
-
           </div>
           <p>Collecting: X</p>
           <p>Moving: X</p>
@@ -163,28 +165,29 @@
           <p>Desired Speed: .35 - .5</p>
         </div>
 
-        <!-- CheckBox xontorls -->
+        <!-- Canvas Sliders Display Div -->
         <div class="col-lg-2 con" id="control5">
           <div id="zoneDiv">
           </div>
         </div>
 
-        <!-- CheckBox xontorls -->
+        <!-- Agent/Object addition/removal -->
         <div class="col-lg-2 con" id="control6">
-          <div id="addDrop">
+          <div id="addDrop"> <!-- Add Agent/Object Dropdown -->
             <label for="sel" style="display:block">Click canvas to ...</label>
           </div><br>
-          <div id="animalButtons">
+          <div id="animalButtons"> <!-- Remove Animal Button -->
           </div>
-          <div id="shepButtons">
+          <div id="shepButtons">   <!-- Remove Manual Shepherd Button -->
           </div>
-          <div id="novButtons">
+          <div id="novButtons">    <!-- Remove Stressor Button -->
           </div><br>
-          <div id="delAll">
+          <div id="delAll"> <!-- Remove All Agents/Objects Button -->
           </div>
         </div>
-      </div> <!-- Close controls row -->
+      </div> <!-- Close Environment Info Display Row -->
 
+      <!-- Control Row Display Titles -->
       <div class="row simHeader">
           <div class="col-lg-8 borderRight infoHeader">
             <h5><b>Animal Controls</b></h5>
@@ -194,8 +197,9 @@
           </div>
       </div>
 
+      <!-- Agent Controls Row -->
       <div class="row" id="controlsRow2">
-
+        <!-- UAV Max Speed Slider -->
         <div class="col-lg-2 con2" id="control7">
           <div>
             <h6><strong><u>Max Speeds</u></strong></h6>
@@ -212,6 +216,7 @@
 
           <br>
 
+          <!-- UAV Set Velocity Sliders -->
           <div>
             <h6><strong><u>Set Velocity</u></strong></h6>
           </div>
@@ -227,7 +232,9 @@
           <br>
         </div>
 
+        <!-- UAV Set Zone Size Sliders -->
         <div class="col-lg-2 con2" id="control8">
+          <!-- Flocking Forces -->
           <div>
             <h6><strong><u>Force Radius</u></strong></h6>
           </div>
@@ -246,6 +253,7 @@
 
           <br>
 
+          <!-- Flight/Pressure Zones -->
           <div>
             <h6><strong><u>Zone Radius</u></strong></h6>
           </div>
@@ -258,8 +266,10 @@
           <br>
         </div>
 
+        <!-- UAV Set Flocking Strength Forces -->
         <div class="col-lg-2 con2" id="control9">
           <div>
+            <!-- Separation -->
             <h6><strong><u>Sep Strength</u></strong></h6>
           </div>
           <div id="sepWan">
@@ -273,6 +283,7 @@
           </div>
           <br>
 
+          <!-- Alignment -->
           <div>
             <h6><strong><u>Ali Strength</u></strong></h6>
           </div>
@@ -288,6 +299,7 @@
           <br>
         </div>
 
+        <!-- Cohesion -->
         <div class="col-lg-2 con2" id="control10">
           <div>
             <h6><strong><u>Coh Strength</u></strong></h6>
@@ -303,6 +315,7 @@
           </div>
           <br>
 
+          <!-- Separation From UAV -->
           <div>
             <h6><strong><u>dSep Strength</u></strong></h6>
           </div>
@@ -313,6 +326,8 @@
             <label for="dSepFliSlider">Fli: </label>
           </div>
           <br>
+
+          <!-- Gaol and Stressor separation Sliders -->
           <div id="goalAnimalsSli">
             <label for="goalAnimalsSlider">Goal: </label>
           </div>
@@ -320,33 +335,37 @@
             <label for="stressorAnimalsSlider">Avoid: </label>
           </div>
         </div>
+
+        <!-- Shepherd UAV Controls/Canvas Info -->
         <div class="col-lg-2 con2" id="control11">
           <div>
             <h6><strong><u>Shepherd</u></strong></h6>
           </div>
-          <div id="uavSpeSli">
+          <div id="uavSpeSli"> <!-- Shepherd Max Speed Slider -->
             <label for="uavSpeedSlider">Speed: </label>
           </div>
           <br>
-          <div id="uavStuff">
+          <div id="uavStuff"> <!-- Shepherd Canvas Display Sliders -->
           </div>
           <h6><strong><u>Select Collection</u></strong></h6>
-          <div id="collectRadio">
+          <div id="collectRadio"> <!-- Shepherd Colloction Type Radio Button -->
           </div>
         </div>
+
+        <!-- Oracle Controls/Display -->
         <div class="col-lg-2 con2" id="control12">
           <div>
             <h6><strong><u>Oracle</u></strong></h6>
           </div>
-          <div id="oracleSpeSli">
+          <div id="oracleSpeSli"> <!-- Oracle Max Speed Slider -->
             <label for="oracleSpeedSlider">Speed: </label>
           </div>
           <br>
-          <div id="oracleStuff">
-
+          <div id="oracleStuff">   <!-- Display Oracle Sectors Slider -->
           </div>
         </div>
-      </div>
+
+      </div> <!-- Close Agent Controls Row -->
     </div> <!-- Close container -->
 
     <!-- More scripts -->
