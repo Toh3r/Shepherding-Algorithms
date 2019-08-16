@@ -2,15 +2,16 @@
 function Environment() {
   // Initialize arrays to store agents/objects
   this.herd = []; // Stores animal agents
-  this.shepherds = [];
-  this.autoShepherds = [];
-  this.oracles = [];
-  this.oracleShepherds = [];
+  this.manualShepherds = [];
+  this.singleGPSShepherds = [];
+  this.singleOracleShepherds = [];
   this.multiGPSShepherds = [];
+  this.multiOracleShepherds = [];
+  this.oracles = [];
+  this.allShepherds = [];
   this.novelObjects = [];
   this.gates = [];
   this.obstacles = [];
-  this.allShepherds = [];
 
   // Create environmental variables
   this.accumulatedStress = 0;
@@ -20,21 +21,18 @@ function Environment() {
   this.vocal = false;
   this.oldTime = 0; // Used for displaying timesteps, timestep variable currently held by shepherd **change to here**
   this.oldMoves = 0;
-  // Hold positoins of herd to draw herd radius on canvas
-  // this.herdBottom = 0;
-  // this.herdTop = 0;
-  // this.herdLeft = 0;
-  // this.herdRight = 0;
 }
 
 // ------------ CREATES AGENTS/OBJECTS WHEN PASSED INFO FROM SKETCH ------------
 Environment.prototype.run = function() {
+this.allShepherds = this.singleGPSShepherds.concat(this.manualShepherds, this.multiGPSShepherds, this.singleOracleShepherds, this.multiOracleShepherds);
+  // Create array holding all shepherds to be passed to animal agents
   for (var i = 0; i < this.herd.length; i++) {
-    this.herd[i].run(this.herd, this.shepherds, this.novelObjects, this.autoShepherds, this.multiGPSShepherds, this.obstacles, this.oracleShepherds);  // Passing all arrays to each animal
+    this.herd[i].run(this.herd, this.allShepherds, this.novelObjects, this.obstacles);  // Passing all arrays to each animal
   }
 
-  for (var i = 0; i < this.shepherds.length; i++) {
-    this.shepherds[i].run(this.herd);
+  for (var i = 0; i < this.manualShepherds.length; i++) {
+    this.manualShepherds[i].run(this.herd);
   }
 
   for (var i = 0; i < this.novelObjects.length; i++) {
@@ -45,8 +43,8 @@ Environment.prototype.run = function() {
     this.gates[i].run();
   }
 
-  for(var i = 0; i < this.autoShepherds.length; i++) {
-    this.autoShepherds[i].run(this.herd);
+  for(var i = 0; i < this.singleGPSShepherds.length; i++) {
+    this.singleGPSShepherds[i].run(this.herd);
   }
 
   for(var i = 0; i < this.multiGPSShepherds.length; i++) {
@@ -57,8 +55,12 @@ Environment.prototype.run = function() {
     this.oracles[i].run(this.herd);
   }
 
-  for(var i = 0; i < this.oracleShepherds.length; i++) {
-    this.oracleShepherds[i].run(this.oracles);
+  for(var i = 0; i < this.singleOracleShepherds.length; i++) {
+    this.singleOracleShepherds[i].run(this.oracles);
+  }
+
+  for(var i = 0; i < this.multiOracleShepherds.length; i++) {
+    this.multiOracleShepherds[i].run(this.oracles);
   }
 
   for(var i = 0; i < this.obstacles.length; i++) {
@@ -69,10 +71,6 @@ Environment.prototype.run = function() {
   if (herdZoneCheck.checked() == true) {
     this.displayHerd(); // Render herd zone
   }
-
-  // if (sectorCheck.checked() == true) {
-  //   this.sectors();
-  // }
 }
 
 // ------------ FUNCTIONS TO ADD AGENTS/OBJECTS ------------
@@ -81,11 +79,11 @@ Environment.prototype.addAnimal = function(a) {
 }
 
 Environment.prototype.addShepherd = function(s) {
-  this.shepherds.push(s);
+  this.manualShepherds.push(s);
 }
 
 Environment.prototype.addAutoShepherd = function(as) {
-  this.autoShepherds.push(as);
+  this.singleGPSShepherds.push(as);
 }
 
 Environment.prototype.addMultiGPS = function(ms) {
@@ -97,7 +95,11 @@ Environment.prototype.addOracle = function(o) {
 }
 
 Environment.prototype.addOracleShepherd = function(os) {
-  this.oracleShepherds.push(os);
+  this.singleOracleShepherds.push(os);
+}
+
+Environment.prototype.addMultiOracleShepherd = function(mos) {
+  this.multiOracleShepherds.push(mos);
 }
 
 Environment.prototype.addNovelty = function(n) {
@@ -118,7 +120,7 @@ Environment.prototype.deleteAnimal = function() {
 }
 
 Environment.prototype.deleteShepherd = function() {
-  this.shepherds.length = 0;
+  this.manualShepherds.length = 0;
 }
 
 Environment.prototype.deleteNovelty = function() {
@@ -157,10 +159,10 @@ Environment.prototype.totalStress = function() {
 }
 
 Environment.prototype.timeSteps = function() {
-  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
+  let recordedShepherds = this.singleGPSShepherds.concat(this.multiGPSShepherds, this.oracles);
   this.time = 0;
-  for (var i = 0; i < this.allShepherds.length; i++) {
-    this.time += this.allShepherds[i].timestep;
+  for (var i = 0; i < recordedShepherds.length; i++) {
+    this.time += recordedShepherds[i].timestep;
   }
   if (this.time % 50 == 0){
     this.oldTime = this.time;
@@ -171,10 +173,10 @@ Environment.prototype.timeSteps = function() {
 }
 
 Environment.prototype.goodMovementTime = function() {
-  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
+  let recordedShepherds = this.singleGPSShepherds.concat(this.multiGPSShepherds, this.oracles);
   this.goodMoves = 0;
-  for (var i = 0; i < this.allShepherds.length; i++) {
-    this.goodMoves += this.allShepherds[i].goodMovement;
+  for (var i = 0; i < recordedShepherds.length; i++) {
+    this.goodMoves += recordedShepherds[i].goodMovement;
   }
   if (this.goodMoves % 50 == 0){
     this.oldMoves = this.goodMoves;
@@ -185,17 +187,17 @@ Environment.prototype.goodMovementTime = function() {
 }
 
 Environment.prototype.theCorrectHeading = function() {
-  this.allShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
-  if(this.allShepherds.length > 0) {
-    return this.allShepherds[0].correctHeading;
+  let recordedShepherds = this.singleGPSShepherds.concat(this.multiGPSShepherds, this.oracles);
+  if(recordedShepherds.length > 0) {
+    return recordedShepherds[0].correctHeading;
   } else {
     return 0;
   }
 }
 
 Environment.prototype.shepCollect = function () {
-  if(this.autoShepherds.length > 0) {
-    return this.autoShepherds[0].collectBool;
+  if(this.singleGPSShepherds.length > 0) {
+    return this.singleGPSShepherds[0].collectBool;
   } else {
     return false;
   }
@@ -228,32 +230,32 @@ Environment.prototype.getOracleSearchArea = function () {
 }
 
 Environment.prototype.shepMove = function () {
-  if(this.autoShepherds.length > 0) {
-    return this.autoShepherds[0].moveBool;
+  if(this.singleGPSShepherds.length > 0) {
+    return this.singleGPSShepherds[0].moveBool;
   } else {
     return false;
   }
 }
 
 Environment.prototype.oShepMove = function () {
-  if(this.oracleShepherds.length > 0) {
-    return this.oracleShepherds[0].isFollowing;
+  if(this.singleOracleShepherds.length > 0) {
+    return this.singleOracleShepherds[0].isFollowing;
   } else {
     return false;
   }
 }
 
 Environment.prototype.oShepCol = function () {
-  if(this.oracleShepherds.length > 0) {
-    return this.oracleShepherds[0].isCollecting;
+  if(this.singleOracleShepherds.length > 0) {
+    return this.singleOracleShepherds[0].isCollecting;
   } else {
     return false;
   }
 }
 
 Environment.prototype.shepAvoidHerd = function () {
-  if(this.autoShepherds.length > 0) {
-    return this.autoShepherds[0].avoidHerdBool;
+  if(this.singleGPSShepherds.length > 0) {
+    return this.singleGPSShepherds[0].avoidHerdBool;
   } else {
     return false;
   }
@@ -296,11 +298,12 @@ Environment.prototype.hitTheGap = function(animal) {
 // ------------ FUNCTIONS TO CLEAR ALL AGENTS/OBJECTS FROM CANVAS ------------
 Environment.prototype.removeAll = function() {
   this.herd.length = 0;
-  this.shepherds.length = 0;
-  this.autoShepherds.length = 0;
+  this.manualShepherds.length = 0;
+  this.singleGPSShepherds.length = 0;
   this.multiGPSShepherds.length = 0;
   this.oracles.length = 0;
-  this.oracleShepherds.length = 0;
+  this.singleOracleShepherds.length = 0;
+  this.multiOracleShepherds.length = 0;
   this.novelObjects.length = 0;
   this.obstacles.length = 0;
   this.accumulatedStress = 0;
@@ -358,41 +361,4 @@ Environment.prototype.displayHerd = function() {
   fill(0);
   stroke(0);
   ellipse(this.herdRight,this.herdBottom, 10, 10);
-}
-
-// ------------ FUNCTIONS TO DRAW SECTORS ------------
-// Currently not used for anything, will be used for oracle drone
-Environment.prototype.sectors = function () {
-
-  stroke(255);
-  fill(0,0,0,0.1);
-  rect(0,0, width/3, height/3);
-  rect(width/3,0, width/3, height/3);
-  rect(width-width/3,0, width/3,height/3);
-  // Middle Sectors
-  rect(0,height/3, width/3, height/3);
-  rect(width/3,height/3, width/3, height/3);
-  rect(width-width/3,height/3, width/3,height/3);
-  // Middle Sectors
-  rect(0,height-height/3, width/3, height/3);
-  rect(width/3,height -height/3, width/3, height/3);
-  rect(width-width/3,height-height/3, width/3,height/3);
-
-  //Sector labels
-  stroke(0,0,255);
-  text("Sector 1", 10, height/3 - 10);
-  text("Sector 2", width/3 + 10, height/3 - 10);
-  text("Sector 3", width-width/3 + 10, height/3 - 10);
-
-  text("Sector 4", 10, height-height/3 - 10);
-  text("Sector 5", width/3 + 10, height - height/3 - 10);
-  text("Sector 6", width-width/3 + 10, height - height/3 - 10);
-
-  text("Sector 7", 10, height - 10);
-  text("Sector 8", width/3 + 10, height - 10);
-  text("Sector 9", width-width/3 + 10, height - 10);
-
-  fill(25,25,25);
-  stroke(0);
-  ellipse(980, 570, 20);
 }

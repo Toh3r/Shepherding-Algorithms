@@ -48,7 +48,11 @@ ManageEnvironment.prototype.createNewEnv = function () {
     for (var i = 0; i < animalNumber; i++) { //Create starting animals in random positions
       x = random(0 ,201);
       y = random(0, 501);
-      var a = new Animal(x, y, animalGoals); // Pass through staring position, position of goal and position of goalZone
+      if (anTypeRadio.value() == 1) {
+        var a = new TameAnimal(x, y, animalGoals);
+      } else if (anTypeRadio.value() == 2) {
+        var a = new FlightyAnimal(x, y, animalGoals);
+      }
       environment.addAnimal(a); // Positions of goal and goalZone used for removalfunction and goal function in animal class
     }
 
@@ -85,7 +89,11 @@ ManageEnvironment.prototype.createNewEnv = function () {
     for (var i = 0; i < animalNumber; i++) { //Create starting animals in random positions
       x = random(201);
       y = random(501);
-      var a = new Animal(x, y, animalGoals);
+      if (anTypeRadio.value() == 1) {
+        var a = new TameAnimal(x, y, animalGoals);
+      } else if (anTypeRadio.value() == 2) {
+        var a = new FlightyAnimal(x, y, animalGoals);
+      }
       environment.addAnimal(a);
     }
 
@@ -143,7 +151,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     for (var i = 0; i < animalNumber; i++) {
       x = random(801);
       y = random(551,751);
-      var a = new Animal(x, y, animalGoals);
+      var a = new TameAnimal(x, y, animalGoals);
       environment.addAnimal(a);
     }
 
@@ -210,7 +218,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     for (var i = 0; i < animalNumber; i++) {   //Create starting animals in random positions
       x = random(100,251);
       y = random(50,351);
-      var a = new Animal(x, y, animalGoals);
+      var a = new TameAnimal(x, y, animalGoals);
       environment.addAnimal(a);
     }
 

@@ -264,7 +264,7 @@ ManageControls.prototype.createControls = function () {
   // -------- START Multi-Drones --------
   multiOracleBtn = createButton('Multi-Oracle');
   multiOracleBtn.parent('multiOracleBtn');
-  multiOracleBtn.mouseClicked(multiDrone);
+  multiOracleBtn.mouseClicked(multiOracle);
 
   // -------- RESET BUTTON --------
   resetBtn = createButton('Reset');
@@ -302,9 +302,8 @@ ManageControls.prototype.createControls = function () {
 
 // Function to update simulation info each frame
 ManageControls.prototype.updateSimInfo = function () {
-  manShep = ((environment.shepherds.length > 0) ? 'True' : 'False');
-  totalUAVs = environment.shepherds.length + environment.autoShepherds.length + environment.oracles.length +
-  environment.oracleShepherds.length + environment.multiGPSShepherds.length;
+  manShep = ((environment.manualShepherds.length > 0) ? 'True' : 'False');
+  totalUAVs = environment.allShepherds.length;
 
   // Destroy all info outputs from previous frame
   animalDisplay.remove();
@@ -438,9 +437,8 @@ ManageControls.prototype.applyControls = function () {
 // Function to create paragrahs to display environment information on front-end
 function updateDisplayInfo () {
   // Variables for UAV information
-  manShep = ((environment.shepherds.length > 0) ? 'True' : 'False');
-  totalUAVs = environment.shepherds.length + environment.autoShepherds.length + environment.oracles.length +
-  environment.oracleShepherds.length + environment.multiGPSShepherds.length;
+  manShep = ((environment.manualShepherds.length > 0) ? 'True' : 'False');
+  totalUAVs = environment.allShepherds.length;
 
   // ---------- CREATE PARAGRAPHS TO DISPLAY INFO ON FRONT-END ----------
   timeSteps = environment.timeSteps();

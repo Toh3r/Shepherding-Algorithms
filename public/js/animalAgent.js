@@ -1,7 +1,7 @@
 // Animal class
 // Set Animal attributes
 class Animal {
-  constructer (x, y, goals) {
+  constructor (x, y, goals) {
     this.acceleration = createVector(0,0); // Starting accelertion
     this.velocity = createVector(random(-1,1),random(-1,1)); // Create starting velocity direction
     this.position = createVector(x,y); // Starting position
@@ -37,8 +37,8 @@ class Animal {
 // ----- ANIMAL UPDATE FUNCTIONS
 
 // Call functions for each animal each time step
-Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds) {
-  this.accumulateMovevmentForces(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds); // Apply forces
+Animal.prototype.run = function(herd, shepherds, novelObjects, obstacles) {
+  this.accumulateMovevmentForces(herd, shepherds, novelObjects, obstacles); // Apply forces
   this.updatePosition(); // Update position based on forces
   this.borders();   // Keep animal in enclosure
   this.render();    // Render animal
@@ -51,6 +51,7 @@ Animal.prototype.run = function(herd, shepherds, novelObjects, autoShepherds, mu
   if(forceCheck.checked() == true) {
     this.renderForces(); // Render force zones
   }
+
 }
 
 // Apply each behavioural rule to each animal
@@ -59,29 +60,28 @@ Animal.prototype.applyForce = function(force) {
 }
 
 // Accumulate a new acceleration each time based on all rules
-Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObjects, autoShepherds, multiGPSShepherds, obstacles, oracleShepherds) {
+Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObjects, obstacles) {
   var sep = this.separate(herd);      // Separation
   var ali = this.align(herd);         // Alignment
   var coh = this.cohesion(herd);      // Cohesion
-  var pre = this.pressure(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds);   // shepherds in pressure zone
-  var fli = this.flightZone(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds); // shepherds in pressure zone
-  var mov = this.move(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds);             // Steer herd
+  var pre = this.pressure(herd, shepherds);   // shepherds in pressure zone
+  var fli = this.flightZone(herd, shepherds); // shepherds in pressure zone
+  var mov = this.move(shepherds);             // Steer herd
   var avo = this.avoid(novelObjects);   // Avoid Novelty
   var bun = this.bunched(herd);         // Bunched
   var obs = this.avoidObstacle(obstacles);
-  var bre = this.breakUp(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds)
+  var bre = this.breakUp(shepherds)
   // var alo = this.alone(herd);
   var moveChance = int(random(1,20));
 
   if (bre == true) {
-    // console.log("Running break")
     this.inFlightZone += 1;
-    mov.mult(1.5);
-    sep.mult(1.2);
-    ali.mult(0.1);
-    coh.mult(0.1);
-    this.maxspeed = 0.5;
-    this.velocity.setMag(0.5);
+    mov.mult(0);
+    sep.mult(0);
+    ali.mult(0);
+    coh.mult(0);
+    this.maxspeed = 0;
+    this.velocity.setMag(0);
   }
 
   // If UAVS in FZ and PZ, disregard UAVS in FZ
@@ -92,53 +92,53 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
   // WHEN SHEPHERD IN FLIGHT ZONE
   if (fli > 0 && bre == false) {
     this.inFlightZone += 1;
-    mov.mult(dSepFliSlider.value());
-    sep.mult(sepFliSlider.value());
-    ali.mult(aliFliSlider.value());
-    coh.mult(cohFliSlider.value());
-    this.maxspeed = fSpeedSlider.value();
-    this.velocity.setMag(fVelSlider.value());
+    mov.mult(0);
+    sep.mult(0);
+    ali.mult(0);
+    coh.mult(0);
+    this.maxspeed = 0;
+    this.velocity.setMag(0);
   }
 
   // WHEN SHEPHERD IN PRESSURE ZONE
-  // if (pre > 0 && bre == false && alo == true) {
+  // if (pre > 0 && bre == false) { // && alo == true
   //   this.maxspeed = 0;
   // } else
-  if (pre > 0 && bre == false) { //  && alo == false
+  if (pre > 0 && bre == false) { // && alo == false
     this.inFlightZone = 0;
     if (bun == false) {
-      this.maxspeed = pSpeedSlider.value();
-      this.velocity.setMag(pVelSlider.value());
-      mov.mult(dSepPreSlider.value());
-      sep.mult(sepPreSlider.value());
-      ali.mult(aliPreSlider.value());
-      coh.mult(cohPreSlider.value());
+      this.maxspeed = 0;
+      this.velocity.setMag(0);
+      mov.mult(0);
+      sep.mult(0);
+      ali.mult(0);
+      coh.mult(0);
     } else if (bun == true) {
       this.maxspeed = this.timeCount / 10 + .1;
-      mov.mult(dSepPreSlider.value());
-      sep.mult(sepPreSlider.value());
-      ali.mult(aliPreSlider.value());
-      coh.mult(cohFliSlider.value());
+      mov.mult(0);
+      sep.mult(0);
+      ali.mult(0);
+      coh.mult(0);
     }
     if (this.oldFli > fli && bun == true) {
       this.timeCount = (Math.round(this.velocity.mag()*10));
       if(dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) > 120) {
         this.speedRed();
       }
-      mov.mult(dSepPreSlider.value());
-      sep.mult(sepPreSlider.value());
-      ali.mult(aliPreSlider.value());
-      coh.mult(cohFliSlider.value());
+      mov.mult(0);
+      sep.mult(0);
+      ali.mult(0);
+      coh.mult(0);
     }
   }
 
   // WHEN SHEPHERDS ARE NOT IN EITHER ZONE
   if (!pre && !fli) {
     this.inFlightZone = 0;
-    sep.mult(sepWanSlider.value());
-    ali.mult(aliWanSlider.value());
-    coh.mult(cohWanSlider.value());
-    this.maxspeed = wSpeedSlider.value();
+    sep.mult(0);
+    ali.mult(0);
+    coh.mult(0);
+    this.maxspeed = 0.1;
     // this.velocity.setMag(wVelSlider.value());
     if (this.oldPre > pre && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) > 120) {
       this.timeCount = Math.round(this.velocity.mag()*10);
@@ -146,29 +146,33 @@ Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObje
     }
     if (this.velocity.mag() < 0.15) {
       if (moveChance == 2) {
-        this.maxspeed = wSpeedSlider.value();
-        this.velocity.setMag(wVelSlider.value());
+        this.maxspeed = 0;
+        this.velocity.setMag(0);
         var wan = this.wander();
-        wan.mult(.1);
+        wan.mult(0);
         this.applyForce(wan);
       } else {
-        this.maxspeed = 0.05;
-        this.velocity.setMag(0.05);
+        this.maxspeed = 0;
+        this.velocity.setMag(0);
       }
     } else if (this.velocity.mag() > 0.15) {
       this.velocity.heading = this.oldheading;
-      sep.mult(sepPreSlider.value());
-      ali.mult(aliPreSlider.value());
-      coh.mult(cohFliSlider.value());
+      sep.mult(0);
+      ali.mult(0);
+      coh.mult(0);
     }
   }
 
   if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 120) {
     var goa = this.goal(herd);            // Seek (Goal area)
-    goa.mult(goalAnimalsSlider.value());
+    goa.mult(0);
     this.timeCount = 4;
   }
-  avo.mult(stressorAnimalsSlider.value());
+
+  if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goals.length-1].x, this.goals[this.goals.length-1].y) < 120) {
+    goa.mult(0);
+  }
+  avo.mult(0);
 
   // Add the force vectors to acceleration
   this.applyForce(mov);
@@ -220,7 +224,7 @@ Animal.prototype.render = function () {
   translate(this.position.x,this.position.y);
   rotate(theta);
   beginShape();
-  ellipse(0,0, 5, 2)
+  ellipse(0,0, 5, 10)
   ellipse(0,-5,5,5)
   endShape(CLOSE);
   pop();
@@ -254,46 +258,45 @@ Animal.prototype.renderZones = function () {
   // Draw flight zone
   fill(0,0,0,0.0)
   stroke(255, 0, 0);
-  ellipse(this.position.x,this.position.y, fliSizeSlider.value() * 2, fliSizeSlider.value() * 2);
-  text("FZ", this.position.x + fliSizeSlider.value(), this.position.y);
-  // text("Zone", this.position.x + fliSizeSlider.value(), this.position.y + 15);
-
+  ellipse(this.position.x,this.position.y, 50 * 2, 50 * 2);
+  text("FZ", this.position.x + 50, this.position.y);
+  // text("Zone", this.position.x + fliSizeSlider.value(), th15
   // Draw pressure zone
   fill(0,0,0,0.0)
   stroke(0, 0, 0);
-  ellipse(this.position.x,this.position.y, preSizeSlider.value() * 2, preSizeSlider.value() * 2);
-  text("PZ", this.position.x + preSizeSlider.value(), this.position.y);
+  ellipse(this.position.x,this.position.y, 200 * 2, 200 * 2);
+  text("PZ", this.position.x + 200, this.position.y);
   // text("Zone", this.position.x + preSizeSlider.value(), this.position.y + 15);
 };
 
 Animal.prototype.renderForces = function () {
   fill(0,0,0,0.0)
   stroke(255, 0, 0);
-  ellipse(this.position.x,this.position.y, sepSizeSlider.value() * 2, sepSizeSlider.value() * 2);
+  ellipse(this.position.x,this.position.y, 15 * 2, 15 * 2);
   fill(0)
   textSize(12);
-  text("Sep", this.position.x + sepSizeSlider.value(), this.position.y);
+  text("Sep", this.position.x + 15, this.position.y);
 
   fill(0,0,0,0.0)
   stroke(255);
-  ellipse(this.position.x,this.position.y, aliSizeSlider.value() * 2, aliSizeSlider.value() * 2);
+  ellipse(this.position.x,this.position.y, 200 * 2, 200 * 2);
   fill(0)
   textSize(12);
-  text("Ali", this.position.x + aliSizeSlider.value(), this.position.y + 15);
+  text("Ali", this.position.x + 200, this.position.y + 15);
 
   fill(0,0,0,0.0)
   stroke(0);
-  ellipse(this.position.x,this.position.y, cohSizeSlider.value() * 2, cohSizeSlider.value() * 2);
+  ellipse(this.position.x,this.position.y, 200 * 2, 200 * 2);
   fill(0)
   textSize(12);
-  text("Coh", this.position.x + cohSizeSlider.value(), this.position.y);
+  text("Coh", this.position.x + 200, this.position.y);
 
   fill(0,0,0,0.0)
   stroke(0, 0, 255);
-  ellipse(this.position.x,this.position.y, dSepSizeSlider.value() * 2, dSepSizeSlider.value() * 2);
+  ellipse(this.position.x,this.position.y, 50 * 2, 50 * 2);
   fill(0)
   textSize(12);
-  text("dSep", this.position.x + dSepSizeSlider.value(), this.position.y);
+  text("dSep", this.position.x + 50, this.position.y);
 
 }
 
@@ -319,7 +322,7 @@ Animal.prototype.borders = function () {
 // Separation
 // Method checks for nearby animals and steers away
 Animal.prototype.separate = function(herd) {
-  var desiredseparation = sepSizeSlider.value();
+  var desiredseparation = 15;
   var steer = createVector(0,0);
   var count = 0;
   // For every animal in the system, check if it's too close
@@ -354,7 +357,7 @@ Animal.prototype.separate = function(herd) {
 // Alignment
 // For every nearby animal in the system, calculate the average velocity
 Animal.prototype.align = function(herd) {
-  var neighbordist = aliSizeSlider.value();
+  var neighbordist = 200;
   var sum = createVector(0,0);
   var count = 0;
   for (var i = 0; i < herd.length; i++) {
@@ -379,7 +382,7 @@ Animal.prototype.align = function(herd) {
 // Cohesion
 // For the average location (i.e. center) of all nearby animals, calculate steering vector towards that location
 Animal.prototype.cohesion = function(herd) {
-  var neighbordist = cohSizeSlider.value();
+  var neighbordist = 200;
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   for (var i = 0; i < herd.length; i++) {
@@ -400,9 +403,9 @@ Animal.prototype.cohesion = function(herd) {
 // ----- ANIMAL BEHAVIOURAL RULES WITH DRONE
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
-Animal.prototype.pressure = function(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds) {
-  var neighbordistMax = preSizeSlider.value();
-  var neighbordistMin = fliSizeSlider.value();
+Animal.prototype.pressure = function(herd, shepherds) {
+  var neighbordistMax = 200;
+  var neighbordistMin = 50;
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   var neighCount = 0;
@@ -411,27 +414,6 @@ Animal.prototype.pressure = function(herd, shepherds, autoShepherds, multiGPSShe
     var d = p5.Vector.dist(this.position,shepherds[i].position);
     if ((d > 0) && (d < neighbordistMax) && (d > neighbordistMin)) {
       sum.add(shepherds[i].position); // Add location
-      count++;
-    }
-  }
-  for (var i = 0; i < autoShepherds.length; i++) {
-    var d = p5.Vector.dist(this.position,autoShepherds[i].position);
-    if ((d > 0) && (d < neighbordistMax) && (d > neighbordistMin)) {
-      sum.add(autoShepherds[i].position); // Add location
-      count++;
-    }
-  }
-  for (var i = 0; i < multiGPSShepherds.length; i++) {
-    var d = p5.Vector.dist(this.position,multiGPSShepherds[i].position);
-    if ((d > 0) && (d < neighbordistMax) && (d > neighbordistMin)) {
-      sum.add(multiGPSShepherds[i].position); // Add location
-      count++;
-    }
-  }
-  for (var i = 0; i < oracleShepherds.length; i++) {
-    var d = p5.Vector.dist(this.position,oracleShepherds[i].position);
-    if ((d > 0) && (d < neighbordistMax) && (d > neighbordistMin)) {
-      sum.add(oracleShepherds[i].position); // Add location
       count++;
     }
   }
@@ -439,8 +421,8 @@ Animal.prototype.pressure = function(herd, shepherds, autoShepherds, multiGPSShe
 }
 
 // When shepherd enters pressure zone, initiate bunching with neighbours
-Animal.prototype.flightZone = function(herd, shepherds, autoShepherds, multiGPSShepherds, oracleShepherds) {
-  var neighbordistMax = fliSizeSlider.value();
+Animal.prototype.flightZone = function(herd, shepherds) {
+  var neighbordistMax = 50;
   var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   var neighCount = 0;
@@ -449,27 +431,6 @@ Animal.prototype.flightZone = function(herd, shepherds, autoShepherds, multiGPSS
     var d = p5.Vector.dist(this.position,shepherds[i].position);
     if ((d > 0) && (d < neighbordistMax)) {
       sum.add(shepherds[i].position); // Add location
-      count++;
-    }
-  }
-  for (var i = 0; i < autoShepherds.length; i++) {
-    var d = p5.Vector.dist(this.position,autoShepherds[i].position);
-    if ((d > 0) && (d < neighbordistMax)) {
-      sum.add(autoShepherds[i].position); // Add location
-      count++;
-    }
-  }
-  for (var i = 0; i < multiGPSShepherds.length; i++) {
-    var d = p5.Vector.dist(this.position,multiGPSShepherds[i].position);
-    if ((d > 0) && (d < neighbordistMax)) {
-      sum.add(multiGPSShepherds[i].position); // Add location
-      count++;
-    }
-  }
-  for (var i = 0; i < oracleShepherds.length; i++) {
-    var d = p5.Vector.dist(this.position,oracleShepherds[i].position);
-    if ((d > 0) && (d < neighbordistMax)) {
-      sum.add(oracleShepherds[i].position); // Add location
       count++;
     }
   }
@@ -510,11 +471,6 @@ Animal.prototype.wander = function() {
     this.wanderAngle += random(-0.05, 0.05);
 
     this.wanderForce = this.wanderCenter.add(displacement);
-    // // this.wanderForce.limit(this.maxForce);
-    // fill(0,0,0,0.1);
-    // stroke(0);
-    // line(this.position.x, this.position.y, this.position.x + this.wanderForce.x + 20, this.position.y + this.wanderForce.y + 20);
-
     this.wanderForce.normalize();
     this.wanderForce.mult(this.maxspeed);
     this.wanderForce.sub(this.velocity);
@@ -525,8 +481,8 @@ Animal.prototype.wander = function() {
 }
 
 // When shepherd enters flight zone, move in opposite direction
-Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, oracleShepherds) {
-  var desiredseparation = dSepSizeSlider.value();
+Animal.prototype.move = function(shepherds) {
+  var desiredseparation = 50;
   var steer = createVector(0,0);
   var count = 0;
   // For every animal in the system, check if it's too close
@@ -536,42 +492,6 @@ Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, or
     if ((d > 0) && (d < desiredseparation)) {
       // Calculate vector pointing away from neighbor
       var diff = p5.Vector.sub(this.position,shepherds[i].position);
-      diff.normalize();
-      diff.div(d);        // Weight by distance
-      steer.add(diff);
-      count++;            // Keep track of how many
-    }
-  }
-  for (var i = 0; i < autoShepherds.length; i++) {
-    var d = p5.Vector.dist(this.position,autoShepherds[i].position);
-    // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
-    if ((d > 0) && (d < desiredseparation)) {
-      // Calculate vector pointing away from neighbor
-      var diff = p5.Vector.sub(this.position,autoShepherds[i].position);
-      diff.normalize();
-      diff.div(d);        // Weight by distance
-      steer.add(diff);
-      count++;            // Keep track of how many
-    }
-  }
-  for (var i = 0; i < multiGPSShepherds.length; i++) {
-    var d = p5.Vector.dist(this.position,multiGPSShepherds[i].position);
-    // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
-    if ((d > 0) && (d < desiredseparation)) {
-      // Calculate vector pointing away from neighbor
-      var diff = p5.Vector.sub(this.position,multiGPSShepherds[i].position);
-      diff.normalize();
-      diff.div(d);        // Weight by distance
-      steer.add(diff);
-      count++;            // Keep track of how many
-    }
-  }
-  for (var i = 0; i < oracleShepherds.length; i++) {
-    var d = p5.Vector.dist(this.position,oracleShepherds[i].position);
-    // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
-    if ((d > 0) && (d < desiredseparation)) {
-      // Calculate vector pointing away from neighbor
-      var diff = p5.Vector.sub(this.position,oracleShepherds[i].position);
       diff.normalize();
       diff.div(d);        // Weight by distance
       steer.add(diff);
@@ -601,7 +521,7 @@ Animal.prototype.move = function(shepherds, autoShepherds, multiGPSShepherds, or
 Animal.prototype.goal = function () {
     var gate = createVector(this.goals[this.goalCounter].x, this.goals[this.goalCounter].y);
     this.checkGoal(gate);
-    if (this.goalCounter == this.goals.length -1 && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 40) {
+    if (dist(this.position.x, this.position.y, this.goals[this.goals.length -1].x, this.goals[this.goals.length -1].y) < 40) {
       console.log("Name of animal leaving: " + this.name);
       environment.hitTheGap(this);
     }
@@ -646,7 +566,7 @@ Animal.prototype.avoid = function (novelObjects) {
   if (count > 0) {
     steer.div(count);
     this.vocalizing = true;
-    this.stressLevel = (this.stressLevel + 0.1);
+    this.stressLevel = (this.stressLevel + 0.01);
   } else {
     this.vocalizing = false;
   }
@@ -657,7 +577,7 @@ Animal.prototype.avoid = function (novelObjects) {
     steer.normalize();
     steer.mult(this.maxspeed);
     steer.sub(this.velocity);
-    steer.limit(0.01);
+    steer.limit(this.maxforce);
   }
   return steer;
 }
@@ -681,7 +601,7 @@ Animal.prototype.speedRed = function() {
         // console.log(self.name + "'s SPEED: " + self.velocity.mag());
         self.timeCount--;
       }
-    }, 3000);
+    }, 4000);
   } else {
     // console.log("ALREADY DECREASING SPEED");
   }
@@ -715,11 +635,10 @@ Animal.prototype.checkGoal = function (g) {
   }
 }
 
-Animal.prototype.breakUp = function (shep, auto, multi, oShep) {
-  var allSheps = shep.concat(auto, multi, oShep);
+Animal.prototype.breakUp = function (shep) {
   var count = 0;
-  for(let i = 0; i < allSheps.length; i++) {
-    if(allSheps[i].position.x > this.left && allSheps[i].position.x < this.right && allSheps[i].position.y > this.top && allSheps[i].position.y < this.bottom) {
+  for(let i = 0; i < shep.length; i++) {
+    if(shep[i].position.x > this.left + 50 && shep[i].position.x < this.right - 50 && shep[i].position.y > this.top + 50 && shep[i].position.y < this.bottom - 50) {
       count ++;
     }
   }
@@ -728,21 +647,5 @@ Animal.prototype.breakUp = function (shep, auto, multi, oShep) {
     return true;
   } else {
     return false;
-  }
-}
-
-Animal.prototype.alone = function (herd) {
-  var neighbordist = 200;
-  var count = 0;
-  for (var i = 0; i < herd.length; i++) {
-    var d = p5.Vector.dist(this.position,herd[i].position);
-    if ((d > 0) && (d < neighbordist)) {
-      count++;
-    }
-  }
-  if (count > 0) {
-    return false;
-  } else {
-    return true;
   }
 }

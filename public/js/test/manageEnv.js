@@ -109,7 +109,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     for (var i = 0; i < numAnimalsSlider.value(); i++) {
       x = random(801);
       y = random(551,751);
-      var a = new Animal(x, y, animalGoals);
+      var a = new TesterAnimal(x, y, animalGoals);
       environment.addAnimal(a);
     }
 
@@ -168,7 +168,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
     for (var i = 0; i < numAnimalsSlider.value(); i++) {   //Create starting animals in random positions
       x = random(100,251);
       y = random(50,351);
-      var a = new Animal(x, y, animalGoals);
+      var a = new TesterAnimal(x, y, animalGoals);
       environment.addAnimal(a);
     }
 
@@ -216,7 +216,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
 function addStuff() {
   var dropSelect = sel.value();
   if (dropSelect == "Add Animal") {
-    environment.addAnimal(new Animal(mouseX, mouseY, animalGoals));
+    environment.addAnimal(new TesterAnimal(mouseX, mouseY, animalGoals));
   }
   if (dropSelect == "Add Shepherd") {
     environment.addShepherd(new Shepherd(mouseX, mouseY));
@@ -273,4 +273,10 @@ function multiDrone() {
   console.log("Well");
   environment.addMultiGPS(new MultiGPSShepherd(shepStartPos, false, 1, shepGoals))
   environment.addMultiGPS(new MultiGPSShepherd(shepStartPos, true, 2, shepGoals))
+}
+
+function multiOracle() {
+  environment.addOracle(new Oracle(shepStartPos, oracleSearch, shepGoals));
+  environment.addMultiOracleShepherd(new MultiOracleShepherd(shepStartPos, false, 1, shepGoals))
+  environment.addMultiOracleShepherd(new MultiOracleShepherd(shepStartPos, true, 2, shepGoals))
 }

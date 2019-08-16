@@ -3,11 +3,11 @@ function Environment() {
   // Initialize arrays to store agents/objects
   this.herd = []; // Stores animal agents
   this.manualShepherds = [];
-  this.autoShepherds = [];
-  this.oracles = [];
-  this.oracleShepherds = [];
+  this.singleGPSShepherds = [];
+  this.singleOracleShepherds = [];
   this.multiGPSShepherds = [];
   this.multiOracleShepherds = [];
+  this.oracles = [];
   this.allShepherds = [];
   this.novelObjects = [];
   this.gates = [];
@@ -39,7 +39,8 @@ function Environment() {
 // ------------ UPDATES EVERY TIMESTEP ------------
 Environment.prototype.run = function() {
   // Create array holding all shepherds to be passed to animal agents
-  this.allShepherds = this.autoShepherds.concat(this.manualShepherds, this.autoShepherds, this.multiGPSShepherds, this.oracleShepherds, this.multiOracleShepherds)
+  this.allShepherds = this.singleGPSShepherds.concat(this.manualShepherds, this.multiGPSShepherds, this.singleOracleShepherds, this.multiOracleShepherds);
+
   for (var i = 0; i < this.herd.length; i++) {
     this.herd[i].run(this.herd, this.allShepherds, this.novelObjects, this.obstacles);  // Passing all arrays to each animal
   }
@@ -56,24 +57,24 @@ Environment.prototype.run = function() {
     this.gates[i].run();
   }
 
-  for(var i = 0; i < this.autoShepherds.length; i++) {
-    this.autoShepherds[i].run(this.herd);
+  for(var i = 0; i < this.singleGPSShepherds.length; i++) {
+    this.singleGPSShepherds[i].run(this.herd);
   }
 
   for(var i = 0; i < this.multiGPSShepherds.length; i++) {
     this.multiGPSShepherds[i].run(this.herd);
   }
 
-  for(var i = 0; i < this.multiOracleShepherds.length; i++) {
-    this.multiOracleShepherds[i].run(this.oracles);
-  }
-
   for(var i = 0; i < this.oracles.length; i++) {
     this.oracles[i].run(this.herd);
   }
 
-  for(var i = 0; i < this.oracleShepherds.length; i++) {
-    this.oracleShepherds[i].run(this.oracles);
+  for(var i = 0; i < this.multiOracleShepherds.length; i++) {
+    this.multiOracleShepherds[i].run(this.oracles);
+  }
+
+  for(var i = 0; i < this.singleOracleShepherds.length; i++) {
+    this.singleOracleShepherds[i].run(this.oracles);
   }
 
   for(var i = 0; i < this.obstacles.length; i++) {
@@ -127,7 +128,7 @@ this.manualShepherds.push(s);
 }
 
 Environment.prototype.addAutoShepherd = function(as) {
-  this.autoShepherds.push(as);
+  this.singleGPSShepherds.push(as);
 }
 
 Environment.prototype.addMultiGPS = function(ms) {
@@ -143,7 +144,7 @@ Environment.prototype.addOracle = function(o) {
 }
 
 Environment.prototype.addOracleShepherd = function(os) {
-  this.oracleShepherds.push(os);
+  this.singleOracleShepherds.push(os);
 }
 
 Environment.prototype.addNovelty = function(n) {
@@ -183,11 +184,11 @@ Environment.prototype.removeGate = function () {
 Environment.prototype.removeAll = function() {
   this.herd.length = 0;
   this.manualShepherds.length = 0;
-  this.autoShepherds.length = 0;
+  this.singleGPSShepherds.length = 0;
   this.multiGPSShepherds.length = 0;
   this.multiOracleShepherds.length = 0;
   this.oracles.length = 0;
-  this.oracleShepherds.length = 0;
+  this.singleOracleShepherds.length = 0;
   this.novelObjects.length = 0;
   this.obstacles.length = 0;
   this.accumulatedStress = 0;
@@ -226,7 +227,7 @@ Environment.prototype.totalStress = function() {
 }
 
 Environment.prototype.timeSteps = function() {
-  let recordedShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
+  let recordedShepherds = this.singleGPSShepherds.concat(this.multiGPSShepherds, this.oracles);
   this.time = 0;
   for (var i = 0; i < recordedShepherds.length; i++) {
     this.time += recordedShepherds[i].timestep;
@@ -240,7 +241,7 @@ Environment.prototype.timeSteps = function() {
 }
 
 Environment.prototype.goodMovementTime = function() {
-  let recordedShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
+  let recordedShepherds = this.singleGPSShepherds.concat(this.multiGPSShepherds, this.oracles);
   this.goodMoves = 0;
   for (var i = 0; i < recordedShepherds.length; i++) {
     this.goodMoves += recordedShepherds[i].goodMovement;
@@ -254,7 +255,7 @@ Environment.prototype.goodMovementTime = function() {
 }
 
 Environment.prototype.theCorrectHeading = function() {
-  let recordedShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracles);
+  let recordedShepherds = this.singleGPSShepherds.concat(this.multiGPSShepherds, this.oracles);
   if(recordedShepherds.length > 0) {
     return recordedShepherds[0].correctHeading;
   } else {
@@ -263,7 +264,7 @@ Environment.prototype.theCorrectHeading = function() {
 }
 
 Environment.prototype.shepCollect = function () {
-  let recordedShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracleShepherds);
+  let recordedShepherds = this.singleGPSShepherds.concat(this.multiGPSShepherds, this.singleOracleShepherds);
   if(recordedShepherds.length > 0) {
     return recordedShepherds[0].collectBool;
   } else {
@@ -298,7 +299,7 @@ Environment.prototype.getOracleSearchArea = function () {
 }
 
 Environment.prototype.shepMove = function () {
-  let recordedShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracleShepherds);
+  let recordedShepherds = this.singleGPSShepherds.concat(this.multiGPSShepherds, this.singleOracleShepherds);
   if(recordedShepherds.length > 0) {
     return recordedShepherds[0].moveBool;
   } else {
@@ -307,23 +308,23 @@ Environment.prototype.shepMove = function () {
 }
 
 Environment.prototype.oShepMove = function () {
-  if(this.oracleShepherds.length > 0) {
-    return this.oracleShepherds[0].isFollowing;
+  if(this.singleOracleShepherds.length > 0) {
+    return this.singleOracleShepherds[0].isFollowing;
   } else {
     return false;
   }
 }
 
 Environment.prototype.oShepCol = function () {
-  if(this.oracleShepherds.length > 0) {
-    return this.oracleShepherds[0].isCollecting;
+  if(this.singleOracleShepherds.length > 0) {
+    return this.singleOracleShepherds[0].isCollecting;
   } else {
     return false;
   }
 }
 
 Environment.prototype.shepAvoidHerd = function () {
-  let recordedShepherds = this.autoShepherds.concat(this.multiGPSShepherds, this.oracleShepherds);
+  let recordedShepherds = this.singleGPSShepherds.concat(this.multiGPSShepherds, this.singleOracleShepherds);
   if(recordedShepherds > 0) {
     return recordedShepherds[0].avoidHerdBool;
   } else {
