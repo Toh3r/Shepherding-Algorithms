@@ -45,11 +45,6 @@ SingleGPSUAV.prototype.run = function(herd) {
     this.timestep++;
   }
 
-  // for(let i = 0; i < this.shepGoals.length; i++) {
-  //   stroke(255,255,0)
-  //   fill(255,255,0)
-  //   ellipse(this.shepGoals[i].x, this.shepGoals[i].y, 20, 20)
-  // }
 }
 
 SingleGPSUAV.prototype.herdAnimals = function (herd) {
@@ -94,21 +89,7 @@ SingleGPSUAV.prototype.collectAnimals = function (herd) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = this.shepGoals[this.goalCounter];
-
-  // Functions to deal with stressor aversion if necessary
-  if (environment.vocalizing() == true && herd.length > 0) {
-    this.avoiding = true;
-    if(this.wait = "false") {
-      this.maxspeed = 0.5;
-    } else {
-      this.maxspeed = 0.5;
-      goal = this.avoidObstacle(center, goal, herd);
-    }
-  } else if (environment.vocalizing() == false && herd.length > 0) {
-    this.wait = false;
-    this.maxspeed = 0.8;
-    this.avoiding = false;
-  }
+  this.maxspeed = 0.8;
 
   var myLine = this.findClosestAnimal(herd, center);
   // Lines to flight zone and pressure zone
@@ -166,16 +147,8 @@ SingleGPSUAV.prototype.advanceCollect = function (herd) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
   var center = createVector(herdX, herdY);          // Centre co-ords of herd
   var goal = this.shepGoals[this.goalCounter];      // Current Goal Point
+  this.maxspeed = 0.8;
 
-  // Functions to deal with stressor avoidance
-  if (environment.vocalizing() == true && herd.length > 0) {
-    this.avoiding = true;
-    this.maxspeed = 0.5;
-    goal = this.avoidObstacle(center, goal, herd); // function to switch target points
-  } else if (environment.vocalizing() == false && herd.length > 0) {
-    this.maxspeed = 0.8;
-    this.avoiding = false;
-  }
 
   // Locate furthest animal from centre of herd
   var furthestPos = 0;
@@ -273,22 +246,25 @@ SingleGPSUAV.prototype.moveAnimals = function (herd) {
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = this.shepGoals[this.goalCounter];
   this.checkGoal(center, goal);
+  this.maxspeed = 0.8;
 
-  if (environment.vocalizing() == true && herd.length > 0) {
-    if (this.oldMovement == 'moving') {
-      this.firstAvoid = true;
-    }
-    this.oldMovement = 'avoiding';
-    this.avoiding = true;
-    goal = this.avoidObstacle(center, goal, herd);
-    this.maxspeed = 0.5;
-  } else if (environment.vocalizing() == false && herd.length > 0) {
-    if(this.avoiding == true) {
-      this.switchingActions = true;
+  if (pathRadio.value() == 1) {
+    if (environment.vocalizing() == true && herd.length > 0) {
+      if (this.oldMovement == 'moving') {
+        this.firstAvoid = true;
+      }
+      this.oldMovement = 'avoiding';
+      this.avoiding = true;
+      goal = this.avoidObstacle(center, goal, herd);
+      this.maxspeed = 0.5;
+    } else if (environment.vocalizing() == false && herd.length > 0) {
+      if(this.avoiding == true) {
+        this.switchingActions = true;
+        this.avoiding = false;
+      }
+      this.maxspeed = 0.8;
       this.avoiding = false;
     }
-    this.maxspeed = 0.8;
-    this.avoiding = false;
   }
 
   var myLine = this.findClosestAnimal(herd, center);

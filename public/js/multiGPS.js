@@ -84,21 +84,8 @@ MultiGPSShepherd.prototype.collectAnimals = function (herd) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = this.shepGoals[this.goalCounter];
+  this.maxspeed = 0.8;
 
-  // Functions to deal with stressor aversion if necessary
-  if (environment.vocalizing() == true && herd.length > 0) {
-    this.avoiding = true;
-    if(this.wait = "false") {
-      this.maxspeed = 0.5;
-    } else {
-      this.maxspeed = 0.5;
-      goal = this.avoidObstacle(center, goal, herd);
-    }
-  } else if (environment.vocalizing() == false && herd.length > 0) {
-    this.wait = false;
-    this.maxspeed = 0.8;
-    this.avoiding = false;
-  }
 
   var myLine = this.findClosestAnimal(herd, center);
   // Lines to flight zone and pressure zone
@@ -160,15 +147,8 @@ MultiGPSShepherd.prototype.advanceCollect = function (herd, uavNum) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = this.shepGoals[this.goalCounter];
-
-if (environment.vocalizing() == true && herd.length > 0) {
-  this.avoiding = true;
-  this.maxspeed = 0.5;
-  goal = this.avoidObstacle(center, goal, herd); // function to switch target points
-} else if (environment.vocalizing() == false && herd.length > 0) {
   this.maxspeed = 0.8;
-  this.avoiding = false;
-}
+
 
 if (Math.abs(this.herdLeft - this.herdRight) > Math.abs(this.herdTop - this.herdBottom)) {
   if (this.uavNum == 2) { // --------- change
@@ -301,22 +281,25 @@ MultiGPSShepherd.prototype.moveAnimals = function (herd) {
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = this.shepGoals[this.goalCounter];
   this.checkGoal(center, goal);
+  this.maxspeed = 0.8;
 
-  if (environment.vocalizing() == true && herd.length > 0) {
-    if (this.oldMovement == 'moving') {
-      this.firstAvoid = true;
-    }
-    this.oldMovement = 'avoiding';
-    this.avoiding = true;
-    goal = this.avoidObstacle(center, goal, herd);
-    this.maxspeed = 0.5;
-  } else if (environment.vocalizing() == false && herd.length > 0) {
-    if(this.avoiding == true) {
-      this.switchingActions = true;
+  if (pathRadio.value() == 1) {
+    if (environment.vocalizing() == true && herd.length > 0) {
+      if (this.oldMovement == 'moving') {
+        this.firstAvoid = true;
+      }
+      this.oldMovement = 'avoiding';
+      this.avoiding = true;
+      goal = this.avoidObstacle(center, goal, herd);
+      this.maxspeed = 0.5;
+    } else if (environment.vocalizing() == false && herd.length > 0) {
+      if(this.avoiding == true) {
+        this.switchingActions = true;
+        this.avoiding = false;
+      }
+      this.maxspeed = 0.8;
       this.avoiding = false;
     }
-    this.maxspeed = 0.8;
-    this.avoiding = false;
   }
 
   var myLine = this.findClosestAnimal(herd, center);

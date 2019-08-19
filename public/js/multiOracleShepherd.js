@@ -126,21 +126,8 @@ MultiOracleShepherd.prototype.collectAnimals = function (animals) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = this.shepGoals[this.goalCounter];
+  this.maxspeed = 0.8;
 
-  // Functions to deal with stressor aversion if necessary
-  if (environment.vocalizing() == true && animals.length > 0) {
-    this.avoiding = true;
-    if(this.wait = "false") {
-      this.maxspeed = 0.5;
-    } else {
-      this.maxspeed = 0.5;
-      goal = this.avoidObstacle(center, goal, animals);
-    }
-  } else if (environment.vocalizing() == false && animals.length > 0) {
-    this.wait = false;
-    this.maxspeed = 0.8;
-    this.avoiding = false;
-  }
 
   var myLine = this.findClosestAnimal(animals, center);
   // Lines to flight zone and pressure zone
@@ -198,16 +185,7 @@ MultiOracleShepherd.prototype.advanceCollect = function (animals, oracle) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = this.shepGoals[this.goalCounter]; // Location of exit
-
-  // Functions to deal with stressor avoidance
-  if (environment.vocalizing() == true && animals.length > 0) {
-    this.avoiding = true;
-    this.maxspeed = 0.5;
-    goal = this.avoidObstacle(center, goal, animals); // function to switch target points
-  } else if (environment.vocalizing() == false && animals.length > 0) {
-    this.maxspeed = 0.8;
-    this.avoiding = false;
-  }
+  this.maxspeed = 0.8;
 
   if (Math.abs(this.herdLeft - this.herdRight) > Math.abs(this.herdTop - this.herdBottom)) { // --------- change
       var furthestPos1 = 0;
@@ -325,22 +303,25 @@ MultiOracleShepherd.prototype.moveAnimals = function (animals) {
   var center = createVector(herdX, herdY); // Centre co-ords of herd
   var goal = this.shepGoals[this.goalCounter];
   this.checkGoal(center, goal);
+  this.maxspeed = 0.8;
 
-  if (environment.vocalizing() == true && animals.length > 0) {
-  if (this.oldMovement == 'moving') {
-    this.firstAvoid = true;
-  }
-  this.oldMovement = 'avoiding';
-  this.avoiding = true;
-  goal = this.avoidObstacle(center, goal, animals);
-  this.maxspeed = 0.5;
-  } else if (environment.vocalizing() == false && animals.length > 0) {
-    if(this.avoiding == true) {
-      this.switchingActions = true;
+  if (pathRadio.value() == 1) {
+    if (environment.vocalizing() == true && animals.length > 0) {
+    if (this.oldMovement == 'moving') {
+      this.firstAvoid = true;
+    }
+    this.oldMovement = 'avoiding';
+    this.avoiding = true;
+    goal = this.avoidObstacle(center, goal, animals);
+    this.maxspeed = 0.5;
+    } else if (environment.vocalizing() == false && animals.length > 0) {
+      if(this.avoiding == true) {
+        this.switchingActions = true;
+        this.avoiding = false;
+      }
+      this.maxspeed = 0.8;
       this.avoiding = false;
     }
-    this.maxspeed = 0.8;
-    this.avoiding = false;
   }
 
   var myLine = this.findClosestAnimal(animals, center);

@@ -129,16 +129,6 @@ OracleShepherd.prototype.advanceCollect = function (animals, oracle) {
   var goal = this.shepGoals[this.goalCounter]; // Location of exit
   this.maxspeed = 0.8;
 
-  // // Functions to deal with stressor avoidance
-  // if (environment.vocalizing() == true && animals.length > 0) {
-  //   this.avoiding = true;
-  //   this.maxspeed = 0.5;
-  //   goal = this.avoidObstacle(center, goal, animals); // function to switch target points
-  // } else if (environment.vocalizing() == false && animals.length > 0) {
-  //   this.maxspeed = 0.8;
-  //   this.avoiding = false;
-  // }
-
   if (Math.abs(this.herdLeft - this.herdRight) > Math.abs(this.herdTop - this.herdBottom)) {
     var furthestPos1 = 0;
     for (var i = 0; i < animals.length; i++) {
@@ -266,22 +256,24 @@ OracleShepherd.prototype.moveAnimals = function (animals) {
   this.checkGoal(center, goal);
   this.maxspeed = 0.8;
 
-  // if (environment.vocalizing() == true && animals.length > 0) {
-  // if (this.oldMovement == 'moving') {
-  //   this.firstAvoid = true;
-  // }
-  // this.oldMovement = 'avoiding';
-  // this.avoiding = true;
-  // goal = this.avoidObstacle(center, goal, animals);
-  // this.maxspeed = 0.5;
-  // } else if (environment.vocalizing() == false && animals.length > 0) {
-  //   if(this.avoiding == true) {
-  //     this.switchingActions = true;
-  //     this.avoiding = false;
-  //   }
-  //   this.maxspeed = 0.8;
-  //   this.avoiding = false;
-  // }
+  if (pathRadio.value() == 1) {
+    if (environment.vocalizing() == true && animals.length > 0) {
+    if (this.oldMovement == 'moving') {
+      this.firstAvoid = true;
+    }
+    this.oldMovement = 'avoiding';
+    this.avoiding = true;
+    goal = this.avoidObstacle(center, goal, animals);
+    this.maxspeed = 0.5;
+    } else if (environment.vocalizing() == false && animals.length > 0) {
+      if(this.avoiding == true) {
+        this.switchingActions = true;
+        this.avoiding = false;
+      }
+      this.maxspeed = 0.8;
+      this.avoiding = false;
+    }
+  }
 
   var myLine = this.findClosestAnimal(animals, center);
   if (myLine < 20) {
