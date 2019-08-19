@@ -88,6 +88,7 @@ Oracle.prototype.runTheShow = function (herd) { // Function which determines act
   } else if (this.firstRun == false && bun == false && allInView == false || this.start.dir != "start") { // Once initial search finishes,if animals are not bunched
     this.following = false;
     // this.maxspeed = oracleSpeedSlider.value();
+    console.log("keepSearcing running")
     var keep = this.keepSearching(herd);               // calculate new search based on their positions
     this.applyForce(keep);                        // and keep searching
   }
@@ -321,8 +322,6 @@ Oracle.prototype.calculateTarget = function (minSec, maxSec) {
 Oracle.prototype.saveAnimalPos = function (herd) {
   if(this.following == true) {
     this.animals.length = 0;
-    // fill(255, 0, 0, 100)
-    // rect(this.position.x - this.secWidth/2, this.position.y - this.secHeight/2, this.secWidth, this.secHeight)
   }
   var viewWidth = this.secWidth/2;
   var viewHieght = this.secHeight/2;
@@ -350,7 +349,6 @@ Oracle.prototype.saveAnimalPos = function (herd) {
       this.animals.push(parsedAnimal); // Add to animals array which is used by shepherd
       count++;
     } else if (this.targetNum >= this.numSectors){
-      // this.oldAnimals = this.animals;
     }
   }
 }
@@ -371,7 +369,7 @@ Oracle.prototype.bunched = function (herd) { // Function to determine if herd is
 }
 
 Oracle.prototype.keepSearching = function (herd) {
-
+  console.log("Keep searching ")
   if (this.start.diffStart == true){
     this.targetNum = this.numSectors;
   }
