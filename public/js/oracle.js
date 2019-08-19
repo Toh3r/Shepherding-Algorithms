@@ -380,6 +380,7 @@ Oracle.prototype.keepSearching = function (herd) {
       this.lCol = this.start.startSec.x;
       this.rCol = this.start.endSec.x;
       this.start.startSwitcher = false;
+      console.log("startswitcher false")
     } else  {
       this.start.diffStart = false;
       this.bRow = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
@@ -395,6 +396,7 @@ Oracle.prototype.keepSearching = function (herd) {
     }
 
     if (this.animals.length < herd.length && this.start.startSwitcher == false) {
+      console.log("Adding columns")
       if (this.lCol >= 2) {
         this.lCol = this.lCol - 1;
       }
