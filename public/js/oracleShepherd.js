@@ -213,6 +213,7 @@ OracleShepherd.prototype.advanceCollect = function (animals, oracle) {
  if (this.movingUp == false) {
    var target = createVector(fzp10.x,fzp10.y);
    this.targetInBounds(target);
+   this.targetInHerd(target);
    this.outOfHerd(target);
    fill(255,255,0);
    stroke(0)
@@ -234,6 +235,7 @@ OracleShepherd.prototype.advanceCollect = function (animals, oracle) {
  } else if (this.movingUp == true) {
    var target = createVector(fzp20.x,fzp20.y);
    this.targetInBounds(target);
+   this.targetInHerd(target);
    this.outOfHerd(target);
    fill(255,255,0);
    stroke(0)
@@ -271,7 +273,6 @@ OracleShepherd.prototype.moveAnimals = function (animals) {
   goal = this.avoidObstacle(center, goal, animals);
   this.maxspeed = 0.5;
   } else if (environment.vocalizing() == false && animals.length > 0) {
-    this.oldMovement = 'moving'
     if(this.avoiding == true) {
       this.switchingActions = true;
       this.avoiding = false;
@@ -308,10 +309,9 @@ OracleShepherd.prototype.moveAnimals = function (animals) {
   avgAnimalSpeed = this.checkAnimalSpeeds(animals);
 
   this.correctHeading = this.getGoodHeading(center, goal);
-  if (environment.avgSpeed() > 0.20 && Math.abs(this.correctHeading - herdHeading) < 0.50) {
+  if (environment.avgSpeed() > 0.30 && environment.avgSpeed() < 0.50 && Math.abs(this.correctHeading - herdHeading) < 0.50) {
     this.goodMovement += 1;
   }
-
   if(this.firstAvoid == true) {
   console.log("First Avoid true")
   if (dist(fzp1.x, fzp1.y, this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y) > dist(fzp2.x, fzp2.y, this.shepGoals[this.goalCounter].x, this.shepGoals[this.goalCounter].y)) {
@@ -334,6 +334,11 @@ if(this.switchingActions == true) {
   }
 }
 
+let slo = this.slowForGoal(center, goal);
+if (slo == true) {
+  this.maxspeed = 0.4;
+}
+
 let statues = this.checkForStatues(animals, center);
 
   if (this.movingUp == false) {
@@ -342,6 +347,9 @@ let statues = this.checkForStatues(animals, center);
     } else {
       var target = createVector(pzp1.x,pzp1.y);
     }
+    if (statues == true) {
+      var target = createVector(this.nudge.x, this.nudge.y);
+    }
     this.targetInBounds(target);
     if (this.oldMovement != "moving") {
       this.outOfHerd(target);
@@ -355,6 +363,7 @@ let statues = this.checkForStatues(animals, center);
       this.movingUp = !this.movingUp;
       this.firstAvoid = false;
       this.switchingActions = false;
+      this.oldMovement = 'moving';
     }
     return steer;
   } else if (this.movingUp == true) {
@@ -363,6 +372,9 @@ let statues = this.checkForStatues(animals, center);
     } else {
       var target = createVector(pzp2.x,pzp2.y);
     }
+    if (statues == true) {
+      var target = createVector(this.nudge.x, this.nudge.y);
+    }
     this.targetInBounds(target);
     if (this.oldMovement != "moving") {
       this.outOfHerd(target);
@@ -376,19 +388,13 @@ let statues = this.checkForStatues(animals, center);
       this.movingUp = !this.movingUp;
       this.firstAvoid = false;
       this.switchingActions = false;
+      this.oldMovement = 'moving';
+
     }
     return steer;
   }
 }
 
-OracleShepherd.prototype.checkHeading = function (animals) {
-  totalHeading = 0;
-  for (var i = 0; i < animals.length; i++) {
-    totalHeading += animals[i].heading;
-  }
-  averageHeading = totalHeading/ animals.length;
-  return averageHeading;
-}
 OracleShepherd.prototype.checkAnimalSpeeds = function (animals) {
   totalSpeed = 0;
   for (var i = 0; i < animals.length; i++) {
@@ -424,14 +430,24 @@ OracleShepherd.prototype.saveOldPositions = function (animals) {
   }
 }
 
+OracleShepherd.prototype.checkHeading = function (animals) {
+  totalHeading = 0;
+  for (var i = 0; i < animals.length; i++) {
+    totalHeading += animals[i].heading;
+  }
+  averageHeading = totalHeading/ animals.length;
+  return averageHeading;
+}
+
 OracleShepherd.prototype.checkForStatues = function (animals, center) {
   let count = 0;
-  let n = this.findClosestAnimal(animals, center);
+  let n = this.findClosestAnimalToUAV(animals, center);
   for (var i = 0; i < animals.length; i++) {
-    if(animals[i].speed < 1.1 && dist(this.position.x, this.position.y, animals[i].position.x, animals[i].position.y) == n) {
+    if(animals[i].speed < 0.15 && dist(this.position.x, this.position.y, animals[i].position.x, animals[i].position.y) == n) {
       count++;
       fill(30,30,30,30)
       ellipse(animals[i].position.x, animals[i].position.y, 30, 30)
+      this.nudge = createVector(animals[i].position.x, animals[i].position.y);
     }
   }
   if (count > 0) {

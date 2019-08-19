@@ -92,10 +92,6 @@ TameAnimal.prototype.accumulateMovevmentForces = function(herd, shepherds, novel
     this.velocity.setMag(0.5);
   }
 
-  // WHEN SHEPHERD IN PRESSURE ZONE
-  // if (pre > 0 && bre == false) { // && alo == true
-  //   this.maxspeed = 0;
-  // } else
   if (pre > 0 && bre == false) { // && alo == false
     this.inFlightZone = 0;
     if (bun == false) {
@@ -117,10 +113,6 @@ TameAnimal.prototype.accumulateMovevmentForces = function(herd, shepherds, novel
       if(dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) > 120) {
         this.speedRed();
       }
-      mov.mult(0.1);
-      sep.mult(1.2);
-      ali.mult(0.7);
-      coh.mult(0.8);
     }
   }
 
@@ -157,13 +149,13 @@ TameAnimal.prototype.accumulateMovevmentForces = function(herd, shepherds, novel
 
   if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 120) {
     var goa = this.goal(herd);            // Seek (Goal area)
-    goa.mult(0.5);
+    goa.mult(0.8);
     this.timeCount = 4;
   }
 
-  if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goals.length-1].x, this.goals[this.goals.length-1].y) < 120) {
-    goa.mult(0.8);
-  }
+  // if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goals.length-1].x, this.goals[this.goals.length-1].y) < 120) {
+  //   goa.mult(0.8);
+  // }
   avo.mult(1.3);
 
   // Add the force vectors to acceleration

@@ -83,10 +83,10 @@ FlightyAnimal.prototype.accumulateMovevmentForces = function(herd, shepherds, no
   // WHEN SHEPHERD IN FLIGHT ZONE
   if (fli > 0 && bre == false) {
     this.inFlightZone += 1;
-    mov.mult(1.5);
+    mov.mult(2);
     sep.mult(1.5);
-    ali.mult(0.5);
-    coh.mult(0.8);
+    ali.mult(0.4);
+    coh.mult(0.4);
     this.maxspeed = 0.6;
     this.velocity.setMag(0.6);
   }
@@ -96,26 +96,22 @@ FlightyAnimal.prototype.accumulateMovevmentForces = function(herd, shepherds, no
     if (bun == false) {
       this.maxspeed = 0.5;
       this.velocity.setMag(0.5);
-      mov.mult(0.5);
+      mov.mult(0.2);
       sep.mult(1);
       ali.mult(0.4);
-      coh.mult(0.9);
+      coh.mult(0.6);
     } else if (bun == true) {
       this.maxspeed = this.timeCount / 10 + .1;
-      mov.mult(0.1);
+      mov.mult(2);
       sep.mult(1.5);
-      ali.mult(0.7);
-      coh.mult(0.8);
+      ali.mult(0.4);
+      coh.mult(0.4);
     }
     if (this.oldFli > fli && bun == true) {
       this.timeCount = (Math.round(this.velocity.mag()*10));
       if(dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) > 120) {
         this.speedRed();
       }
-      mov.mult(0.1);
-      sep.mult(1.2);
-      ali.mult(0.7);
-      coh.mult(0.8);
     }
   }
 
@@ -125,7 +121,7 @@ FlightyAnimal.prototype.accumulateMovevmentForces = function(herd, shepherds, no
     sep.mult(4);
     ali.mult(0);
     coh.mult(0);
-    this.maxspeed = 0.05;
+    this.maxspeed = 0.03;
     // this.velocity.setMag(wVelSlider.value());
     if (this.oldPre > pre && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) > 120) {
       this.timeCount = Math.round(this.velocity.mag()*10);
@@ -139,8 +135,8 @@ FlightyAnimal.prototype.accumulateMovevmentForces = function(herd, shepherds, no
         wan.mult(0.1);
         this.applyForce(wan);
       } else {
-        this.maxspeed = 0.05;
-        this.velocity.setMag(0.05);
+        this.maxspeed = 0.03;
+        this.velocity.setMag(0.03);
       }
     } else if (this.velocity.mag() > 0.15) {
       this.velocity.heading = this.oldheading;
@@ -156,10 +152,10 @@ FlightyAnimal.prototype.accumulateMovevmentForces = function(herd, shepherds, no
     this.timeCount = 4;
   }
 
-  if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goals.length-1].x, this.goals[this.goals.length-1].y) < 120) {
-    goa.mult(0.8);
-  }
-  avo.mult(1);
+  // if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goals.length-1].x, this.goals[this.goals.length-1].y) < 120) {
+  //   goa.mult(0.8);
+  // }
+  avo.mult(1.3);
 
   // Add the force vectors to acceleration
   this.applyForce(mov);

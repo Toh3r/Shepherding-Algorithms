@@ -124,10 +124,8 @@ MultiGPSShepherd.prototype.collectAnimals = function (herd) {
    fill(255,0,0);
    ellipse(target.x, target.y, 20,20)
    this.targetInBounds(target);
-   this.outOfHerd(target);
-   // this.targetInBounds(target);
    this.targetInHerd(target);
-   // this.targetInBounds(target);
+   this.outOfHerd(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
@@ -140,10 +138,8 @@ MultiGPSShepherd.prototype.collectAnimals = function (herd) {
  } else if (this.movingUp == true) {
    var target = createVector(pzp2.x,pzp2.y);
    this.targetInBounds(target);
-   this.outOfHerd(target);
-   // this.targetInBounds(target);
    this.targetInHerd(target);
-   // this.targetInBounds(target);
+   this.outOfHerd(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
@@ -315,7 +311,6 @@ MultiGPSShepherd.prototype.moveAnimals = function (herd) {
     goal = this.avoidObstacle(center, goal, herd);
     this.maxspeed = 0.5;
   } else if (environment.vocalizing() == false && herd.length > 0) {
-    this.oldMovement = 'moving'
     if(this.avoiding == true) {
       this.switchingActions = true;
       this.avoiding = false;
@@ -353,7 +348,7 @@ MultiGPSShepherd.prototype.moveAnimals = function (herd) {
 
   herdHeading = this.checkHeading(herd);
   this.correctHeading = this.getGoodHeading(center, goal);
-  if (environment.avgSpeed() > 0.35 && Math.abs(this.correctHeading - herdHeading) < 0.50) {
+  if (environment.avgSpeed() > 0.30 && environment.avgSpeed() < 0.50 && Math.abs(this.correctHeading - herdHeading) < 0.50) {
     this.goodMovement += 1;
   }
 
@@ -379,6 +374,11 @@ if(this.switchingActions == true) {
   }
 }
 
+let slo = this.slowForGoal(center, goal);
+if (slo == true) {
+  this.maxspeed = 0.4;
+}
+
   let statues = this.checkForStatues(herd, center);
   if (this.movingUp == false) {
     if (this.uavNum == 2) {
@@ -394,12 +394,10 @@ if(this.switchingActions == true) {
         var target = createVector(cppz.x,cppz.y);
       }
     }
-
-    // console.log("target: ", target)
+    if (statues == true) {
+      var target = createVector(this.nudge.x, this.nudge.y);
+    }
     this.targetInBounds(target);
-
-    fill(255,0,0);
-    ellipse(target.x, target.y, 20,20)
     if (this.oldMovement != "moving") {
       this.outOfHerd(target);
     }
@@ -412,6 +410,7 @@ if(this.switchingActions == true) {
       this.movingUp = !this.movingUp;
       this.firstAvoid = false;
       this.switchingActions = false;
+      this.oldMovement = 'moving';
     }
     return steer;
   } else if (this.movingUp == true) {
@@ -428,9 +427,10 @@ if(this.switchingActions == true) {
         var target = createVector(pzp2.x,pzp2.y);
       }
     }
-    // console.log("target: ", target)
+    if (statues == true) {
+      var target = createVector(this.nudge.x, this.nudge.y);
+    }
     this.targetInBounds(target);
-    // ellipse(target.x, target.y, 20,20)
     if (this.oldMovement != "moving") {
       this.outOfHerd(target);
     }
@@ -443,6 +443,8 @@ if(this.switchingActions == true) {
       this.movingUp = !this.movingUp;
       this.firstAvoid = false;
       this.switchingActions = false;
+      this.oldMovement = 'moving';
+
     }
     return steer;
   }
@@ -457,34 +459,18 @@ MultiGPSShepherd.prototype.checkHeading = function (herd) {
   return averageHeading;
 }
 
-MultiGPSShepherd.prototype.getGoodHeading = function (hc, g) {
-
-  let v0 = createVector(hc.x, hc.y);
-  let v1 = createVector(g.x - hc.x, g.y - hc.y);
-
-  let myHeading = v1.heading();
-
-  noStroke();
-  text(
-   'vector heading: ' +
-     myHeading.toFixed(2) +
-     ' radians',50,50,90,50);
-
-  return myHeading;
-}
-
 MultiGPSShepherd.prototype.checkForStatues = function (herd, center) {
   let count = 0;
-  let n = this.findClosestAnimal(herd, center);
+  let n = this.findClosestAnimalToUAV(herd, center);
   for (var i = 0; i < herd.length; i++) {
-    if(herd[i].velocity.mag() < 1.1 && dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y) == n) {
+    if(herd[i].velocity.mag() < 0.15 && dist(this.position.x, this.position.y, herd[i].position.x, herd[i].position.y) == n) {
       count++;
       fill(30,30,30,30)
       ellipse(herd[i].position.x, herd[i].position.y, 30, 30)
+      this.nudge = createVector(herd[i].position.x, herd[i].position.y);
     }
   }
   if (count > 0) {
-    console.log("I run")
     return true;
   } else {
     return false;

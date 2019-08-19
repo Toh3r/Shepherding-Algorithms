@@ -59,135 +59,6 @@ Animal.prototype.applyForce = function(force) {
   this.acceleration.add(force);
 }
 
-// Accumulate a new acceleration each time based on all rules
-Animal.prototype.accumulateMovevmentForces = function(herd, shepherds, novelObjects, obstacles) {
-  var sep = this.separate(herd);      // Separation
-  var ali = this.align(herd);         // Alignment
-  var coh = this.cohesion(herd);      // Cohesion
-  var pre = this.pressure(herd, shepherds);   // shepherds in pressure zone
-  var fli = this.flightZone(herd, shepherds); // shepherds in pressure zone
-  var mov = this.move(shepherds);             // Steer herd
-  var avo = this.avoid(novelObjects);   // Avoid Novelty
-  var bun = this.bunched(herd);         // Bunched
-  var obs = this.avoidObstacle(obstacles);
-  var bre = this.breakUp(shepherds)
-  // var alo = this.alone(herd);
-  var moveChance = int(random(1,20));
-
-  if (bre == true) {
-    this.inFlightZone += 1;
-    mov.mult(0);
-    sep.mult(0);
-    ali.mult(0);
-    coh.mult(0);
-    this.maxspeed = 0;
-    this.velocity.setMag(0);
-  }
-
-  // If UAVS in FZ and PZ, disregard UAVS in FZ
-  if (fli > 0 && pre > 0) {
-    pre = 0;
-  }
-
-  // WHEN SHEPHERD IN FLIGHT ZONE
-  if (fli > 0 && bre == false) {
-    this.inFlightZone += 1;
-    mov.mult(0);
-    sep.mult(0);
-    ali.mult(0);
-    coh.mult(0);
-    this.maxspeed = 0;
-    this.velocity.setMag(0);
-  }
-
-  // WHEN SHEPHERD IN PRESSURE ZONE
-  // if (pre > 0 && bre == false) { // && alo == true
-  //   this.maxspeed = 0;
-  // } else
-  if (pre > 0 && bre == false) { // && alo == false
-    this.inFlightZone = 0;
-    if (bun == false) {
-      this.maxspeed = 0;
-      this.velocity.setMag(0);
-      mov.mult(0);
-      sep.mult(0);
-      ali.mult(0);
-      coh.mult(0);
-    } else if (bun == true) {
-      this.maxspeed = this.timeCount / 10 + .1;
-      mov.mult(0);
-      sep.mult(0);
-      ali.mult(0);
-      coh.mult(0);
-    }
-    if (this.oldFli > fli && bun == true) {
-      this.timeCount = (Math.round(this.velocity.mag()*10));
-      if(dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) > 120) {
-        this.speedRed();
-      }
-      mov.mult(0);
-      sep.mult(0);
-      ali.mult(0);
-      coh.mult(0);
-    }
-  }
-
-  // WHEN SHEPHERDS ARE NOT IN EITHER ZONE
-  if (!pre && !fli) {
-    this.inFlightZone = 0;
-    sep.mult(0);
-    ali.mult(0);
-    coh.mult(0);
-    this.maxspeed = 0.1;
-    // this.velocity.setMag(wVelSlider.value());
-    if (this.oldPre > pre && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) > 120) {
-      this.timeCount = Math.round(this.velocity.mag()*10);
-      this.speedRed();
-    }
-    if (this.velocity.mag() < 0.15) {
-      if (moveChance == 2) {
-        this.maxspeed = 0;
-        this.velocity.setMag(0);
-        var wan = this.wander();
-        wan.mult(0);
-        this.applyForce(wan);
-      } else {
-        this.maxspeed = 0;
-        this.velocity.setMag(0);
-      }
-    } else if (this.velocity.mag() > 0.15) {
-      this.velocity.heading = this.oldheading;
-      sep.mult(0);
-      ali.mult(0);
-      coh.mult(0);
-    }
-  }
-
-  if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goalCounter].x, this.goals[this.goalCounter].y) < 120) {
-    var goa = this.goal(herd);            // Seek (Goal area)
-    goa.mult(0);
-    this.timeCount = 4;
-  }
-
-  if(bun == true && dist(this.position.x, this.position.y, this.goals[this.goals.length-1].x, this.goals[this.goals.length-1].y) < 120) {
-    goa.mult(0);
-  }
-  avo.mult(0);
-
-  // Add the force vectors to acceleration
-  this.applyForce(mov);
-  this.applyForce(sep);
-  this.applyForce(ali);
-  this.applyForce(goa);
-  this.applyForce(avo);
-  this.applyForce(coh);
-  this.applyForce(obs);
-
-  this.oldFli = fli;
-  this.oldPre = pre; // Store old array values (Used for comparison in following frame)
-  this.oldheading = this.velocity.heading;
-}
-
 // Method to update location
 Animal.prototype.updatePosition = function() {
   // Update velocity
@@ -643,7 +514,7 @@ Animal.prototype.breakUp = function (shep) {
     }
   }
   if (count > 0) {
-    this.stressLevel += 0.1;
+    this.stressLevel += 0.01;
     return true;
   } else {
     return false;

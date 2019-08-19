@@ -1,7 +1,6 @@
 // Create Base UAV Shepherd
 class UAVAgent {
   constructor (startPos, shepGoals) {
-    this.position = createVector(startPos.x, startPos.y);
     this.shepGoals = shepGoals;
   }
 }
@@ -92,7 +91,7 @@ UAVAgent.prototype.bunched = function (herd) {
   }
   // Return if herd is bunched or not
   herdDist = dist(this.herdLeft, this.herdTop, this.herdRight, this.herdBottom);
-  if (herdDist < 250) {
+  if (herdDist < 300) {
     return true;
   } else {
     return false;
@@ -122,19 +121,19 @@ UAVAgent.prototype.targetInHerd = function (target) {
   }
   if (target.x < this.topLeft.x - 100) {
     target.x = this.topLeft - 20;
-    // console.log("tl.x running")
+    console.log("tl.x running")
   }
   if (target.y < this.topLeft.y - 100) {
     target.y = this.topLeft.y - 20;
-    // console.log("tl.y running");
+    console.log("tl.y running");
   }
   if (target.x > this.topRight.x + 100) {
     target.x = this.topRight.x + 20;
-    // console.log("tr.x running");
+    console.log("tr.x running");
   }
   if (target.y > this.bottomRight.y + 100) {
     target.y = this.bottomRight.y + 20;
-    // console.log("br.y running");
+    console.log("br.y running");
   }
   return target;
 }
@@ -145,39 +144,39 @@ UAVAgent.prototype.outOfHerd = function (target) { //In herd
   if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y && this.position.y < this.bottomLeft.y) {
     stroke(66, 66, 244); // Around herd
     fill(255,30,30,100);
-    quad(this.topLeft.x, this.topLeft.y, this.topRight.x, this.topRight.y, this.bottomRight.x, this.bottomRight.y, this.bottomLeft.x, this.bottomLeft.y);
+    // quad(this.topLeft.x, this.topLeft.y, this.topRight.x, this.topRight.y, this.bottomRight.x, this.bottomRight.y, this.bottomLeft.x, this.bottomLeft.y);
     this.redAlert(target);
   } else if (this.position.x > this.topLeft.x && this.position.x < this.topRight.x && this.position.y > this.topLeft.y - 100 && this.position.y < this.topLeft.y) { // top
     // Top
-    quad(this.topLeft.x, this.topLeft.y - 100, this.topRight.x, this.topRight.y - 100, this.topRight.x, this.topRight.y , this.topLeft.x, this.topLeft.y)
+    // quad(this.topLeft.x, this.topLeft.y - 100, this.topRight.x, this.topRight.y - 100, this.topRight.x, this.topRight.y , this.topLeft.x, this.topLeft.y)
     this.avoidHerdTop(target, this.sec5, this.sec6, this.sec7, this.sec8);
   } else if (this.position.x > this.topRight.x && this.position.x < this.topRight.x + 100 && this.position.y > this.topRight.y && this.position.y < this.bottomRight.y) { //Right
     // Right
-    quad(this.topRight.x, this.topRight.y, this.topRight.x + 100, this.topRight.y, this.bottomRight.x + 100, this.bottomRight.y , this.bottomRight.x, this.bottomRight.y)
+    // quad(this.topRight.x, this.topRight.y, this.topRight.x + 100, this.topRight.y, this.bottomRight.x + 100, this.bottomRight.y , this.bottomRight.x, this.bottomRight.y)
     this.avoidHerdRight(target, this.sec6, this.sec7, this.sec8, this.sec5);
   } else if (this.position.x > this.bottomLeft.x && this.position.x < this.topRight.x && this.position.y > this.bottomLeft.y && this.position.y < this.bottomLeft.y + 100) { // bottom
     // Bottom
-    quad(this.bottomLeft.x, this.bottomLeft.y, this.bottomRight.x, this.bottomRight.y, this.bottomRight.x, this.bottomRight.y + 100, this.bottomLeft.x, this.bottomLeft.y + 100)
+    // quad(this.bottomLeft.x, this.bottomLeft.y, this.bottomRight.x, this.bottomRight.y, this.bottomRight.x, this.bottomRight.y + 100, this.bottomLeft.x, this.bottomLeft.y + 100)
     this.avoidHerdBottom(target, this.sec7, this.sec8, this.sec5, this.sec6);
   } else if (this.position.x > this.topLeft.x - 100 && this.position.x < this.topLeft.x && this.position.y > this.topLeft.y && this.position.y < this.bottomLeft.y) { // Left
     // Left
-    quad(this.topLeft.x - 100, this.topLeft.y, this.topLeft.x, this.topLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x - 100, this.bottomLeft.y);
+    // quad(this.topLeft.x - 100, this.topLeft.y, this.topLeft.x, this.topLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x - 100, this.bottomLeft.y);
     this.avoidHerdLeft(target, this.sec8, this.sec5, this.sec6, this.sec7);
   } else if (this.position.x > this.topLeft.x - 100 && this.position.x < this.topLeft.x && this.position.y > this.topLeft.y - 100 && this.position.y < this.topLeft.y) {
     // Top-left Corner
-    quad(this.topLeft.x - 100, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y, this.topLeft.x - 100, this.topLeft.y)
+    // quad(this.topLeft.x - 100, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y - 100, this.topLeft.x, this.topLeft.y, this.topLeft.x - 100, this.topLeft.y)
     this.avoidHerdTopLeft(target, this.sec5, this.sec6, this.sec8);
   } else if (this.position.x > this.topRight.x && this.position.x < this.topRight.x + 100 && this.position.y > this.topRight.y - 100 && this.position.y < this.topRight.y) {
     // Top right corner
-    quad(this.topRight.x, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y, this.topRight.x, this.topRight.y)
+    // quad(this.topRight.x, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y - 100, this.topRight.x + 100, this.topRight.y, this.topRight.x, this.topRight.y)
     this.avoidHerdTopRight(target, this.sec6, this.sec7, this.sec5);
   } else if (this.position.x > this.bottomRight.x && this.position.x < this.bottomRight.x + 100 && this.position.y > this.bottomRight.y && this.position.y < this.bottomRight.y + 100) {
     // Bottom Right corner
-    quad(this.bottomRight.x, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y + 100, this.bottomRight.x, this.bottomRight.y + 100)
+    // quad(this.bottomRight.x, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y, this.bottomRight.x + 100, this.bottomRight.y + 100, this.bottomRight.x, this.bottomRight.y + 100)
     this.avoidHerdBottomRight(target, this.sec7, this.sec6, this.sec8);
   } else if (this.position.x > this.bottomLeft.x - 100 && this.position.x < this.bottomLeft.x && this.position.y > this.bottomLeft.y && this.position.y < this.bottomLeft.y + 100) {
     // Bottom left
-    quad(this.bottomLeft.x - 100, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y + 100, this.bottomLeft.x - 100, this.bottomLeft.y + 100)
+    // quad(this.bottomLeft.x - 100, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y, this.bottomLeft.x, this.bottomLeft.y + 100, this.bottomLeft.x - 100, this.bottomLeft.y + 100)
     this.avoidHerdBottomLeft(target, this.sec8, this.sec5, this.sec7);
   }
 }
@@ -505,7 +504,7 @@ UAVAgent.prototype.checkGoal = function (hc, g) {
 }
 
 UAVAgent.prototype.slowForGoal = function (hc, g) {
-  if (dist(hc.x, hc.y, g.x, g.y) < 120) {
+  if (dist(hc.x, hc.y, g.x, g.y) < 100) {
     return true;
   } else {
     return false;
@@ -615,8 +614,6 @@ UAVAgent.prototype.checkForStatues = function (herd, center) {
     }
   }
   if (count > 0) {
-    console.log("I run")
-
     return true;
   } else {
     return false;

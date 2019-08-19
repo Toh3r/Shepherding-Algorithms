@@ -111,11 +111,11 @@ ManageControls.prototype.createControls = function () {
   testNumRadio.option('20', 20);
 
   //  SET STARTING PARAMETERS
-  envRadio._getInputChildrenArray()[0].checked = true;
+  envRadio._getInputChildrenArray()[3].checked = true;
   pathRadio._getInputChildrenArray()[0].checked = true;
   anNumRadio._getInputChildrenArray()[1].checked = true;
   anTypeRadio._getInputChildrenArray()[0].checked = true;
-  testNumRadio._getInputChildrenArray()[1].checked = true;
+  testNumRadio._getInputChildrenArray()[2].checked = true;
 
   // Initialize new environment
   environment = new Environment();
@@ -369,4 +369,10 @@ ManageControls.prototype.updateMyChart = function () {
   this.chart.data.datasets[1].data.push(results[results.length-1].move);
   this.chart.data.datasets[2].data.push(results[results.length-1].adverse.toFixed(2));
   this.chart.update(); // Updates chart
+}
+
+function keyPressed() {
+  if (keyCode == 70) {
+    environment.runItBack();
+  }
 }

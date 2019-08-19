@@ -5,7 +5,7 @@ function Oracle (startPos, os, shepGoals) { // Passing through starting co-ords,
   this.acceleration = createVector(0,0); // Starting acceleration of 0
   this.velocity = createVector(0,0);     // Starting acceleration of 0
   this.position = createVector(startPos.x, startPos.y);    // Starting position
-  this.maxspeed = 2;    // Starting Maxspeed
+  this.maxspeed = 1.5;    // Starting Maxspeed
   this.maxForce = 1;  // Max strength of forces
 
   // Searching/managing attributes
@@ -391,7 +391,6 @@ Oracle.prototype.keepSearching = function (herd) {
       this.rCol = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.x; }));
     }
     if (this.animals.length == 0) {
-      console.log("I'm a jackass")
       this.bRow = this.oldbRow;
       this.tRow = this.oldtRow;
       this.lCol = this.oldlCol;
@@ -420,7 +419,7 @@ Oracle.prototype.keepSearching = function (herd) {
       this.lCol = this.start.startSec.x;
       this.rCol = this.start.endSec.x;
     }
-    
+
     topRight = createVector(this.rCol, this.tRow);   // Top right
     bottomLeft = createVector(this.lCol, this.bRow); // bottom left
     bottomRight = createVector(this.rCol, this.bRow) //bottom right

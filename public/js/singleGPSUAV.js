@@ -44,6 +44,12 @@ SingleGPSUAV.prototype.run = function(herd) {
   if (herd.length > 0) { // Count time steps
     this.timestep++;
   }
+
+  // for(let i = 0; i < this.shepGoals.length; i++) {
+  //   stroke(255,255,0)
+  //   fill(255,255,0)
+  //   ellipse(this.shepGoals[i].x, this.shepGoals[i].y, 20, 20)
+  // }
 }
 
 SingleGPSUAV.prototype.herdAnimals = function (herd) {
@@ -53,6 +59,7 @@ SingleGPSUAV.prototype.herdAnimals = function (herd) {
   var bun = this.bunched(herd); // Check if herd is bunched
   var too = this.tooClose(herd);
 
+
   if (bun == true) {  	        // If bunched, call move function
     var mov = this.moveAnimals(herd);
     this.applyForce(mov);
@@ -60,7 +67,7 @@ SingleGPSUAV.prototype.herdAnimals = function (herd) {
     this.moveBool = true;
   }
 
-  if (bun == false) { // If false, call collecting function
+  if (bun == false && herd.length > 0) { // If false, call collecting function
     var avgDist = this.checkDist(herd)
     var non = this.nonMover(herd);
     if (avgDist > 120 || non == true) { // FFHC Collect
@@ -124,12 +131,8 @@ SingleGPSUAV.prototype.collectAnimals = function (herd) {
  if (this.movingUp == false) {
    var target = createVector(pzp1.x,pzp1.y);
    this.targetInBounds(target);
-   this.outOfHerd(target);
-   // this.targetInBounds(target);
-   // console.log("Target after OOH: " + target);
    this.targetInHerd(target);
-   // this.targetInBounds(target);
-   // console.log("Target after TIH: " + target);
+   this.outOfHerd(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
@@ -142,12 +145,8 @@ SingleGPSUAV.prototype.collectAnimals = function (herd) {
  } else if (this.movingUp == true) {
    var target = createVector(pzp2.x,pzp2.y);
    this.targetInBounds(target);
-   this.outOfHerd(target);
-   // this.targetInBounds(target);
-   // console.log("Target after OOH: " + target);
    this.targetInHerd(target);
-   // this.targetInBounds(target);
-   // console.log("Target after TIH: " + target);
+   this.outOfHerd(target);
    var desired = p5.Vector.sub(target, this.position);
    desired.normalize();
    desired.mult(this.maxspeed);
@@ -167,7 +166,6 @@ SingleGPSUAV.prototype.advanceCollect = function (herd) {
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
   var center = createVector(herdX, herdY);          // Centre co-ords of herd
   var goal = this.shepGoals[this.goalCounter];      // Current Goal Point
-
 
   // Functions to deal with stressor avoidance
   if (environment.vocalizing() == true && herd.length > 0) {
@@ -348,9 +346,9 @@ SingleGPSUAV.prototype.moveAnimals = function (herd) {
     }
   }
 
-  let slo = this.slowForGoal(center, herd);
+  let slo = this.slowForGoal(center, goal);
   if (slo == true) {
-    this.maxspeed = 0.2;
+    this.maxspeed = 0.4;
   }
 
   let statues = this.checkForStatues(herd, center);
@@ -367,9 +365,6 @@ SingleGPSUAV.prototype.moveAnimals = function (herd) {
     if (this.oldMovement != "moving") {
       this.outOfHerd(target);
     }
-    stroke(255)
-    // fill(0,255,0)
-    // ellipse(target.x, target.y, 15,15)
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -380,7 +375,6 @@ SingleGPSUAV.prototype.moveAnimals = function (herd) {
       this.firstAvoid = false;
       this.switchingActions = false;
       this.oldMovement = 'moving';
-      // this.moveOutofFli = false;
     }
     return steer;
   } else if (this.movingUp == true) {
@@ -396,9 +390,6 @@ SingleGPSUAV.prototype.moveAnimals = function (herd) {
     if (this.oldMovement != "moving") {
       this.outOfHerd(target);
     }
-    // stroke(255)
-    // fill(0,255,0)
-    // ellipse(target.x, target.y, 15,15)
     var desired = p5.Vector.sub(target, this.position);
     desired.normalize();
     desired.mult(this.maxspeed);
@@ -409,7 +400,6 @@ SingleGPSUAV.prototype.moveAnimals = function (herd) {
       this.firstAvoid = false;
       this.switchingActions = false;
       this.oldMovement = 'moving';
-      // this.moveOutofFli = false;
     }
     return steer;
   }
@@ -424,22 +414,6 @@ SingleGPSUAV.prototype.checkHeading = function (herd) {
   return averageHeading;
 }
 
-SingleGPSUAV.prototype.getGoodHeading = function (hc, g) {
-
-  let v0 = createVector(hc.x, hc.y);
-  let v1 = createVector(g.x - hc.x, g.y - hc.y);
-
-  let myHeading = v1.heading();
-  //
-  // noStroke();
-  // text(
-  //  'vector heading: ' +
-  //    myHeading.toFixed(2) +
-  //    ' radians',50,50,90,50);
-
-  return myHeading;
-}
-
 SingleGPSUAV.prototype.checkForStatues = function (herd, center) {
   let count = 0;
   let n = this.findClosestAnimalToUAV(herd, center);
@@ -452,8 +426,6 @@ SingleGPSUAV.prototype.checkForStatues = function (herd, center) {
     }
   }
   if (count > 0) {
-    console.log("I run")
-
     return true;
   } else {
     return false;
