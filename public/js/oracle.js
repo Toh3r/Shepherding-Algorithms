@@ -88,7 +88,6 @@ Oracle.prototype.runTheShow = function (herd) { // Function which determines act
   } else if (this.firstRun == false && bun == false && allInView == false || this.start.dir != "start") { // Once initial search finishes,if animals are not bunched
     this.following = false;
     // this.maxspeed = oracleSpeedSlider.value();
-    console.log("keepSearcing running")
     var keep = this.keepSearching(herd);               // calculate new search based on their positions
     this.applyForce(keep);                        // and keep searching
   }
@@ -369,7 +368,6 @@ Oracle.prototype.bunched = function (herd) { // Function to determine if herd is
 }
 
 Oracle.prototype.keepSearching = function (herd) {
-  console.log("Keep searching ")
   if (this.start.diffStart == true){
     this.targetNum = this.numSectors;
   }
@@ -381,6 +379,7 @@ Oracle.prototype.keepSearching = function (herd) {
       this.tRow = this.start.startSec.y;
       this.lCol = this.start.startSec.x;
       this.rCol = this.start.endSec.x;
+      this.start.startSwitcher = false;
     } else  {
       this.start.diffStart = false;
       this.bRow = Math.max.apply(Math, this.animals.map(function(o) { return o.inSector.y; }));
@@ -493,9 +492,6 @@ Oracle.prototype.keepSearching = function (herd) {
   var steer = p5.Vector.sub(desired, this.velocity);
   steer.limit(this.maxforce);
   if (dist(this.position.x, this.position.y, this.currentTarget.position.x, this.currentTarget.position.y) < 2){
-    if (this.start.startSwitcher == true && this.targetNum == this.numSectors) {
-      this.start.startSwitcher == false;
-    }
     this.moving = false;
     this.targetNum ++;
     this.saveAnimalPos(herd);
