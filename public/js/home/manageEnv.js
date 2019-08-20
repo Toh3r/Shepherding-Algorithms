@@ -203,7 +203,7 @@ ManageEnvironment.prototype.createNewEnv = function () {
       shepGoals = [goal1, goal2, goal3, goal4, goal5, goal6, goal7, goal8, goal9];
     }
 
-    aGoal1 = createVector(1070, 400), aGoal2 = createVector(1190,170);
+    aGoal1 = createVector(1070, 400), aGoal2 = createVector(1250,150);
     aGoal3 = createVector(1100, 240);
     animalGoals = [aGoal1, aGoal2, aGoal3];
 

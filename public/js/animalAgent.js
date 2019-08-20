@@ -514,6 +514,7 @@ Animal.prototype.breakUp = function (shep) {
     }
   }
   if (count > 0) {
+    console.log("true")
     this.stressLevel += 0.01;
     return true;
   } else {

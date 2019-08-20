@@ -287,9 +287,16 @@ ManageControls.prototype.createControls = function () {
   collectRadio.option('FFHC', 1);
   collectRadio.option('ZZ', 2);
 
+  pathRadio = createRadio();
+  pathRadio.parent("pathRadio");
+  pathRadio.option('Reactive', 1);
+  pathRadio.option('Planned', 2);
+
+
   //  SELECT STARTING PARAMETERS
   envRadio._getInputChildrenArray()[0].checked = true;
   collectRadio._getInputChildrenArray()[0].checked = true;
+  pathRadio._getInputChildrenArray()[0].checked = true;
 
   // Initialize new environment
   environment = new Environment();
