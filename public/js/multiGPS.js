@@ -331,7 +331,7 @@ MultiGPSShepherd.prototype.moveAnimals = function (herd) {
 
   herdHeading = this.checkHeading(herd);
   this.correctHeading = this.getGoodHeading(center, goal);
-  if (environment.avgSpeed() > 0.30 && environment.avgSpeed() < 0.50 && Math.abs(this.correctHeading - herdHeading) < 0.50) {
+  if (environment.avgSpeed() > 0.30 && environment.avgSpeed() < 0.50 && Math.abs(this.correctHeading - herdHeading) < 0.50 && this.uavNum == 1) {
     this.goodMovement += 1;
   }
 
