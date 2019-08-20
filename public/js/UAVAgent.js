@@ -366,8 +366,10 @@ UAVAgent.prototype.displayShepLines = function (herd) {
   // var goal = createVector(this.goalX,this.goalY); // Location of exit
   var goal = this.shepGoals[this.goalCounter];
 
-  if (environment.vocalizing() == true && herd.length > 0) {
-    goal = this.avoidObstacle(center, goal, herd);
+  if(pathRadio.value() == 1) {
+    if (environment.vocalizing() == true && herd.length > 0) {
+      goal = this.avoidObstacle(center, goal, herd);
+  }
   }
 
   var myLine = this.findClosestAnimal(herd, center);

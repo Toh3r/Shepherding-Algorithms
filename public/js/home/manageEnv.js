@@ -191,13 +191,13 @@ ManageEnvironment.prototype.createNewEnv = function () {
     shepStartPos = createVector(1030, 165); // Create shepherd starting co-ords
     if (pathRadio.value() == 1) {
       goal1 = createVector(1070, 400), goal2 = createVector(1220, 400);
-      goal3 = createVector(1480, 390), goal4 = createVector(1450, 150)
+      goal3 = createVector(1480, 340), goal4 = createVector(1450, 150)
       goal5 = createVector(1180,160), goal6 = createVector(1100, 255);
       shepGoals = [goal1, goal2, goal3, goal4, goal5, goal6];
     } else if (pathRadio.value() == 2) {
       goal1 = createVector(650, 380), goal2 = createVector(1070, 400);
       goal3 = createVector(1220, 400), goal4 = createVector(1300, 400);
-      goal5 = createVector(1480, 390), goal6 = createVector(1450, 150);
+      goal5 = createVector(1480, 340), goal6 = createVector(1450, 150);
       goal7 = createVector(1320,130), goal8 = createVector(1180, 160);
       goal9 = createVector(1100, 255)
       shepGoals = [goal1, goal2, goal3, goal4, goal5, goal6, goal7, goal8, goal9];
