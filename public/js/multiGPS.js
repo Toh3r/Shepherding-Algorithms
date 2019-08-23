@@ -41,8 +41,12 @@ MultiGPSShepherd.prototype.run = function(herd) {
   if(lineCheck.checked() == true && herd.length > 0) {
     this.displayShepLines(herd);
   }
-  if (herd.length > 0 && this.uavNum == 1) { // Count time steps
-    this.timestep++;
+  if (herd.length > 0) { // Count time steps
+    this.timestep += 0.5;
+  }
+
+  if (uavHistoryCheck.checked() == true){
+    this.drawHistory();
   }
 }
 
@@ -79,7 +83,7 @@ MultiGPSShepherd.prototype.herdAnimals = function (herd) {
 }
 
 MultiGPSShepherd.prototype.collectAnimals = function (herd) {
-  this.oldMovement = "Collecting";
+  this.oldMovement = "collecting";
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
   var center = createVector(herdX, herdY); // Centre co-ords of herd
@@ -141,7 +145,7 @@ MultiGPSShepherd.prototype.collectAnimals = function (herd) {
 
 
 MultiGPSShepherd.prototype.advanceCollect = function (herd, uavNum) {
-  this.oldMovement = "Collecting";
+  this.oldMovement = "collecting";
   this.avoidHerdBool = false;
   var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
   var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
@@ -457,5 +461,31 @@ MultiGPSShepherd.prototype.checkForStatues = function (herd, center) {
     return true;
   } else {
     return false;
+  }
+}
+
+MultiGPSShepherd.prototype.drawHistory = function () {
+  var oldPos = {
+    pos: createVector(this.position.x, this.position.y),
+    mov: this.oldMovement
+  }
+  if(this.timestep % 25 == 0){
+    this.history.push(oldPos);
+  }
+
+  for(let i = 0; i < this.history.length; i++){
+    if (this.history[i].mov == "collecting") {
+      stroke(0,0,255);
+      fill(0,0,255);
+    } else if (this.uavNum == 1 && this.history[i].mov != "collecting") {
+      stroke(0,0,0);
+      fill(0,0,0);
+    } else if (this.uavNum == 2 && this.history[i].mov != "collecting") {
+      stroke(255);
+      fill(255);
+    }
+
+    var pos = this.history[i].pos;
+    ellipse(pos.x, pos.y, 5, 5)
   }
 }

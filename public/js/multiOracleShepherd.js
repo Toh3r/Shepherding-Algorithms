@@ -71,6 +71,14 @@ MultiOracleShepherd.prototype.run = function(oracles) {
   if(oracles[0].maxspeed == 0) {
     this.maxspeed = 0;
   }
+
+  if (oracles.length > 0) { // Count time steps
+    this.timestep += 0.5;
+  }
+
+  if (uavHistoryCheck.checked() == true){
+    this.drawHistory();
+  }
 }
 
 MultiOracleShepherd.prototype.herdAnimals = function (animals, oracle) {
@@ -525,5 +533,19 @@ MultiOracleShepherd.prototype.checkForStatues = function (animals, center) {
     return true;
   } else {
     return false;
+  }
+}
+
+MultiOracleShepherd.prototype.drawHistory = function () {
+  var oldPos = createVector(this.position.x, this.position.y);
+  if(this.timestep % 25 == 0){
+    this.history.push(oldPos);
+  }
+  if (this.uavNum == 1) {
+    stroke(0,0,255);
+    fill(0,0,255);
+  } else {
+    stroke(255,0,255);
+    fill(255,0,255);
   }
 }

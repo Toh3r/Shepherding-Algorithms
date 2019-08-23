@@ -11,7 +11,7 @@ function ManageEnvironment () {
 ManageEnvironment.prototype.createNewEnv = function () {
   // Change number of starting animals
   if(anNumRadio.value() == 1) {
-    animalNumber = 10;
+    animalNumber = 100;
     this.anNumberForChart = "10" // Used for chart title
   } else if(anNumRadio.value() == 2) {
     animalNumber = 20;

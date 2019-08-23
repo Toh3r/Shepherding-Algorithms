@@ -44,6 +44,9 @@ SingleGPSUAV.prototype.run = function(herd) {
   if (herd.length > 0) { // Count time steps
     this.timestep++;
   }
+  if (uavHistoryCheck.checked() == true){
+    this.drawHistory();
+  }
 
 }
 

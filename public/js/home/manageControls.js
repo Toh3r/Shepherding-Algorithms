@@ -52,6 +52,14 @@ ManageControls.prototype.createControls = function () {
   sectorCheck = createCheckbox("Show Sectors", true);
   sectorCheck.parent("oracleStuff");
 
+  // Create checkbox to display flight/Pressure zones
+  herdHistoryCheck = createCheckbox("Show Herd History");
+  herdHistoryCheck.parent("zoneDiv");
+
+  // Create checkbox to display flight/Pressure zones
+  uavHistoryCheck = createCheckbox("Show UAV History");
+  uavHistoryCheck.parent("uavStuff");
+
   // -------- INITIATE UAV BUTTONS --------
   singleGPSBtn = createButton('GPS UAV'); // SINGLE GPS
   singleGPSBtn.parent('singleGPSBtn');
@@ -94,7 +102,7 @@ ManageControls.prototype.createControls = function () {
 
   anNumRadio = createRadio();
   anNumRadio.parent("anNumRadio");
-  anNumRadio.option('10', 1);
+  anNumRadio.option('100', 1);
   anNumRadio.option('20', 2);
   anNumRadio.option('50', 3);
 

@@ -2,6 +2,7 @@
 class UAVAgent {
   constructor (startPos, shepGoals) {
     this.shepGoals = shepGoals;
+    this.history = [];
   }
 }
 
@@ -28,6 +29,32 @@ UAVAgent.prototype.borders = function () {
     this.position.x = width - 15;
   } else if (this.position.y > height - 10) {
     this.position.y = height - 10;
+  }
+}
+
+UAVAgent.prototype.drawHistory = function () {
+  var oldPos = {
+    pos: createVector(this.position.x, this.position.y),
+    mov: this.oldMovement
+  }
+
+  if(this.timestep % 25 == 0){
+    this.history.push(oldPos);
+  }
+
+  for(let i = 0; i < this.history.length; i++){
+    if (this.history[i].mov == "collecting") {
+      stroke(0,0,255);
+      fill(0,0,255);
+    } else if (this.history[i].mov == "patroling"){
+      stroke(255,255,0);
+      fill(255,255,0);
+    } else {
+      stroke(255);
+      fill(255);
+    }
+    var pos = this.history[i].pos;
+    ellipse(pos.x, pos.y, 5, 5)
   }
 }
 
@@ -96,7 +123,6 @@ UAVAgent.prototype.bunched = function (herd) {
   } else {
     return false;
   }
-
 }
 
 UAVAgent.prototype.targetInBounds = function (target) {
@@ -117,23 +143,23 @@ UAVAgent.prototype.targetInBounds = function (target) {
 
 UAVAgent.prototype.targetInHerd = function (target) {
   if (target.x > this.topLeft.x && target.x < this.topRight.x && target.y > this.topLeft.y && target.y < this.bottomRight.y) {
-    console.log("This is not good")
+    // console.log("This is not good")
   }
   if (target.x < this.topLeft.x - 100) {
     target.x = this.topLeft - 20;
-    console.log("tl.x running")
+    // console.log("tl.x running")
   }
   if (target.y < this.topLeft.y - 100) {
     target.y = this.topLeft.y - 20;
-    console.log("tl.y running");
+    // console.log("tl.y running");
   }
   if (target.x > this.topRight.x + 100) {
     target.x = this.topRight.x + 20;
-    console.log("tr.x running");
+    // console.log("tr.x running");
   }
   if (target.y > this.bottomRight.y + 100) {
     target.y = this.bottomRight.y + 20;
-    console.log("br.y running");
+    // console.log("br.y running");
   }
   return target;
 }

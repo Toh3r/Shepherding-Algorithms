@@ -33,6 +33,8 @@ function Environment() {
   this.totalTime = 0;
   this.totalMoves = 0;
   this.totalAccStress = 0;
+
+  this.herdHistory = [];
 }
 
 // ------------ CREATES AGENTS/OBJECTS WHEN PASSED INFO FROM SKETCH ------------
@@ -84,6 +86,10 @@ Environment.prototype.run = function() {
   // -- Draws herd radius/sectors on canvas
   if (herdZoneCheck.checked() == true) {
     this.displayHerd(); // Render herd zone
+  }
+
+  if (herdHistoryCheck.checked() == true) {
+    this.displayHerdHistory();
   }
 
   // --------------- TESTS ---------------
@@ -360,6 +366,32 @@ Environment.prototype.hitTheGap = function(animal) {
     return item.name;
   }).indexOf(animal.name);
   this.herd.splice(index, 1); // Remove selected animal after they have left field
+}
+
+Environment.prototype.displayHerdHistory = function () {
+  this.herdBottom = Math.max.apply(Math, this.herd.map(function(o) { return o.position.y; }));
+  this.herdTop = Math.min.apply(Math, this.herd.map(function(o) { return o.position.y; }));
+  this.herdLeft = Math.min.apply(Math, this.herd.map(function(o) { return o.position.x; }));
+  this.herdRight = Math.max.apply(Math, this.herd.map(function(o) { return o.position.x; }));
+  var herdX = (this.herdRight + this.herdLeft) / 2; // X co-ord of herd centre
+  var herdY = (this.herdTop + this.herdBottom) / 2; // Y co-ord of herd centre
+  this.herdCentrePosition = createVector (herdX, herdY);
+
+  let herdCentrePos = createVector(this.herdCentrePosition.x, this.herdCentrePosition.y);
+  if(this.time % 25 == 0) {
+    this.herdHistory.push(herdCentrePos);
+  }
+
+  stroke(255);
+  fill(255);
+  for(let i = 0; i < this.herdHistory.length; i++){
+    var pos = this.herdHistory[i];
+    ellipse(pos.x, pos.y, 5, 5)
+  }
+
+  if(this.herd.length == 0) {
+    this.herdHistory.length = 0;
+  }
 }
 
 // ------------ FUNCTIONS TO DISPLAY HERD RADIUS ------------

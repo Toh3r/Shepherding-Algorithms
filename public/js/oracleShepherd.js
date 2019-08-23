@@ -71,6 +71,10 @@ OracleShepherd.prototype.run = function(oracles) {
   if(oracles[0].maxspeed == 0) {
     this.maxspeed = 0;
   }
+
+  if (uavHistoryCheck.checked() == true){
+    this.drawHistory();
+  }
 }
 
 OracleShepherd.prototype.herdAnimals = function (animals, oracle) {
@@ -95,6 +99,7 @@ OracleShepherd.prototype.herdAnimals = function (animals, oracle) {
 }
 
 OracleShepherd.prototype.patrol = function (oracle) {
+  this.oldMovement = 'patroling';
   var orTarXString = oracle.isForShep.id.x;
   var orTarPosX = oracle.isForShep.position.x;
   var orTarPosY = oracle.isForShep.position.y;
